@@ -1,8 +1,8 @@
-package com.bank.service;
+package com.bank.main;
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }
-    
+
 }
