@@ -1,0 +1,91 @@
+/* 
+Packages:
+1. UI
+2. Service
+3. Repository
+*/
+
+/* Package UI */
+public interface Menu {
+	public boolean isDisplayed();
+	public void displayMenu();
+	public String getString();
+	public long getLong();
+	public <T> void displayCollection(Collection<T> collection);
+}
+
+/* Package Service: */
+public interface BankService {
+
+}
+
+/* Exceptions */
+MenuException extends Exception; {}
+RepositoryException extends Exception {};
+BankServiceException extends Exception {};
+
+/* Package Repository: */
+
+public interface Repository {
+	public List<T> getAll(); 
+	public T getById(int id);
+	public void add(T acc);
+	public void update(int id, T acc);
+	public void delete(int id);
+}
+
+/* Repository intfce will be implemented as BankAccountRepository, UserRepository, TransactionRepository */
+public class BankAcountRepository implements Repository {
+	public List<BankAccount> getAll() {}; /* will implement List<BankAccount> */
+	public BankAccount getById(int id) {};
+	public void add(BankAccount acc) {};
+	public void update(int id, BankAccount acc) {};
+	public void delete(int id) {};
+}
+
+public class UserRepository implements Repository {
+	public List<User> getAll();
+	public User getById(int id);
+	public void add(User user);
+	public void update(int id, User user);
+	public void delete(int id);
+}
+
+public class TransactionRepository implements Repository 
+{
+	public List<Transaction> getAll();
+	public Transaction getById(long id);
+	public void add(Transaction transaction);
+	public void update(int id, Transaction transaction);
+	public void delete(int id);
+}
+
+public class BankAccount 
+{
+	long getId();
+	long getBalance();
+	long deposit(long amount);
+	long withdraw(long amount);
+	transfer(Blong amount)
+}
+
+public class User
+{
+	public int getId(BankAccount acc);
+	public String getFirstName(BankAccount acc);
+	public String getLastName(BankAccount acc);
+	public String getAddress(BankAccount acc);
+
+	public Enum getRole();
+	public void setRole(int id);
+}
+
+public class Transaction 
+{
+	public int getId(BankAccount acc);
+
+}
+
+/* List of operations: */
+General - Create User
+
