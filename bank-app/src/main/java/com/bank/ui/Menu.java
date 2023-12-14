@@ -1,5 +1,7 @@
 package com.bank.ui;
 
+import java.util.Collection;
+
 public interface Menu {
 	public boolean isDisplayed() throws MenuException;
 	public void displayMenu() throws MenuException;
