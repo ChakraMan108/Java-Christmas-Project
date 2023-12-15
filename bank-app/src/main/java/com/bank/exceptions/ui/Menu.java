@@ -1,8 +1,11 @@
-package com.bank.ui;
+package com.bank.exceptions.ui;
 
 import java.util.Collection;
 
+import com.bank.exceptions.MenuException;
+
 public interface Menu {
+	public boolean isLoggedIn() throws MenuException;
 	public boolean isDisplayed() throws MenuException;
 	public void displayMenu() throws MenuException;
 	public String getString() throws MenuException;
