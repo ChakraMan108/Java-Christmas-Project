@@ -1,4 +1,4 @@
-package com.bank.ui;
+package com.bank.exceptions;
 
 public class MenuException extends Exception {
 

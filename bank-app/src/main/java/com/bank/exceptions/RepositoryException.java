@@ -1,4 +1,4 @@
-package com.bank.repository;
+package com.bank.exceptions;
 
 public class RepositoryException extends Exception {
 
