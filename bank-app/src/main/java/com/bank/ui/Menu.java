@@ -1,4 +1,4 @@
-package com.bank.exceptions.ui;
+package com.bank.ui;
 
 import java.util.Collection;
 
