@@ -3,6 +3,9 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+/target/classes/com/bank
+target/classes
+target/classes/com/bank/repository/
 
 ### STS ###
 .apt_generated
