@@ -1,2 +1,5 @@
 target/
-target/*
+target/classes
+target/classes/com
+target/classes/com/bank
+target/test-classes
