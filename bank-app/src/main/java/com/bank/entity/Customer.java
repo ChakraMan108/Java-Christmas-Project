@@ -1,6 +1,5 @@
 package com.bank.entity;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.exceptions.CustomerException;
@@ -129,8 +128,6 @@ public class Customer {
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
                 + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType.name() + "]";
     }
-
-
 
 
 }
