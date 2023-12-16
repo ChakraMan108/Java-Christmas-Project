@@ -20,6 +20,7 @@ public class Customer {
     private LocalDate createdDate;
     private LocalDate deactivatedDate;
     private CustomerType customerType;
+    private BankAccount account;
 
     private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance();
 
@@ -102,7 +103,15 @@ public class Customer {
     public void setCustomerType(CustomerType customerType) {
         this.customerType = customerType;
     }
+    
+    public BankAccount getAccount() {
+        return account;
+    }
 
+    public void setAccount(BankAccount account) {
+        this.account = account;
+    }
+    
     public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
     {
         this.name = name;
