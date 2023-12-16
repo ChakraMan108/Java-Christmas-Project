@@ -1,12 +1,10 @@
 package com.bank.entity;
 
 import com.bank.service.TransactionService;
-
+//Fionn is working here
 public class Transaction {
-//this is test
-//test2
+    public long getId(BankAccount acc);
+    public long getBalance(BankAccount acc);
 
 
-
-//Fionn
 }
