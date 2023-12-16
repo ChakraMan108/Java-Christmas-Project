@@ -1,13 +1,32 @@
 package com.bank.entity;
 
 //Getter and Setter, Method, Variable
-
+//Fionn is working here
 
 import com.bank.service.TransactionService;
-//Fionn is working here
+
 public class Transaction {
-    public long getId(BankAccount acc);
-    public long getBalance(BankAccount acc);
+    
+    public enum TransactionType {
+        TDeposit,
+        TWithdrawl//,
+    //    TTransfer
+    }
+    
+    
+    
+    //public long getId(BankAccount acc);
+    //public long getBalance(BankAccount acc);
+
+
+    //Transaction despositTransaction = new Transaction();
+
+
+    //Transaction WithdrawTransaction = new Transaction();
+
+
+
+    //Transaction transferTransaction = new Transaction();
 
 
 }
