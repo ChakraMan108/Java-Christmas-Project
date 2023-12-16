@@ -1,5 +1,8 @@
 package com.bank.entity;
 
+//Getter and Setter, Method, Variable
+
+
 import com.bank.service.TransactionService;
 //Fionn is working here
 public class Transaction {
