@@ -66,7 +66,4 @@ public class BankAccount {
    public String toString(){
       return accNum + "\n" + name + "\n" + Double.toString(balance);
    }
-   //Test change. 2 fergal
-   //Rob changes
-   // Tom change
 }
