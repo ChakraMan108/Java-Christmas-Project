@@ -34,6 +34,11 @@ public class Transaction {
 
 /* ****************************** */
 // Constructors
+    public Transaction()
+    {
+
+    }
+
 
     public Transaction(String accountNumber, long balance, String name, boolean isActive, BankAccount account, LocalDate transactionDate, TransactionType transactiontype, long depositAmmount, long withDrawlAmmount)
     {
@@ -44,6 +49,14 @@ public class Transaction {
 /* ****************************** */
 // Getters and setters
 
+
+/* ****************************** */
+
+   @Override
+   public String toString() {
+        return
+
+   }
 
 //------------------------OLD IGNORE-----------------------------------
     //BankAccount.getId
