@@ -29,8 +29,9 @@ public class Transaction {
 
     private LocalDate transactionDate;
     private TransactionType transactiontype;
-    private long depositAmmount;
-    private long withDrawlAmmount;
+    private long transactionId;
+    private long transactionAmount;
+
 
 /* ****************************** */
 // Constructors
@@ -38,7 +39,6 @@ public class Transaction {
     {
 
     }
-
 
     public Transaction(String accountNumber, long balance, String name, boolean isActive, BankAccount account, LocalDate transactionDate, TransactionType transactiontype, long depositAmmount, long withDrawlAmmount)
     {
@@ -52,11 +52,11 @@ public class Transaction {
 
 /* ****************************** */
 
-   @Override
-   public String toString() {
-        return
+  // @Override
+   //public String toString() {
+    //    return
 
-   }
+   //}
 
 //------------------------OLD IGNORE-----------------------------------
     //BankAccount.getId
