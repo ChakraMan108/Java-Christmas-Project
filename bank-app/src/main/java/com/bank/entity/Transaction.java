@@ -130,10 +130,12 @@ public static void main(String[] args) {
         String userName = scanner.nextLine();
         transaction.setUsername(userName);
 
-        // Get input for transaction type (assume hardcoded as DEPOSIT for simplicity)
+        // Transaction is hard coded here to deposit FIX
+        System.out.print("Enter transaction type: DEPOSIT or WITHDRAWL ");
+        String transactionType = transactionType.nextLine();
         transaction.setTransactionType(TransactionType.DEPOSIT);
 
-        // Adding transaction to an ArrayList (optional)
+        // Adding transaction to an ArrayList 
         ArrayList<Transaction> transactionList = new ArrayList<>();
         transactionList.add(transaction);
 
