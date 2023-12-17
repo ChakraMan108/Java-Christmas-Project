@@ -31,14 +31,14 @@ public class Customer {
     }
 
     // Parametrised constructor taking mandatory fields
-    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
+    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType type)
     {
         this.name = name;
         this.address = address;
         this.dob = dob;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.type = customerType;
+        this.type = type;
         this.isActive = true;
         this.createdDate = LocalDate.now();
     }
@@ -131,33 +131,11 @@ public class Customer {
         this.account = account;
     }
     
-    public Customer() {
-    }
-
-    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
-    {
-        this.name = name;
-        this.address = address;
-        this.dob = dob;
-        this.phoneNumber = phoneNumber;
-
-        if (!EMAIL_VALIDATOR.isValid(email)) {
-            throw new CustomerException("Invalid email. The email must be in xxx@yyy.zzz format.");
-        }
-        else 
-        {
-            this.email = email;
-        }
-        
-        this.customerType = customerType;
-        this.isActive = true;
-    }
-
     @Override
     public String toString() {
         return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
-                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + type + ", account=" + account + "]";
+                + ", deactivatedDate=" + deactivatedDate + ", type=" + type + ", account=" + account + "]";
     }
 
 }
