@@ -6,15 +6,14 @@ package com.bank.entity;
 import com.bank.service.TransactionService;
 
 public class Transaction {
-    
     public enum TransactionType {
         TDeposit,
         TWithdrawl//,
     //    TTransfer
     }
-    class Transaction
+    class Transaction {
     private TransactionType transactiontype;
-    
+    }
     //------------------------
     //public long getId(BankAccount acc);
     //public long getBalance(BankAccount acc);
