@@ -1,5 +1,6 @@
 package com.bank.entity;
 
+import java.util.Random;
 import java.time.LocalDate;
 
 import com.bank.service.BankAccountService;
@@ -69,6 +70,8 @@ public class BankAccount {
    }
 
    public String openAccount(){
+      Random random = new Random();
+      long randomNumber = (long)(random.nextDouble() * 9_000_000_000L) + 1_000_000_000L;
 
       return accountNumber;
    }
