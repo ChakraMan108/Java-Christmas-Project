@@ -1,61 +1,46 @@
 package com.bank.service;
 
-import com.bank.entity.BankAccount;
+import com.bank.model.BankAccount;
 
-public class OperationService implements Service {
+public class OperationService{
 
-   // @Override
-    public void displayAccountDescription(BankAccount account) {
-        System.out.println("Account Owner: " + account.getOwner().getName());
-        System.out.println("Date Opened: " + account.getDateOpened());
-        // Add other relevant account details
+    // Display description of a specific account (e.g., owner, date opened)
+    public void showAccountDescription(BankAccount account) {
+        System.out.println("Account Description:");
+        System.out.println("Owner: " + account.getId());
+        System.out.println("Date Opened: " + account.getCreatedDate());
     }
 
-   // @Override
-    public void displayAccountState(BankAccount account) {
-        System.out.println("Account ID: " + account.getid());
-        System.out.println("Current Balance: " + account.getBalance());
-        // Add other relevant account state details
+    // Display state of a specific account (e.g., current balance)
+    public void showAccountState(BankAccount account) {
+        System.out.println("Account State:");
+        System.out.println("Current Balance: " + account.getCurrentBalance());
     }
 
-   // @Override
+    // Deposit funds into a specific account
     public void deposit(BankAccount account, long amount) {
-        long newBalance = account.getBalance() + amount;
-        account.setBalance(newBalance);
-        System.out.println("Funds deposited successfully. New balance: " + newBalance);
+        // Perform deposit logic here
+        account.setCurrentBalance(account.getCurrentBalance() + amount);
+        System.out.println("Deposited " + amount + " into the account.");
     }
 
-   // @Override
+    // Withdraw funds from a specific account
     public void withdraw(BankAccount account, long amount) {
-        long currentBalance = account.getBalance();
+        // Perform withdrawal logic here
+        long currentBalance = account.getCurrentBalance();
         if (currentBalance >= amount) {
-            long newBalance = currentBalance - amount;
-            account.setBalance(newBalance);
-            System.out.println("Funds withdrawn successfully. New balance: " + newBalance);
+            account.setCurrentBalance(currentBalance - amount);
+            System.out.println("Withdrawn " + amount + " from the account.");
         } else {
             System.out.println("Insufficient funds for withdrawal.");
         }
     }
 
-    //@Override
+    // Transfer funds between two specific accounts
     public void transfer(BankAccount fromAccount, BankAccount toAccount, long amount) {
-        long fromAccountBalance = fromAccount.getBalance();
-        if (fromAccountBalance >= amount) {
-            long newFromBalance = fromAccountBalance - amount;
-            fromAccount.setBalance(newFromBalance);
-
-            long toAccountBalance = toAccount.getBalance();
-            long newToBalance = toAccountBalance + amount;
-            toAccount.setBalance(newToBalance);
-
-            System.out.println("Funds transferred successfully.");
-            System.out.println("From Account (" + fromAccount.getid() + ") New Balance: " + newFromBalance);
-            System.out.println("To Account (" + toAccount.getid() + ") New Balance: " + newToBalance);
-        } else {
-            System.out.println("Insufficient funds for transfer.");
-        }
+        // Perform transfer logic here
+        withdraw(fromAccount, amount);
+        deposit(toAccount, amount);
+        System.out.println("Transferred " + amount + " from one account to another.");
     }
-
-   
-    }
-
+}
