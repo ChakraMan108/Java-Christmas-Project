@@ -12,9 +12,10 @@ public class Transaction {
         TWithdrawl//,
     //    TTransfer
     }
+    class Transaction
+    private TransactionType transactiontype;
     
-    
-    
+    //------------------------
     //public long getId(BankAccount acc);
     //public long getBalance(BankAccount acc);
 
