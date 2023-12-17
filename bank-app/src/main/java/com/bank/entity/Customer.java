@@ -115,12 +115,12 @@ public class Customer {
         this.deactivatedDate = deactivatedDate;
     }
 
-    public CustomerType getCustomerType() {
+    public CustomerType getType() {
         return type;
     }
 
-    public void setCustomerType(CustomerType customerType) {
-        this.type = customerType;
+    public void setType(CustomerType type) {
+        this.type = type;
     }
     
     public BankAccount getAccount() {
