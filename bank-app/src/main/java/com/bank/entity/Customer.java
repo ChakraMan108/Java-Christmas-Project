@@ -22,7 +22,21 @@ public class Customer {
     private CustomerType customerType;
     private BankAccount account;
 
-    private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance();
+    public Customer() {
+
+    }
+
+    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
+    {
+        this.name = name;
+        this.address = address;
+        this.dob = dob;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.customerType = customerType;
+        this.isActive = true;
+        this.createdDate = LocalDate.now();
+    }
 
     public long getId() {
         return id;
@@ -111,32 +125,12 @@ public class Customer {
     public void setAccount(BankAccount account) {
         this.account = account;
     }
-    
-    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
-    {
-        this.name = name;
-        this.address = address;
-        this.dob = dob;
-        this.phoneNumber = phoneNumber;
-
-        if (!EMAIL_VALIDATOR.isValid(email)) {
-            throw new CustomerException("Invalid email. The email must be in xxx@yyy.zzz format.");
-        }
-        else 
-        {
-            this.email = email;
-        }
-        
-        this.customerType = customerType;
-        this.isActive = true;
-    }
 
     @Override
     public String toString() {
         return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
-                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType.name() + "]";
+                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType + ", account=" + account + "]";
     }
-
 
 }
