@@ -27,13 +27,16 @@ public class UiImpl implements Ui {
         }
     }
     public void displayMenu() throws MenuException {
-        System.out.println("1. Create Account");
-        System.out.println("2. Deposit");
-        System.out.println("3. Withdraw");
-        System.out.println("4. Transfer");
+        System.out.println("1. Create Customer");
+        System.out.println("2. Update Customer Details");
+        System.out.println("3. Deactivate Customer");
+        System.out.println("4. Open New Account");
         System.out.println("5. Close Account");
-        System.out.println("6. Display All Accounts");
-        System.out.println("7. Exit");
+        System.out.println("6. Change Account type");
+        System.out.println("7. Display Customer Details");
+        System.out.println("8. Display Account Balance");
+        System.out.println("9. Deposit Funds to Account");
+        System.out.println("10. Transfer Funds to/from Account");
     }
     public String getString() throws MenuException {
         Scanner scanner = new Scanner(System.in);
