@@ -6,8 +6,9 @@ import java.time.LocalDate;
 import com.bank.service.BankAccountService;
 
 public class BankAccount {
+   private long id;
    private String accountName;
-   private integer accountNumber;
+   private String accountNumber;
    private long balance;
    private boolean isActive;
    private LocalDate createdDate;
@@ -15,6 +16,10 @@ public class BankAccount {
 
 /* ****************************** */
 // Constructors
+
+   public BankAccount() {
+
+   }
 
    public BankAccount(String accountName, String accountNumber, long balance){
       this.accountName = accountName;
@@ -26,6 +31,14 @@ public class BankAccount {
 
 /* ****************************** */
 // Getters and setters
+
+   public long getId() {
+      return id;
+   }
+
+   public void setId(long id) {
+      this.id = id;
+   }   
 
    public String getaccountName(){
       return accountName;
@@ -89,6 +102,6 @@ public class BankAccount {
    public String toString() {
       return "BankAccount [accountName=" + accountName + ", accountNumber=" + accountNumber + ", balance=" + balance
             + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate
-            + ", accountNameg=" + accountNameg + ", accountNumberraccountNumber=" + accountNumberraccountNumber + "]";
+            + "]";
    }
 }

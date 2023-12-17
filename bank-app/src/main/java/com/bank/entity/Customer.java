@@ -5,11 +5,13 @@ import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.exceptions.CustomerException;
 
 public class Customer {
+
     public enum CustomerType {
         INTERNAL,
         INDIVIDUAL,
         COMPANY
     }
+    
     private long id;
     private String name;
     private String address;
@@ -19,13 +21,16 @@ public class Customer {
     private boolean isActive;
     private LocalDate createdDate;
     private LocalDate deactivatedDate;
-    private CustomerType customerType;
-    private BankAccount account;
+    private CustomerType customerType = null;
+    private BankAccount account = null;
 
+    // Constructors
+    // Empty constructor for instantiating empty/null objects for testing etc.
     public Customer() {
 
     }
 
+    // Parametrised constructor taking mandatory fields
     public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
     {
         this.name = name;
