@@ -1,37 +1,45 @@
 package com.bank.entity;
 
+import java.util.Random;
+import java.time.LocalDate;
+
 import com.bank.service.BankAccountService;
 
 public class BankAccount {
-   private String name;
-   private String accNum;
-   private double balance;
+   private String accountName;
+   private String accountNumber;
+   private long balance;
+   private boolean isActive;
+   private LocalDate createdDate;
+   private LocalDate deactivatedDate;
 
-   public BankAccount(String name, String accNum, double balance){
-      this.name = name;
-      this.accNum = accNum;
+   public BankAccount(String accountName, String accountNumber, long balance){
+      this.accountName = accountName;
+      this.accountNumber = accountNumber;
       this.balance = balance;
+      this.isActive = true;
+      this.createdDate = new Date();
    }
 
 /* ****************************** */
 
-   public String getName(){
-      return name;
+   public String getaccountName(){
+      return accountName;
    }
 
-   public void setName(){
-      this.name = name;
+   public void setaccountName(){
+      this.accountName = accountName;
    }
 
-   public String getAccNum(){
-      return accNum;
+   public String getaccountNumber(){
+      return accountNumber;
    }
 
-   public void setAccNum(){
-      this.accNum = accNum;
+   public void setaccountNumber(){
+      this.accountNumber = accountNumber;
    }
 
-   public double getBalance(){
+   public long getBalance(){
       return balance;
    }
 
@@ -39,13 +47,21 @@ public class BankAccount {
       this.balance = balance;
    }
 
+   public boolean isActive(){
+      return isActive;
+   }
+
+   public void setIsActive(){
+      this.isActive = isActive;
+   }
+
 /* ****************************** */
 
-   public void deposit(double amount){
+   public void deposit(long amount){
       balance += amount;
    }
 
-   public void withdraw(double amount){
+   public void withdraw(long amount){
       amount -= amount;
    }
 
@@ -54,16 +70,14 @@ public class BankAccount {
    }
 
    public String openAccount(){
+      Random random = new Random();
+      long randomNumber = (long)(random.nextDouble() * 9_000_000_000L) + 1_000_000_000L;
 
-      return accNum;
+      return accountNumber;
    }
 
    public String closeAccount(){
 
-      return accNum;
-   }
-
-   public String toString(){
-      return accNum + "\n" + name + "\n" + Double.toString(balance);
+      return accountNumber;
    }
 }
