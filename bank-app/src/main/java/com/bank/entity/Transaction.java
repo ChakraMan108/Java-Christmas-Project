@@ -1,5 +1,7 @@
 package com.bank.entity;
 
+import com.bank.entity.Transaction.TransactionType;
+
 //Getter and Setter, Method, Variable
 //Fionn is working here
 
@@ -13,6 +15,7 @@ public class Transaction {
     }
     class Transaction {
     private TransactionType transactiontype;
+    BankAccount.getId
     }
     //------------------------
     //public long getId(BankAccount acc);
