@@ -22,6 +22,22 @@ public class Customer {
     private CustomerType customerType;
     private BankAccount account;
 
+    public Customer() {
+
+    }
+
+    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
+    {
+        this.name = name;
+        this.address = address;
+        this.dob = dob;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.customerType = customerType;
+        this.isActive = true;
+        this.createdDate = LocalDate.now();
+    }
+
     public long getId() {
         return id;
     }
@@ -108,22 +124,6 @@ public class Customer {
 
     public void setAccount(BankAccount account) {
         this.account = account;
-    }
-    
-    public Customer() {
-
-    }
-
-    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
-    {
-        this.name = name;
-        this.address = address;
-        this.dob = dob;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.customerType = customerType;
-        this.isActive = true;
-        this.createdDate = LocalDate.now();
     }
 
     @Override
