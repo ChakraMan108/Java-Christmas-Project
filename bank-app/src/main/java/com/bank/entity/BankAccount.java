@@ -1,36 +1,35 @@
 package com.bank.entity;
 
-import java.util.Random;
 import java.time.LocalDate;
-
 import com.bank.service.BankAccountService;
 
 public class BankAccount {
+   
+   public enum AccountType {
+      CURRENT_ACCOUNT,
+      SAVING_ACCOUNT,
+      STUDENT_ACCOUNT
+   }
+
    private long id;
    private String accountName;
-   private String accountNumber;
+   private AccountType type;
    private long balance;
    private boolean isActive;
    private LocalDate createdDate;
    private LocalDate deactivatedDate;
 
-/* ****************************** */
-// Constructors
-
    public BankAccount() {
 
    }
 
-   public BankAccount(String accountName, String accountNumber, long balance){
+   public BankAccount(long id, String accountName, long balance){
+      this.id = id;
       this.accountName = accountName;
-      this.accountNumber = accountNumber;
       this.balance = balance;
       this.isActive = true;
       this.createdDate = LocalDate.now();
    }
-
-/* ****************************** */
-// Getters and setters
 
    public long getId() {
       return id;
@@ -38,70 +37,62 @@ public class BankAccount {
 
    public void setId(long id) {
       this.id = id;
-   }   
+   }
 
-   public String getaccountName(){
+   public String getAccountName() {
       return accountName;
    }
 
-   public void setaccountName(String accountName){
+   public void setAccountName(String accountName) {
       this.accountName = accountName;
    }
 
-   public String getaccountNumber(){
-      return accountNumber;
-   }
-
-   public void setaccountNumber(integer accountNumber){
-      this.accountNumber = accountNumber;
-   }
-
-   public long getBalance(){
+   public long getBalance() {
       return balance;
    }
 
-   public void setBalance(long balance){
+   public void setBalance(long balance) {
       this.balance = balance;
    }
 
-   public boolean isActive(){
+   public boolean isActive() {
       return isActive;
    }
 
-   public void setIsActive(boolean isActive){
+   public void setActive(boolean isActive) {
       this.isActive = isActive;
    }
 
-/* ****************************** */
-
-   public void deposit(long amount){
-      balance += amount;
+   public LocalDate getCreatedDate() {
+      return createdDate;
    }
 
-   public void withdraw(long amount){
-      amount -= amount;
+   public void setCreatedDate(LocalDate createdDate) {
+      this.createdDate = createdDate;
    }
 
-   public String seeBal(){
-      return toString();
+   public LocalDate getDeactivatedDate() {
+      return deactivatedDate;
    }
 
-   public String openAccount(){
-      Random random = new Random();
-      long randomNumber = (long)(random.nextDouble() * 9_000_000_000L) + 1_000_000_000L;
-
-      return accountNumber;
+   public void setDeactivatedDate(LocalDate deactivatedDate) {
+      this.deactivatedDate = deactivatedDate;
    }
 
-   public String closeAccount(integer accountNumber){
+   public AccountType getType() {
+      return type;
+   }
 
-      return accountNumber;
+   public void setType(AccountType type) {
+      this.type = type;
    }
 
    @Override
    public String toString() {
-      return "BankAccount [accountName=" + accountName + ", accountNumber=" + accountNumber + ", balance=" + balance
-            + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate
-            + "]";
+      return "BankAccount [id=" + id + ", accountName=" + accountName + ", type=" + type + ", balance=" + balance
+            + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate + "]";
    }
+
+
+
 }
