@@ -3,6 +3,7 @@ package com.bank.ui;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
@@ -62,6 +63,33 @@ public class UiImpl implements Ui {
             System.out.println(t);
         }
     }
+
+    public void Details(ArrayList coll) {
+        for (Object o : coll) {
+            System.out.println(o);
+        }
+
+    private static final emailValidator = EmailValidator.getInstance();
+
+    if(!emailValidator.isValid(email)) {
+        throw new MenuException("Invalid Email Address");
+        
+    } else {
+        System.out.println("Email Address is Valid");
+    }
+
+    }
+
+    
+    
+    public UiImpl(ArrayList<BankAccount> bankAccounts, ArrayList<Customer> customers,
+            ArrayList<Transaction> transactions) {
+        this.bankAccounts = bankAccounts;
+        this.customers = customers;
+        this.transactions = transactions;
+    }
+
+
 
     ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
     ArrayList<Customer> customers = new ArrayList<Customer>();
