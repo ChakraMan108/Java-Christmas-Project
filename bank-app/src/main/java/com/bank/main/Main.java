@@ -11,9 +11,11 @@ public class Main {
     public static void main(String[] args) {
         
             Customer cust1 = new Customer("Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+
             Customer cust2 = new Customer("Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444", "mary@x.com", Customer.CustomerType.INDIVIDUAL);
-            System.out.println(cust1);
             
+            System.out.println(cust1);
+
             BankAccount acc1 = new BankAccount("Cool", "1234567", 0);
             System.out.println(acc1);
 
