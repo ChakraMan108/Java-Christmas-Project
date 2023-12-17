@@ -43,7 +43,7 @@ public class Transaction {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.transactionDate = new Date();
-        this.TransactionType = transactionType;
+        //this.TransactionType = transactionType;
         this.transactionId = transactionId;
         this.transactionAmount = transactionAmount;
     }
@@ -131,4 +131,5 @@ public void setTransactionAmount(long transactionAmount) {
     //Transaction transferTransaction = new Transaction();
 
 
+}
 }
