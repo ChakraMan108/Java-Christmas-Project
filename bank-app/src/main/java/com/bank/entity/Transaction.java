@@ -1,22 +1,40 @@
+//Fionn is working here
+//Getter and Setter, Method, Variable
 package com.bank.entity;
 
-import com.bank.entity.Transaction.TransactionType;
+import java.time.LocalDate;
 
-//Getter and Setter, Method, Variable
-//Fionn is working here
+import com.bank.entity.Customer.CustomerType;
+import com.bank.entity.BankAccount;
 
+
+import com.bank.service.BankAccountService;
 import com.bank.service.TransactionService;
 
+
+//import com.bank.entity.Transaction.TransactionType;
 public class Transaction {
     public enum TransactionType {
         TDeposit,
-        TWithdrawl//,
-    //    TTransfer
+        TWithdrawl
     }
-    class Transaction {
-    private TransactionType transactiontype;
-    BankAccount.getId
-    }
+    private String accountNumber;
+    private long balance;
+
+
+    private String name;
+    private boolean isActive;
+    private CustomerType customerType;
+    private BankAccount account;
+
+    private LocalDate transactionDate;
+
+    //class Transaction {
+        public TransactionType transactiontype;
+
+
+    //BankAccount.getId
+}
     //------------------------
     //public long getId(BankAccount acc);
     //public long getBalance(BankAccount acc);
@@ -32,4 +50,4 @@ public class Transaction {
     //Transaction transferTransaction = new Transaction();
 
 
-}
+
