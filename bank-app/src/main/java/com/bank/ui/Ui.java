@@ -19,6 +19,7 @@ public interface Ui {
 }
 
 public class UiImpl implements Ui {
+    
     public void authenticateApp() throws MenuException {
         System.out.println("Enter your username: ");
         String username = getString();
@@ -69,17 +70,20 @@ public class UiImpl implements Ui {
             System.out.println(o);
         }
 
+    private Object email;
     private static final emailValidator = EmailValidator.getInstance();
 
+    public void validateEmail(String email) throws MenuException {
     if(!emailValidator.isValid(email)) {
         throw new MenuException("Invalid Email Address");
         
     } else {
         System.out.println("Email Address is Valid");
     }
-
+    if (email == null) {
+        throw new NullPointerException("Invalid Input");
     }
-
+    }
     
     
     public UiImpl(ArrayList<BankAccount> bankAccounts, ArrayList<Customer> customers,
