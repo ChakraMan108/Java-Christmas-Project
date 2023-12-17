@@ -1,37 +1,35 @@
 package com.bank.service;
 
-import com.bank.model.BankAccount;
-
-import java.math.BigDecimal;
+import com.bank.entity.BankAccount;
 
 public class OperationService implements Service {
 
-    @Override
+   // @Override
     public void displayAccountDescription(BankAccount account) {
-        System.out.println("Account Owner: " + account.getOwner());
+        System.out.println("Account Owner: " + account.getOwner().getName());
         System.out.println("Date Opened: " + account.getDateOpened());
         // Add other relevant account details
     }
 
-    @Override
+   // @Override
     public void displayAccountState(BankAccount account) {
-        System.out.println("Account ID: " + account.getAccountId());
+        System.out.println("Account ID: " + account.getid());
         System.out.println("Current Balance: " + account.getBalance());
         // Add other relevant account state details
     }
 
-    @Override
-    public void depositFunds(BankAccount account, BigDecimal amount) {
-        BigDecimal newBalance = account.getBalance().add(amount);
+   // @Override
+    public void deposit(BankAccount account, long amount) {
+        long newBalance = account.getBalance() + amount;
         account.setBalance(newBalance);
         System.out.println("Funds deposited successfully. New balance: " + newBalance);
     }
 
-    @Override
-    public void withdrawFunds(BankAccount account, BigDecimal amount) {
-        BigDecimal currentBalance = account.getBalance();
-        if (currentBalance.compareTo(amount) >= 0) {
-            BigDecimal newBalance = currentBalance.subtract(amount);
+   // @Override
+    public void withdraw(BankAccount account, long amount) {
+        long currentBalance = account.getBalance();
+        if (currentBalance >= amount) {
+            long newBalance = currentBalance - amount;
             account.setBalance(newBalance);
             System.out.println("Funds withdrawn successfully. New balance: " + newBalance);
         } else {
@@ -39,22 +37,25 @@ public class OperationService implements Service {
         }
     }
 
-    @Override
-    public void transferFunds(BankAccount fromAccount, BankAccount toAccount, BigDecimal amount) {
-        BigDecimal fromAccountBalance = fromAccount.getBalance();
-        if (fromAccountBalance.compareTo(amount) >= 0) {
-            BigDecimal newFromBalance = fromAccountBalance.subtract(amount);
+    //@Override
+    public void transfer(BankAccount fromAccount, BankAccount toAccount, long amount) {
+        long fromAccountBalance = fromAccount.getBalance();
+        if (fromAccountBalance >= amount) {
+            long newFromBalance = fromAccountBalance - amount;
             fromAccount.setBalance(newFromBalance);
 
-            BigDecimal toAccountBalance = toAccount.getBalance();
-            BigDecimal newToBalance = toAccountBalance.add(amount);
+            long toAccountBalance = toAccount.getBalance();
+            long newToBalance = toAccountBalance + amount;
             toAccount.setBalance(newToBalance);
 
             System.out.println("Funds transferred successfully.");
-            System.out.println("From Account (" + fromAccount.getAccountId() + ") New Balance: " + newFromBalance);
-            System.out.println("To Account (" + toAccount.getAccountId() + ") New Balance: " + newToBalance);
+            System.out.println("From Account (" + fromAccount.getid() + ") New Balance: " + newFromBalance);
+            System.out.println("To Account (" + toAccount.getid() + ") New Balance: " + newToBalance);
         } else {
             System.out.println("Insufficient funds for transfer.");
         }
     }
-}
+
+   
+    }
+
