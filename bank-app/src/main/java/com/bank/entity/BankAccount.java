@@ -7,7 +7,7 @@ import com.bank.service.BankAccountService;
 
 public class BankAccount {
    private String accountName;
-   private integer accountNumber;
+   private String accountNumber;
    private long balance;
    private boolean isActive;
    private LocalDate createdDate;
@@ -39,7 +39,7 @@ public class BankAccount {
       return accountNumber;
    }
 
-   public void setaccountNumber(integer accountNumber){
+   public void setaccountNumber(String accountNumber){
       this.accountNumber = accountNumber;
    }
 
@@ -61,7 +61,7 @@ public class BankAccount {
 
 /* ****************************** */
 
-   public void deposit(long amount){
+/*   public void deposit(long amount){
       balance += amount;
    }
 
@@ -89,6 +89,6 @@ public class BankAccount {
    public String toString() {
       return "BankAccount [accountName=" + accountName + ", accountNumber=" + accountNumber + ", balance=" + balance
             + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate
-            + ", accountNameg=" + accountNameg + ", accountNumberraccountNumber=" + accountNumberraccountNumber + "]";
+            + ", accountNameg=" + accountNameg + ", accountNumberraccountNumber=" + accountNumberraccountNumber + "]";  */
    }
 }
