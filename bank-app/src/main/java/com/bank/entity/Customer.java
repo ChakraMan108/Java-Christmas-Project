@@ -129,15 +129,14 @@ public class Customer {
         
         this.customerType = customerType;
         this.isActive = true;
+        this.createdDate = LocalDate.now();
     }
 
     @Override
     public String toString() {
         return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
-                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType.name() + ", account=" + account
-                + "]";
+                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType.name() + ", account=" + account "]";
     }
-
 
 }
