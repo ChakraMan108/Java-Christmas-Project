@@ -6,14 +6,15 @@ package com.bank.entity;
 import java.util.Date;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 //import com.bank.entity.Customer;
 //import com.bank.entity.Customer.CustomerType;
-//import com.bank.entity.BankAccount;
+import com.bank.entity.BankAccount;
 
 
 
-import java.util.ArrayList;
+
 //import com.bank.service.BankAccountService;
 //import com.bank.service.TransactionService;
 
@@ -31,9 +32,8 @@ public class Transaction {
     private LocalDate createdDate;
     private String username;
     private TransactionType transactionType = null;
-    private long accountId;
 
-    private static long transactionIdCounter = 1;
+    private long accountIdCounter = 1;
 
 
 /* ****************************** */
@@ -43,25 +43,18 @@ public class Transaction {
 
     }
 
-    public Transaction(String accountNumber, long id, long amount, LocalDate createdDate, String username, TransactionType transactionType, long accountId) {
+    public Transaction(String accountNumber, long id, long amount, 
+                        LocalDate createdDate, String username, TransactionType transactionType, long accountIdCounter) {
         this.accountNumber = accountNumber;
         this.id = id;
         this.amount = amount;
         this.createdDate = createdDate;
         this.username = username;
         this.transactionType = transactionType;
-        this.accountId = accountId;
+        this.accountIdCounter = accountIdCounter;
     }
 /* ****************************** */
 // Getters and setters
-public String getUsername() {
-    return username;
-}
-
-public void setUsername(String accountName) {
-    this.username = username;
-}
-
 public String getAccountNumber() {
     return accountNumber;
 }
@@ -70,12 +63,32 @@ public void setAccountNumber(String accountNumber) {
     this.accountNumber = accountNumber;
 }
 
-public LocalDate getTransactionDate() {
+public long getId() {
+    return id;
+}
+
+public void setId(long id) {
+    this.id = id;
+}
+
+public long getAmount() {
+    return amount;
+}
+
+public void setAmount(long amount) {
+    this.amount = amount;
+}
+
+public LocalDate getCreatedDate() {
     return createdDate;
 }
 
-public void setTransactionDate(Date transactionDate) {
-    this.createdDate = createdDate;
+public String getUsername() {
+    return username;
+}
+
+public void setUsername(String username) {
+    this.username = username;
 }
 
 public TransactionType getTransactionType() {
@@ -86,84 +99,56 @@ public void setTransactionType(TransactionType transactionType) {
     this.transactionType = transactionType;
 }
 
-public long getid() {
-    return id;
-}
-
-public void setTransactionId(long transactionId) {
-    this.id = transactionId;
-}
-
-public long getTransactionAmount() {
-    return amount;
-}
-
-public void setTransactionAmount(long transactionAmount) {
-    this.amount = transactionAmount;
+public long getAccountId() {
+    return accountIdCounter++;
 }
 
 /* ****************************** */
-private static long generateTransactionId() {
-    return transactionIdCounter++;
-}
-
-
 
 //Scanner here temp. to test if it runs
 public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Transaction transaction = new Transaction();
 
+        // Get input for accountNumber
         System.out.print("Enter account number: ");
-        String accountNumber = scanner.nextLine();
+        String accNumber = scanner.nextLine();
+        transaction.setAccountNumber(accNumber);
 
+        // Get input for id
         System.out.print("Enter transaction ID: ");
-        long id = Long.parseLong(scanner.nextLine());
+        long transId = Long.parseLong(scanner.nextLine());
+        transaction.setId(transId);
 
+        // Get input for amount
         System.out.print("Enter transaction amount: ");
-        long amount = Long.parseLong(scanner.nextLine());
+        long transAmount = Long.parseLong(scanner.nextLine());
+        transaction.setAmount(transAmount);
 
-        // Assume you have a method to fetch the account from BankAccount.java
-        // Replace the following line with the actual call to fetch the account
-        String fetchedAccount = BankAccount.getAccountNumber(); // Replace this line with actual method call
-
-        LocalDate currentDate = LocalDate.now(); // Use the current date as created date
-
+        // Get input for username
         System.out.print("Enter username: ");
-        String username = scanner.nextLine();
+        String userName = scanner.nextLine();
+        transaction.setUsername(userName);
 
-        // You can ask for transaction type input here (e.g., deposit or withdrawal)
-        // For simplicity, let's assume it's hardcoded as a deposit in this example
-        TransactionType transactionType = TransactionType.DEPOSIT;
+        // Get input for transaction type (assume hardcoded as DEPOSIT for simplicity)
+        transaction.setTransactionType(TransactionType.DEPOSIT);
 
-        // Generate accountId consecutively (this is a simplified example)
-        long accountId = generateAccountId(); // Replace this with your logic to generate the ID
-
-        // Create the transaction object using user inputs
-        Transaction transaction = new Transaction(accountNumber, id, amount, currentDate, username, transactionType, accountId);
-
-        // Create an ArrayList and add the transaction object
+        // Adding transaction to an ArrayList (optional)
         ArrayList<Transaction> transactionList = new ArrayList<>();
         transactionList.add(transaction);
 
-        // You can perform operations with the transactionList as needed
-        // For example, iterating through the list and printing details
+        // Print transaction details
         for (Transaction t : transactionList) {
-            System.out.println("Transaction Details:");
-            System.out.println("Account Number: " + t.accountNumber);
-            System.out.println("Transaction ID: " + t.id);
-            System.out.println("Transaction Amount: " + t.amount);
-            System.out.println("Created Date: " + t.createdDate);
-            System.out.println("Username: " + t.username);
-            System.out.println("Transaction Type: " + t.transactionType);
-            System.out.println("Account ID: " + t.accountId);
+            System.out.println("\n" + //
+                    "Transaction Details:");
+            System.out.println("Account Number: " + t.getAccountNumber());
+            System.out.println("Transaction ID: " + t.getId());
+            System.out.println("Transaction Amount: " + t.getAmount());
+            System.out.println("Created Date: " + t.getCreatedDate());
+            System.out.println("Username: " + t.getUsername());
+            System.out.println("Transaction Type: " + t.getTransactionType());
+            System.out.println("Account ID: " + t.getAccountId());
         }
-    }
-
-    // Method to generate accountId (you may implement your logic here)
-    private static long generateAccountId() {
-        // Replace this with your implementation to generate the account ID
-        // For example:
-        return 12345; // Just a placeholder, replace this with your logic
     }
 }
   // @Override
