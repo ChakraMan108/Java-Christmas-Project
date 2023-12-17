@@ -1,10 +1,12 @@
 package com.bank.repository;
 
+import com.bank.entity.Operation;
 import com.bank.model.BankAccount;
 import com.bank.service.OperationService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class OperationRepository implements Repository {
 
@@ -26,31 +28,32 @@ public class OperationRepository implements Repository {
         return accounts;
     }
 
-    // Perform an operation on a specific account using the OperationService
-    public void performOperation(BankAccount account, OperationType operationType, long amount) {
-        switch (operationType) {
-            case SHOW_DESCRIPTION:
-                operationService.showAccountDescription(account);
-                break;
-            case SHOW_STATE:
-                operationService.showAccountState(account);
-                break;
-            case DEPOSIT:
-                operationService.deposit(account, amount);
-                break;
-            case WITHDRAW:
-                operationService.withdraw(account, amount);
-                break;
-            // Add more cases for other operation types if needed
-        }
+    public void deleteById(long id) {
     }
 
-    // Enum to represent different types of operations
-    public enum OperationType {
-        SHOW_DESCRIPTION,
-        SHOW_STATE,
-        DEPOSIT,
-        WITHDRAW
-        // Add more operation types if needed
+    public Optional<Operation> findById(long id) {
+        return null;
     }
-}
+
+    // // Perform an operation on a specific account using the OperationService
+    // public void performOperation(BankAccount account, OperationType operationType, long amount) {
+    //     switch (operationType) {
+    //         case SHOW_DESCRIPTION:
+    //             operationService.showAccountDescription(account);
+    //             break;
+    //         case SHOW_STATE:
+    //             operationService.showAccountState(account);
+    //             break;
+    //         case DEPOSIT:
+    //             operationService.deposit(account, amount);
+    //             break;
+    //         case WITHDRAW:
+    //             operationService.withdraw(account, amount);
+    //             break;
+    //         // Add more cases for other operation types if needed
+    //     }
+    // }
+
+    
+    }
+

@@ -1,51 +1,72 @@
 package com.bank.entity;
 
-import com.bank.model.BankAccount;
-import com.bank.service.OperationService;
+import java.time.LocalDate;
 
-//import java.math.BigDecimal;
+public class Operation {
 
-public class Operation extends BankAccount{
+    public enum OperationType {
+       CUSTOMER_CREATION,
+        CUSTOMER_DEACTIVATION,
+        ACCOUNT_CREATION,
+        ACCOUNT_DEACTIVATION
 
-    private final OperationService operationService;
 
-    public Operation(OperationService operationService) {
-        this.operationService = operationService;
+    }
+    private long id;
+    private OperationType operationtype;
+    private String username;
+    private LocalDate date;
+    private Customer customer;
+    
+    public Operation(long id, OperationType operationtype, String username, LocalDate date, Customer customer ) {
+        this.id = id;
+        this.operationtype = operationtype;
+        this.username = username;
+        this.date = date;
+        this.customer=customer;
     }
 
-    // Display description of a specific account
-    public void displayAccountDescription(BankAccount account) {
-        operationService.displayAccountDescription(account);
+
+    public long getId() {
+        return id;
     }
 
-    // Display state of a specific account
-    public void displayAccountState(BankAccount account) {
-        operationService.displayAccountState(account);
+    public void setId(long id) {
+        this.id = id;
     }
 
-    // Deposit funds into a specific account
-    public void deposit(BankAccount account, long amount) {
-        operationService.displayAccountState(account);
-        operationService.deposit(account, amount);
-        operationService.displayAccountState(account);
+    public OperationType getOperationtype() {
+        return operationtype;
     }
 
-    // Withdraw funds from a specific account
-    public void withdraw(BankAccount account, long amount) {
-        operationService.displayAccountState(account);
-        operationService.withdraw(account, amount);
-        operationService.displayAccountState(account);
+    public void setOperationtype(OperationType operationtype) {
+        this.operationtype = operationtype;
     }
 
-    // Transfer funds between two specific accounts
-    public void transfer(BankAccount fromAccount, BankAccount toAccount, long amount) {
-        operationService.displayAccountState(fromAccount);
-        operationService.displayAccountState(toAccount);
-
-        operationService.transfer(fromAccount, toAccount, amount);
-
-        operationService.displayAccountState(fromAccount);
-        operationService.displayAccountState(toAccount);
+    public String getUsername() {
+        return username;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+    
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "Operation [id=" + id + ", operationtype=" + operationtype + ", username=" + username + ", date=" + date
+                + "]";
+    }
+
+
+       
+        // Add more operation types if needed
 }
 

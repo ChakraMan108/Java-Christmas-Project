@@ -112,6 +112,9 @@ public class Customer {
         this.account = account;
     }
     
+    public Customer() {
+    }
+
     public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
     {
         this.name = name;
