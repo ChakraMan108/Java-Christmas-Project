@@ -1,6 +1,6 @@
 package com.bank.ui;
 
-import javax.swing.*;
+import java.util.Scanner;
 
 import java.util.Collection;
 
