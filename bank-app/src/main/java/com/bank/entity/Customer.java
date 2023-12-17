@@ -135,7 +135,8 @@ public class Customer {
     public String toString() {
         return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
-                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType.name() + "]";
+                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType.name() + ", account=" + account
+                + "]";
     }
 
 
