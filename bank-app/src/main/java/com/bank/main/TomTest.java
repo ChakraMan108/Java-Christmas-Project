@@ -21,8 +21,9 @@ public class TomTest {
         BankAccount acc1 = new BankAccount(1, "Tom", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
 
         System.out.println(acc1);
-
-        cust1.setAccount(acc1);
+        cust1.setAccount(acc1);       
         System.out.println(cust1);
+
+
     }
 }
