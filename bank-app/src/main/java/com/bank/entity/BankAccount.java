@@ -7,27 +7,31 @@ import com.bank.service.BankAccountService;
 
 public class BankAccount {
    private String accountName;
-   private String accountNumber;
+   private integer accountNumber;
    private long balance;
    private boolean isActive;
    private LocalDate createdDate;
    private LocalDate deactivatedDate;
+
+/* ****************************** */
+// Constructors
 
    public BankAccount(String accountName, String accountNumber, long balance){
       this.accountName = accountName;
       this.accountNumber = accountNumber;
       this.balance = balance;
       this.isActive = true;
-      this.createdDate = new Date();
+      this.createdDate = LocalDate.now();
    }
 
 /* ****************************** */
+// Getters and setters
 
    public String getaccountName(){
       return accountName;
    }
 
-   public void setaccountName(){
+   public void setaccountName(String accountName){
       this.accountName = accountName;
    }
 
@@ -35,7 +39,7 @@ public class BankAccount {
       return accountNumber;
    }
 
-   public void setaccountNumber(){
+   public void setaccountNumber(integer accountNumber){
       this.accountNumber = accountNumber;
    }
 
@@ -43,7 +47,7 @@ public class BankAccount {
       return balance;
    }
 
-   public void setBalance(){
+   public void setBalance(long balance){
       this.balance = balance;
    }
 
@@ -51,7 +55,7 @@ public class BankAccount {
       return isActive;
    }
 
-   public void setIsActive(){
+   public void setIsActive(boolean isActive){
       this.isActive = isActive;
    }
 
@@ -76,8 +80,15 @@ public class BankAccount {
       return accountNumber;
    }
 
-   public String closeAccount(){
+   public String closeAccount(integer accountNumber){
 
       return accountNumber;
+   }
+
+   @Override
+   public String toString() {
+      return "BankAccount [accountName=" + accountName + ", accountNumber=" + accountNumber + ", balance=" + balance
+            + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate
+            + ", accountNameg=" + accountNameg + ", accountNumberraccountNumber=" + accountNumberraccountNumber + "]";
    }
 }
