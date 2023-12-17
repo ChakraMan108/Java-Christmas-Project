@@ -1,9 +1,6 @@
 package com.bank.main;
 
 import java.time.LocalDate;
-import java.util.Random;
-import java.util.UUID;
-
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 
@@ -14,14 +11,18 @@ public class Main {
 
             Customer cust2 = new Customer("Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444", "mary@x.com", Customer.CustomerType.INDIVIDUAL);
             
+            Customer cust3 = new Customer();
+
             System.out.println(cust1);
+            System.out.println(cust2);
+            System.out.println(cust3);
 
             BankAccount acc1 = new BankAccount("Cool", "1234567", 0);
             System.out.println(acc1);
 
             cust1.setAccount(acc1);
             System.out.println(cust1);
-          
+
           }
 
 }
