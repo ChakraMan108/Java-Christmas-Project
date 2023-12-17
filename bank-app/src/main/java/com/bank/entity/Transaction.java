@@ -12,20 +12,15 @@ import com.bank.entity.BankAccount;
 import com.bank.service.BankAccountService;
 import com.bank.service.TransactionService;
 
-
 //import com.bank.entity.Transaction.TransactionType;
 public class Transaction {
     public enum TransactionType {
         TDeposit,
         TWithdrawl
     }
+    private String accountName;
     private String accountNumber;
     private long balance;
-
-
-    private String name;
-    private boolean isActive;
-    private BankAccount account;
 
     private LocalDate transactionDate;
     private TransactionType transactiontype;
@@ -40,7 +35,7 @@ public class Transaction {
 
     }
 
-    public Transaction(String accountNumber, long balance, String name, boolean isActive, BankAccount account, LocalDate transactionDate, TransactionType transactiontype, long depositAmmount, long withDrawlAmmount)
+    public Transaction(String accountNumber, long balance, boolean isActive, LocalDate transactionDate, TransactionType transactiontype, long transactionId, long transactionAmount)
     {
         this.accountNumber = accountNumber;
         this.balance = balance;
