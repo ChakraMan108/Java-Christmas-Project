@@ -106,15 +106,8 @@ public void setTransactionAmount(long transactionAmount) {
 }
 
 /* ****************************** */
-
-    public class TransactionList {
-        ArrayList<String> arrayList = new ArrayList<>();
-
-
-
-
-    }
-
+    public static void main(String[] args) {
+        ArrayList<Transaction> transactions = new ArrayList<>();
 
   // @Override
    //public String toString() {
