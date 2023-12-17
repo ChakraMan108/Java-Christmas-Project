@@ -37,7 +37,7 @@ public class OperationService {
 
 
     //getOperationById: This method retrieves an Operation by its ID using the findById method provided by the operationRepository. The result is wrapped in an Optional. If an exception occurs, it is caught, and a RuntimeException is thrown with an error message.
-    public Optional<Optional<Operation>> getOperationById(long id) {
+    public Optional<Object> getOperationById(long id) {
         try {
             return Optional.ofNullable(operationRepository.findById(id));
         } catch (Exception e) {

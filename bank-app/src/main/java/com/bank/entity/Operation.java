@@ -9,6 +9,7 @@ public class Operation {
         CUSTOMER_DEACTIVATION,
         ACCOUNT_CREATION,
         ACCOUNT_DEACTIVATION
+        
 
 
     }

@@ -1,14 +1,20 @@
 package com.bank.repository;
 
 import com.bank.entity.Operation;
-import com.bank.model.BankAccount;
+import com.bank.repository.BankAccount;
 import com.bank.service.OperationService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class OperationRepository implements Repository {
+public class OperationRepository<T> implements Repository<T> {
+
+    //@Override
+    public List<T> findAll(long id) {
+        
+        return null; 
+    }
 
     private List<BankAccount> accounts;
     private OperationService operationService;
@@ -18,6 +24,7 @@ public class OperationRepository implements Repository {
         this.operationService = operationService;
     }
 
+    
     // Add a new account to the repository
     public void save(BankAccount account) {
         accounts.add(account);
@@ -31,7 +38,7 @@ public class OperationRepository implements Repository {
     public void deleteById(long id) {
     }
 
-    public Optional<Operation> findById(long id) {
+    public T findById(long id) {
         return null;
     }
 
