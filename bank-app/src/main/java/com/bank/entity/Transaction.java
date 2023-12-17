@@ -115,17 +115,17 @@ public static void main(String[] args) {
         String accNumber = scanner.nextLine();
         transaction.setAccountNumber(accNumber);
 
-        // Get input for id
+        // Get user input for id
         System.out.print("Enter transaction ID: ");
         long transId = Long.parseLong(scanner.nextLine());
         transaction.setId(transId);
 
-        // Get input for amount
+        // Get user input for amount here
         System.out.print("Enter transaction amount: ");
         long transAmount = Long.parseLong(scanner.nextLine());
         transaction.setAmount(transAmount);
 
-        // Get input for username
+        // Get user input for username here
         System.out.print("Enter username: ");
         String userName = scanner.nextLine();
         transaction.setUsername(userName);
@@ -139,7 +139,7 @@ public static void main(String[] args) {
         ArrayList<Transaction> transactionList = new ArrayList<>();
         transactionList.add(transaction);
 
-        // Print transaction details
+        // Print out transaction details for testing purposes
         for (Transaction t : transactionList) {
             System.out.println("\n" + //
                     "Transaction Details:");
