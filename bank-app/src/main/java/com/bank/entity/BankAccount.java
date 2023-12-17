@@ -23,9 +23,10 @@ public class BankAccount {
 
    }
 
-   public BankAccount(long id, String accountName, long balance){
+   public BankAccount(long id, String accountName, AccountType type, long balance) {
       this.id = id;
       this.accountName = accountName;
+      this.type = type;
       this.balance = balance;
       this.isActive = true;
       this.createdDate = LocalDate.now();
