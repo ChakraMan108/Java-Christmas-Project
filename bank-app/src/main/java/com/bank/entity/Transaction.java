@@ -4,6 +4,7 @@ package com.bank.entity;
 
 import java.time.LocalDate;
 
+import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.BankAccount;
 
@@ -28,14 +29,20 @@ public class Transaction {
     private BankAccount account;
 
     private LocalDate transactionDate;
+    private TransactionType transactiontype;
+    private long depositAmmount;
+    private long withDrawlAmmount;
 
-    //class Transaction {
-        public TransactionType transactiontype;
+/* ****************************** */
+// Constructors
 
+public Transaction(String accountNumber, long balance, String name, boolean isActive, CustomerType customerType, BankAccount account, LocalDate transactionDate, TransactionType transactiontype, long depositAmmount, long withDrawlAmmount)
+{
 
-    //BankAccount.getId
 }
-    //------------------------
+    
+//------------------------OLD IGNORE-----------------------------------
+    //BankAccount.getId
     //public long getId(BankAccount acc);
     //public long getBalance(BankAccount acc);
 
@@ -50,4 +57,4 @@ public class Transaction {
     //Transaction transferTransaction = new Transaction();
 
 
-
+}
