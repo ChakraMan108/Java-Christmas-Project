@@ -25,7 +25,6 @@ public class Transaction {
 
     private String name;
     private boolean isActive;
-    private CustomerType customerType;
     private BankAccount account;
 
     private LocalDate transactionDate;
@@ -36,11 +35,16 @@ public class Transaction {
 /* ****************************** */
 // Constructors
 
-public Transaction(String accountNumber, long balance, String name, boolean isActive, CustomerType customerType, BankAccount account, LocalDate transactionDate, TransactionType transactiontype, long depositAmmount, long withDrawlAmmount)
-{
-
-}
+    public Transaction(String accountNumber, long balance, String name, boolean isActive, BankAccount account, LocalDate transactionDate, TransactionType transactiontype, long depositAmmount, long withDrawlAmmount)
+    {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+    }
     
+/* ****************************** */
+// Getters and setters
+
+
 //------------------------OLD IGNORE-----------------------------------
     //BankAccount.getId
     //public long getId(BankAccount acc);
