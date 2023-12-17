@@ -1,15 +1,18 @@
 package com.bank.repository;
 
-import com.bank.entity.Operation;
-import com.bank.repository.BankAccount;
-import com.bank.service.OperationService;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import com.bank.entity.BankAccount;
+import com.bank.entity.Operation;
+import com.bank.exceptions.RepositoryException;
+import com.bank.service.OperationService;
 
 public class OperationRepository<T> implements Repository<T> {
 
+    public List<T> findAll() throws RepositoryException{
+    return null;
+    }
     //@Override
     public List<T> findAll(long id) {
         
@@ -24,13 +27,7 @@ public class OperationRepository<T> implements Repository<T> {
         this.operationService = operationService;
     }
 
-    
-    // Add a new account to the repository
-    public void save(BankAccount account) {
-        accounts.add(account);
-    }
-
-    // Get all accounts from the repository
+   
     public List<BankAccount> getAllAccounts() {
         return accounts;
     }
@@ -41,7 +38,22 @@ public class OperationRepository<T> implements Repository<T> {
     public T findById(long id) {
         return null;
     }
+    public long count() throws RepositoryException{
+        return count();
+    }
+    @Override
+    public Operation save(T entity) throws RepositoryException {
+        
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
 
+ // Add a new account to the repository
+    // public void save(BankAccount account) {
+    //     accounts.add(account);
+    // }
+
+    // Get all accounts from the repository
+    
     // // Perform an operation on a specific account using the OperationService
     // public void performOperation(BankAccount account, OperationType operationType, long amount) {
     //     switch (operationType) {
