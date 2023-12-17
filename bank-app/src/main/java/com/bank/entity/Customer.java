@@ -11,7 +11,7 @@ public class Customer {
         INDIVIDUAL,
         COMPANY
     }
-    
+
     private long id;
     private String name;
     private String address;
@@ -21,7 +21,7 @@ public class Customer {
     private boolean isActive;
     private LocalDate createdDate;
     private LocalDate deactivatedDate;
-    private CustomerType customerType = null;
+    private CustomerType type = null;
     private BankAccount account = null;
 
     // Constructors
@@ -38,7 +38,7 @@ public class Customer {
         this.dob = dob;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.customerType = customerType;
+        this.type = customerType;
         this.isActive = true;
         this.createdDate = LocalDate.now();
     }
@@ -116,11 +116,11 @@ public class Customer {
     }
 
     public CustomerType getCustomerType() {
-        return customerType;
+        return type;
     }
 
     public void setCustomerType(CustomerType customerType) {
-        this.customerType = customerType;
+        this.type = customerType;
     }
     
     public BankAccount getAccount() {
@@ -135,7 +135,7 @@ public class Customer {
     public String toString() {
         return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
-                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + customerType + ", account=" + account + "]";
+                + ", deactivatedDate=" + deactivatedDate + ", customerType=" + type + ", account=" + account + "]";
     }
 
 }
