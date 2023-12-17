@@ -1,9 +1,12 @@
 package com.bank.ui;
 
 import java.util.Scanner;
-
+import java.util.ArrayList;
 import java.util.Collection;
 
+import com.bank.entity.BankAccount;
+import com.bank.entity.Customer;
+import com.bank.entity.Transaction;
 import com.bank.exceptions.MenuException;
 
 public interface Ui {
@@ -59,4 +62,10 @@ public class UiImpl implements Ui {
             System.out.println(t);
         }
     }
+
+    ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
+    ArrayList<Customer> customers = new ArrayList<Customer>();
+    ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+
+
 }
