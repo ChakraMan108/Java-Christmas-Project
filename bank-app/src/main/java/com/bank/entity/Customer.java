@@ -130,6 +130,28 @@ public class Customer {
     public void setAccount(BankAccount account) {
         this.account = account;
     }
+    
+    public Customer() {
+    }
+
+    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType customerType)
+    {
+        this.name = name;
+        this.address = address;
+        this.dob = dob;
+        this.phoneNumber = phoneNumber;
+
+        if (!EMAIL_VALIDATOR.isValid(email)) {
+            throw new CustomerException("Invalid email. The email must be in xxx@yyy.zzz format.");
+        }
+        else 
+        {
+            this.email = email;
+        }
+        
+        this.customerType = customerType;
+        this.isActive = true;
+    }
 
     @Override
     public String toString() {
