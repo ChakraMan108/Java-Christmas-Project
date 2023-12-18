@@ -8,7 +8,7 @@ public class BankAccountRepository implements Repository<BankAccount> {
 
     private ArrayList<BankAccount> bankAccounts;
 
-        public BankAccountRepository(ArrayList<BankAccount> bankAccounts) {
+    public BankAccountRepository(ArrayList<BankAccount> bankAccounts) {
         this.bankAccounts = bankAccounts;
     }
     
@@ -33,8 +33,7 @@ public class BankAccountRepository implements Repository<BankAccount> {
         throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
     }
 
-    @Override
-    public long save(BankAccount bankAccount) {
+    public long save(BankAccount bankAccount) throws RepositoryException {
         if (!bankAccounts.contains(bankAccount)) {
             bankAccounts.add(bankAccount);
             return generateAccountNumber();

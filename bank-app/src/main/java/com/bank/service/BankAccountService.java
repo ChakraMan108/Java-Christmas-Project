@@ -8,21 +8,19 @@ import com.bank.repository.BankAccountRepository;
 
 public class BankAccountService implements Service<BankAccount> {
 
-    BankAccountRepository repo;
-    
+    private BankAccountRepository repo;
+
     public BankAccountService(BankAccountRepository repo) {
         this.repo = repo;
     }
 
     public long count() throws ServiceException {
-        long count = 0;
         try {
-            repo.count();
+            return repo.count();
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
         }
-        return count;
     }
 
     public ArrayList<BankAccount> findAll() throws ServiceException {
@@ -43,24 +41,26 @@ public class BankAccountService implements Service<BankAccount> {
         }
     }
 
-    @Override
-    public long save(BankAccount bankAccount) {
-        long id = repo.save(bankAccount);
-        bankAccount.setId(id);
-        return id;
+    public long save(BankAccount bankAccount) throws ServiceException {
+        try {
+            return repo.save(bankAccount);
+        }
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Repository by the Service.", ex);
+        }
     }
 
     public void depositIntoAccount(long id, long amount) throws ServiceException {
-        if (amount < 1) {
-            throw new ServiceException("Cannot deposit €" + amount/100 + " to account id" + acc.getId(), Long.toString(acc.getId()));           
-        }
         try {
             BankAccount acc = repo.findById(id);
+            if (amount < 1) {
+               throw new ServiceException("Cannot deposit €" + amount/100 + " to account id" + acc.getId(), Long.toString(acc.getId()));           
+            }
             acc.setBalance(acc.getBalance() + amount);
             repo.save(acc);
         }
         catch (RepositoryException ex) {
-            throw ex;
+            throw new ServiceException("Exception received from the Repository by the Service.");
         }
     }
 
@@ -74,7 +74,7 @@ public class BankAccountService implements Service<BankAccount> {
             repo.save(acc);
         }
         catch (RepositoryException ex) {
-            throw ex;
+            throw new ServiceException("Exception received from the Repository by the Service.");
         }
     }
 }
