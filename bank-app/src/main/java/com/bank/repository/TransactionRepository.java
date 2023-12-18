@@ -4,6 +4,8 @@ package com.bank.repository;
 //save it or fetch
 //Read or write
 
+//Increment transaction ID here!!!!!!!!!!!!!!
+
 import java.util.List;
 
 import com.bank.entity.Operation;
@@ -18,10 +20,7 @@ public class TransactionRepository implements Repository<Transaction> {
 	public Transaction getById(long id) throws RepositoryException {
         return null;
     }
-	public Transaction save(long id, Transaction transaction) throws RepositoryException{
-        return null;
-    }
-	public Transaction delete(long id) throws RepositoryException{
+	public Transaction save(long id, Transaction transaction) throws RepositoryException {
         return null;
     }
     //private static long nextId = 0;
@@ -39,14 +38,20 @@ public class TransactionRepository implements Repository<Transaction> {
         return null;
     }
     @Override
-    public Transaction findById(long id) throws RepositoryException {
+    public Transaction findById(long id) throws ServiceException {
         // TODO Auto-generated method stub
-        return null;
+        try {
+            return repo.findById(id);
+        }
+        catch (RepositoryException ex){
+            throw new ServiceException(message: "Exception recieved from Repository by the")
+        }
+        
     }
     @Override
-    public Operation save(Transaction entity) throws RepositoryException {
+    public long save(Transaction entity) throws RepositoryException {
         // TODO Auto-generated method stub
-        return null;
+        return 0;
     }
 
 
