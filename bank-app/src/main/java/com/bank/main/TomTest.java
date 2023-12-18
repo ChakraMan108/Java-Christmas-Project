@@ -42,9 +42,12 @@ public class TomTest {
         System.out.println(acc1.getId());
 
         for (BankAccount ba : bankAccounts) {
-            System.err.println(ba);
+            System.out.println(ba);
         }
         
-        System.err.println(service.findAll());
+        System.out.println(service.findAll());
+
+        System.out.println(service.findById(acc1.getId()));
+        System.out.println(service.findById(1234567));
     }
 }

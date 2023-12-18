@@ -33,14 +33,17 @@ public class BankAccountRepository implements Repository<BankAccount> {
     }
 
     public BankAccount findById(long id) throws RepositoryException {
+        boolean found = false;
         BankAccount bankAccount = new BankAccount();
         for (BankAccount ba : bankAccounts) {
             if (ba.getId() == id) {
+                System.out.println("Found it!");
                 bankAccount = ba;
+                found = true;
             }
-            else {
-                throw new RepositoryException("No bank account items with id " + id + " found in the repository!");        
-            }
+         }
+        if (!found) {
+            throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
         }
         return bankAccount;
     }
