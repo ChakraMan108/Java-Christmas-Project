@@ -17,7 +17,7 @@ public class TransactionRepository implements Repository<Transaction> {
     public List<Transaction> getAll() throws RepositoryException {
         return null;
     }
-	public Transaction getById(long id) throws RepositoryException {
+	public Transaction getById(long id) throws RepositoryException {//REMOVE
         return null;
     }
 	public Transaction save(long id, Transaction transaction) throws RepositoryException {
