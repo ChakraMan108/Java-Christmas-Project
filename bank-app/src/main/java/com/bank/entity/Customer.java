@@ -1,8 +1,6 @@
 package com.bank.entity;
 
 import java.time.LocalDate;
-import org.apache.commons.validator.routines.EmailValidator;
-import com.bank.exceptions.CustomerException;
 
 public class Customer {
 
@@ -31,8 +29,9 @@ public class Customer {
     }
 
     // Parametrised constructor taking mandatory fields
-    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType type)
+    public Customer(long id, String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType type)
     {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.dob = dob;
@@ -130,12 +129,13 @@ public class Customer {
     public void setAccount(BankAccount account) {
         this.account = account;
     }
-    
+
     @Override
     public String toString() {
         return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
                 + ", deactivatedDate=" + deactivatedDate + ", type=" + type + ", account=" + account + "]";
     }
+
 
 }
