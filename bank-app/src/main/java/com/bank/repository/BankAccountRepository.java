@@ -46,7 +46,6 @@ public class BankAccountRepository implements Repository<BankAccount> {
     }
 
     public long generateAccountNumber() {
-        long id = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
-        return id;
+        return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
     }
 }

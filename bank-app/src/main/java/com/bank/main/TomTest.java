@@ -29,7 +29,6 @@ public class TomTest {
         BankAccount acc2 = new BankAccount();
         
         System.out.println(acc1 + "\n" + acc2);
-
     
         System.out.println(service.save(acc1));
         System.out.println(service.save(acc2));
@@ -54,7 +53,7 @@ public class TomTest {
         acc1.setCreatedDate(LocalDate.now());
         acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
         service.save(acc1);
-        
+
         System.out.println(acc1);
         // System.out.println(service.findById(1234567));
     }
