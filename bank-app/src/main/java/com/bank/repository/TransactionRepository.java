@@ -49,8 +49,7 @@ public class TransactionRepository implements Repository<Transaction> {
         return null;
     }
 
-    //transaction.setID(++nextId);    // Must be static
-    //repository.add(transaction);
+
 
 
     

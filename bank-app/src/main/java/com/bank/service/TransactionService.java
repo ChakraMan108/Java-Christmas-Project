@@ -4,3 +4,6 @@ package com.bank.service;
 public class TransactionService implements Service {
 
 }
+
+
+    //transaction.setID(++nextId);    // Must be static
