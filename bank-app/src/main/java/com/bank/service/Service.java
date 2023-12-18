@@ -5,8 +5,7 @@ import com.bank.exceptions.ServiceException;
 
 public interface Service<T> {
 	public List<T> findAll() throws ServiceException; 
-	public T findById(int id) throws ServiceException;
+	public T findById(long id) throws ServiceException;
 	public long count() throws ServiceException;
-	public void add(T entity) throws ServiceException;
-	public void update(int id, T entity) throws ServiceException;
+	public long save(T entity) throws ServiceException;
 }
