@@ -1,7 +1,6 @@
 package com.bank.repository;
 
 import java.util.ArrayList;
-
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
 
@@ -14,21 +13,15 @@ public class BankAccountRepository implements Repository<BankAccount> {
     }
     
     public long count() throws RepositoryException {
-        long count = 0;
-        for (BankAccount ba : bankAccounts) {
-            count++;
-        }
-        if (count == 0) {
-            throw new RepositoryException("No bank account items found in the repository!");
-        }
-        return count;
+        if (bankAccounts.size() != 0)
+            return bankAccounts.size();    
+        throw new RepositoryException("No bank account items found in the repository!");
     }
 
     public ArrayList<BankAccount> findAll() throws RepositoryException {
-        if (bankAccounts.size() == 0) {
-            throw new RepositoryException("No bank account items found in the repository!");  
-        }
-        return bankAccounts;
+        if (bankAccounts.size() != 0) 
+            return bankAccounts;
+        throw new RepositoryException("No bank account items found in the repository!");  
     }
 
     public BankAccount findById(long id) throws RepositoryException {
@@ -36,7 +29,7 @@ public class BankAccountRepository implements Repository<BankAccount> {
             if (ba.getId() == id) {
                 return ba;
             }
-         }
+        }
         throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
     }
 

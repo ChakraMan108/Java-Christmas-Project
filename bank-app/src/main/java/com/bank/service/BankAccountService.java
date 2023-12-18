@@ -1,7 +1,6 @@
 package com.bank.service;
 
 import java.util.ArrayList;
-
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
@@ -27,25 +26,21 @@ public class BankAccountService implements Service<BankAccount> {
     }
 
     public ArrayList<BankAccount> findAll() throws ServiceException {
-        ArrayList<BankAccount> baArrayList = new ArrayList<>();
         try {
-            baArrayList = repo.findAll();
+            return repo.findAll();
         } 
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
         }
-        return baArrayList;
     }
 
     public BankAccount findById(long id) throws ServiceException {
-        BankAccount bankAccount = new BankAccount();
         try {
-            bankAccount = repo.findById(id);
+            return repo.findById(id);
         } 
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);         
         }
-        return bankAccount;
     }
 
     @Override
