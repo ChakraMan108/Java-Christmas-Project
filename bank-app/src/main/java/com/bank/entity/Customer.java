@@ -1,8 +1,6 @@
 package com.bank.entity;
 
 import java.time.LocalDate;
-import org.apache.commons.validator.routines.EmailValidator;
-import com.bank.exceptions.CustomerException;
 
 public class Customer {
 

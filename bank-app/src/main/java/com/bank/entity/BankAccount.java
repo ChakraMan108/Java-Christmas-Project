@@ -1,7 +1,6 @@
 package com.bank.entity;
 
 import java.time.LocalDate;
-import com.bank.service.BankAccountService;
 
 public class BankAccount {
    
@@ -23,8 +22,7 @@ public class BankAccount {
 
    }
 
-   public BankAccount(long id, String accountName, AccountType type, long balance) {
-      this.id = id;
+   public BankAccount(String accountName, AccountType type, long balance) {
       this.accountName = accountName;
       this.type = type;
       this.balance = balance;
