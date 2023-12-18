@@ -2,11 +2,11 @@
 package com.bank.service;
 
 import com.bank.entity.Operation;
-import com.bank.exceptions.RepositoryException;
 import com.bank.repository.OperationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class OperationService {
 
 
-
+    private List<Operation> operations;
 
     private OperationRepository operationRepository;
 
@@ -37,14 +37,12 @@ public class OperationService {
 
 
     //getOperationById: This method retrieves an Operation by its ID using the findById method provided by the operationRepository. The result is wrapped in an Optional. If an exception occurs, it is caught, and a RuntimeException is thrown with an error message.
-    public Optional<Object> getOperationById(long id) {
-        try {
-            return Optional.ofNullable(operationRepository.findById(id));
-        } catch (Exception e) {
-            // Handle the exception or log it
-            throw new RuntimeException("Failed to retrieve operation by id: " + id, e);
-        }
+    public Optional<Operation> getOperationById(long id) {
+        return operations.stream()
+                .filter(operation -> operation.getId() == id)
+                .findFirst();
     }
+
 
 
     //getAllOperations: This method retrieves all Operation objects using the findAll method provided by the operationRepository. If an exception occurs, it is caught, and a RuntimeException is thrown with an error message.
@@ -56,20 +54,28 @@ public class OperationService {
             throw new RuntimeException("Failed to retrieve all operations", e);
         }
     }
+//     public List<Operation> getAllOperations() {
+//         return operations;
+//     }
+// }
 
 
     //deleteOperationById:This method deletes an Operation by its ID using the deleteById method provided by the operationRepository. If an exception occurs, it is caught, and a RuntimeException is thrown with an error message.
     public void deleteOperationById(long id) {
-        try {
-            operationRepository.deleteById(id);
-        } catch (Exception e) {
-            // Handle the exception or log it
-            throw new RuntimeException("Failed to delete operation by id: " + id, e);
+        Iterator<Operation> iterator = operations.iterator();
+        while (iterator.hasNext()) {
+            Operation operation = iterator.next();
+            if (operation.getId() == id) {
+                iterator.remove(); // Remove the operation from the list
+                // Optionally, you may want to perform additional cleanup or trigger events here
+                return;
+            }
         }
+        throw new IllegalArgumentException("Operation with ID " + id + " not found");
     }
-
-    
 }
+    
+
 
 
 
@@ -78,7 +84,7 @@ public class OperationService {
 
 /*
 
-    @Autowired
+    
     private OperationRepository operationRepository;
 
     @Override
