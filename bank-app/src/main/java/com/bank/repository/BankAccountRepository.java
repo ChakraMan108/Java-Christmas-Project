@@ -13,7 +13,6 @@ public class BankAccountRepository implements Repository<BankAccount> {
         this.bankAccounts = bankAccounts;
     }
     
-    
     public long count() throws RepositoryException {
         long count = 0;
         for (BankAccount ba : bankAccounts) {
@@ -33,25 +32,25 @@ public class BankAccountRepository implements Repository<BankAccount> {
     }
 
     public BankAccount findById(long id) throws RepositoryException {
-        boolean found = false;
-        BankAccount bankAccount = new BankAccount();
         for (BankAccount ba : bankAccounts) {
             if (ba.getId() == id) {
-                System.out.println("Found it!");
-                bankAccount = ba;
-                found = true;
+                return ba;
             }
          }
-        if (!found) {
-            throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
-        }
-        return bankAccount;
+        throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
     }
 
     @Override
     public long save(BankAccount bankAccount) {
-        bankAccounts.add(bankAccount);
-        return generateAccountNumber();
+        if (!bankAccounts.contains(bankAccount)) {
+            bankAccounts.add(bankAccount);
+            return generateAccountNumber();
+        }
+        else
+        {
+            bankAccounts.set(bankAccounts.indexOf(bankAccount), bankAccount);
+            return bankAccount.getId();
+        }
     }
 
     public long generateAccountNumber() {

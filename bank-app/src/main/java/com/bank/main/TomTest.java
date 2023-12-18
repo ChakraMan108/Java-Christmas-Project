@@ -48,6 +48,14 @@ public class TomTest {
         System.out.println(service.findAll());
 
         System.out.println(service.findById(acc1.getId()));
-        System.out.println(service.findById(1234567));
+        acc1.setAccountName("Tom");
+        acc1.setActive(true);
+        acc1.setBalance(1000);
+        acc1.setCreatedDate(LocalDate.now());
+        acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
+        service.save(acc1);
+        
+        System.out.println(acc1);
+        // System.out.println(service.findById(1234567));
     }
 }
