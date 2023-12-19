@@ -1,14 +1,7 @@
 package com.bank.repository;
-//Fionn
-//Collection of Objects
-//save it or fetch
-//Read or write
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-
-//Increment transaction ID here!!!!!!!!!!!!!!
-
 import java.util.List;
 
 import com.bank.entity.BankAccount;
@@ -19,7 +12,7 @@ import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 
 public class TransactionRepository implements Repository<Transaction> {
-    private long lastTransactionNumber;
+    private static long lastTransactionNumber;
 
     private ArrayList<Transaction> transactions;
 
@@ -27,23 +20,19 @@ public class TransactionRepository implements Repository<Transaction> {
         this.transactions = transactions;
     }
 
-    //private static long nextId = 0;
-    
-    //DONE
     public long count() throws RepositoryException {
         if (!transactions.isEmpty())
             return transactions.size();    
         throw new RepositoryException("No transaction items found in the repository.");
     }
-    //DONE
+
     public ArrayList<Transaction> findAll() throws RepositoryException {
         if (!transactions.isEmpty()) 
             return transactions;
         throw new RepositoryException("No transaction items found in the repository.");  
     }
-    //DONE
+
     public Transaction findById(long id) throws RepositoryException {
-        // TODO Auto-generated method stub
         for (Transaction t : transactions) {
             if (t.getId() == id) {
                 return t;
@@ -76,15 +65,4 @@ public class TransactionRepository implements Repository<Transaction> {
        
         
     }
-
-
-    
 }
-
-// public List<Transaction> getAll() throws RepositoryException {
-//         return null;
-//     }
-
-//  return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
-//         for (long i = 0; i < 5; i++) {
-//         }

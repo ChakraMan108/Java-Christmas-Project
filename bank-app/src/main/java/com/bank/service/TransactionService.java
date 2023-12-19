@@ -1,9 +1,4 @@
-//Fionn - Just passes data here
-// Look in Operation service specifically Findall
-// Do FindByID differently
 package com.bank.service;
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,10 +62,6 @@ public class TransactionService implements Service<Transaction> {
             
             Transaction newTransaction = new Transaction(id, amount);
             long generatedTransactionId = repo.save(newTransaction);
-
-            
-    
-
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
@@ -79,12 +70,3 @@ public class TransactionService implements Service<Transaction> {
 
 }
 
-
-//long defaultAmount = 0;
-            // Transaction transaction = new Transaction(id, defaultAmount);
-            // long generatedTransactionId = transactionService.saveTransaction(transaction);
-
-
-
-
-    //transaction.setID(++nextId);    // Must be static

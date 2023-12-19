@@ -166,7 +166,7 @@ public class Transaction {
 
             transaction.setCreatedDate(LocalDate.parse("2023-12-17"));
 
-            // Transaction is hard coded here to deposit FIX
+            // Transaction type here
             System.out.print("Enter transaction type (DEPOSIT or WITHDRAWAL): ");
             String transactionType = scanner.nextLine();
             if (transactionType.equals("DEPOSIT")) 
