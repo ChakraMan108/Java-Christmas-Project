@@ -1,10 +1,13 @@
 package com.bank.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.BankAccountRepository;
+
 
 public class BankAccountService implements Service<BankAccount> {
 
@@ -76,6 +79,10 @@ public class BankAccountService implements Service<BankAccount> {
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
         }
+    }
+
+    public void saveJson(ArrayList<BankAccount> bankAccounts) throws IOException {
+        repo.saveJson(bankAccounts);
     }
 }
 

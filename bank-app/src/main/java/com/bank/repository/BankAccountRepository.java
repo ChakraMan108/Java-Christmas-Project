@@ -1,8 +1,13 @@
 package com.bank.repository;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class BankAccountRepository implements Repository<BankAccount> {
 
@@ -13,13 +18,13 @@ public class BankAccountRepository implements Repository<BankAccount> {
     }
     
     public long count() throws RepositoryException {
-        if (bankAccounts.size() != 0)
+        if (!bankAccounts.isEmpty())
             return bankAccounts.size();    
         throw new RepositoryException("No bank account items found in the repository!");
     }
 
     public ArrayList<BankAccount> findAll() throws RepositoryException {
-        if (bankAccounts.size() != 0) 
+        if (!bankAccounts.isEmpty()) 
             return bankAccounts;
         throw new RepositoryException("No bank account items found in the repository!");  
     }
@@ -31,12 +36,14 @@ public class BankAccountRepository implements Repository<BankAccount> {
             }
         }
         throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
+    /* using stream & lambda - return bankAccounts.stream().filter(a->a.getId() == id).collect(Collectors.toList()).get(0); */
     }
 
     public long save(BankAccount bankAccount) throws RepositoryException {
         if (!bankAccounts.contains(bankAccount)) {
+            bankAccount.setId(generateAccountNumber());
             bankAccounts.add(bankAccount);
-            return generateAccountNumber();
+            return bankAccount.getId();
         }
         else
         {
@@ -48,4 +55,11 @@ public class BankAccountRepository implements Repository<BankAccount> {
     public long generateAccountNumber() {
         return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
     }
+
+    public void saveJson(ArrayList<BankAccount> bankAccounts) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.writeValue(new File("../data/bankaccounts.json"), bankAccounts);
+    }
+
 }
