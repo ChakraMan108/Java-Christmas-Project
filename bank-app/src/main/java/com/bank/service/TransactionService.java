@@ -1,7 +1,8 @@
-package com.bank.service;
 //Fionn - Just passes data here
 // Look in Operation service specifically Findall
 // Do FindByID differently
+package com.bank.service;
+
 
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import com.bank.exceptions.ServiceException;
 
 
 
-public class TransactionService implements Service {
+public class TransactionService implements Service<Transaction> {
 
     private TransactionRepository repo;
 
@@ -26,21 +27,63 @@ public class TransactionService implements Service {
     }
 
     public long count() throws ServiceException {
-
+        try {
+            return repo.count();
+        }
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
+        }
     }
 
     public ArrayList<Transaction> findAll() throws ServiceException {
-
+        try {
+            return repo.findAll();
+        } 
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
+        }
     }
 
     public Transaction findById(long id) throws ServiceException {
-
+        try {
+            return repo.findById(id);
+        } 
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);         
+        }
     }
 
-    public long save(Transaction transaction) throws RepositoryException {
-
+    public long save(Transaction transaction) throws ServiceException {
+        try {
+            return repo.save(transaction);
+        }
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
+        }
     }
+
+    public void createTransaction(long id, long amount) throws ServiceException {
+        try {
+            
+            Transaction newTransaction = new Transaction(id, amount);
+            long generatedTransactionId = repo.save(newTransaction);
+
+            
+    
+
+        }
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Repository by the Service.");
+        }
+    }
+
 }
+
+
+//long defaultAmount = 0;
+            // Transaction transaction = new Transaction(id, defaultAmount);
+            // long generatedTransactionId = transactionService.saveTransaction(transaction);
+
 
 
 
