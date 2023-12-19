@@ -12,22 +12,19 @@ import com.bank.service.OperationService;
 public class OperationRepository implements Repository<Operation> {
 
     private ArrayList<Operation> operations;
-    private long nextId = 1;
+    private long nextId = 0;
     private ArrayList<BankAccount> accounts;
     private OperationService service;
     private BankAccountService baService;
     private static long lastOperationId = 1_000_000_000L;
 
     public ArrayList<Operation> findAll() throws RepositoryException {
-        try {
-            return service.findAll();
-        } catch (Exception ex) {
-            String errorMessage = "Failed to fetch all operations";
-            throw new RepositoryException(errorMessage, ex);
-        }
+        if (!operations.isEmpty())
+            return operations;
+        throw new RepositoryException("No operation items found in the repository!");
     }
 
-    public OperationRepository() {// empty constructor
+    public OperationRepository() {
     }
 
     public OperationRepository(ArrayList<Operation> operation) {
