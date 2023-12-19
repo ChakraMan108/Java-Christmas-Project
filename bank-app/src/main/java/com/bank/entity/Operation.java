@@ -111,8 +111,5 @@ public class Operation {
         return true;
     }
 
-
-       
-        // Add more operation types if needed
 }
 

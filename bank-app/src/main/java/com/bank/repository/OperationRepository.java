@@ -1,24 +1,24 @@
 package com.bank.repository;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.bank.entity.BankAccount;
-import com.bank.entity.Customer;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
+import com.bank.service.BankAccountService;
 import com.bank.service.OperationService;
 
 public class OperationRepository implements Repository<Operation> {
 
-    private List<Operation> operations;
+    private ArrayList<Operation> operations;
     private long nextId = 1;
-     private List<BankAccount> accounts;
+    private ArrayList<BankAccount> accounts;
     private OperationService service;
+    private BankAccountService baService;
     
 
 
-    public Operation findAll() throws RepositoryException {
+    public ArrayList<Operation> findAll() throws RepositoryException {
         try {
             return service.findAll();
         } catch (Exception ex) {
@@ -31,11 +31,6 @@ public class OperationRepository implements Repository<Operation> {
         this.accounts = new ArrayList<>();
         this.service = opService;
     }
-
-
-    // public List<BankAccount> getAllAccounts() {
-    //     return accounts;
-    // }
 
    
     public Operation findById(long id) throws RepositoryException {
@@ -59,12 +54,12 @@ public class OperationRepository implements Repository<Operation> {
     
     public long save(Operation operation) throws RepositoryException {
         try {
-            // Assuming your repository can save the operation and returns the generated ID
+            
             long id = operation.getId();
-            operation.setId(id); // Set the generated ID on the operation object
+            operation.setId(id); 
             return id;
         } catch (Exception ex) {
-            // Log the exception or handle it appropriately based on your application's needs
+            
             String errorMessage = "Failed to save operation";
             throw new RepositoryException(errorMessage, ex);
         }
