@@ -1,12 +1,6 @@
 package com.bank.entity;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Scanner;
-import java.time.LocalDate;
-import java.util.ArrayList;
-
-import com.bank.entity.BankAccount;
 
 public class Transaction {
 
@@ -29,10 +23,8 @@ public class Transaction {
     
     }
 
-    public Transaction(long id, long amount, String username, TransactionType type) {
-        this.id = id;
+    public Transaction(long amount, String username, TransactionType type) {
         this.amount = amount;
-        this.createdDate = LocalDate.now();
         this.username = username;
         this.type = type;
     }
@@ -86,8 +78,6 @@ public class Transaction {
         this.accountId = accountId;
     }
     
-    
-
     @Override
     public int hashCode() {
         final int prime = 31;
