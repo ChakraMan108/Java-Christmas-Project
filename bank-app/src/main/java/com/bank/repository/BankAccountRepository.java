@@ -12,11 +12,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class BankAccountRepository implements Repository<BankAccount> {
 
-    private ArrayList<BankAccount> bankAccounts;
+    private ArrayList<BankAccount> bankAccounts = new ArrayList<>();
 
-    public BankAccountRepository(ArrayList<BankAccount> bankAccounts) {
-        this.bankAccounts = bankAccounts;
-    }
+    // public BankAccountRepository(ArrayList<BankAccount> bankAccounts) {
+    //     this.bankAccounts = bankAccounts;
+    // }
     
     public long count() throws RepositoryException {
         if (!bankAccounts.isEmpty())

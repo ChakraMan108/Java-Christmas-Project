@@ -11,15 +11,15 @@ import com.bank.repository.BankAccountRepository;
 
 public class BankAccountService implements Service<BankAccount> {
 
-    private BankAccountRepository repo;
+    private BankAccountRepository repository = new BankAccountRepository();
 
-    public BankAccountService(BankAccountRepository repo) {
-        this.repo = repo;
-    }
+    // public BankAccountService(BankAccountRepository repo) {
+    //     this.repo = repo;
+    // }
 
     public long count() throws ServiceException {
         try {
-            return repo.count();
+            return repository.count();
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
@@ -28,7 +28,7 @@ public class BankAccountService implements Service<BankAccount> {
 
     public ArrayList<BankAccount> findAll() throws ServiceException {
         try {
-            return repo.findAll();
+            return repository.findAll();
         } 
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
@@ -37,7 +37,7 @@ public class BankAccountService implements Service<BankAccount> {
 
     public BankAccount findById(long id) throws ServiceException {
         try {
-            return repo.findById(id);
+            return repository.findById(id);
         } 
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);         
@@ -47,7 +47,7 @@ public class BankAccountService implements Service<BankAccount> {
     public long save(BankAccount bankAccount) throws ServiceException {
         try {
             
-            return repo.save(bankAccount);
+            return repository.save(bankAccount);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
@@ -56,12 +56,12 @@ public class BankAccountService implements Service<BankAccount> {
 
     public void depositIntoAccount(long id, long amount) throws ServiceException {
         try {
-            BankAccount account = repo.findById(id);
+            BankAccount account = repository.findById(id);
             if (amount < 1) {
                throw new ServiceException("Cannot deposit €" + amount/100 + " to account id" + account.getId(), Long.toString(account.getId()));           
             }
             account.setBalance(account.getBalance() + amount);
-            repo.save(account);
+            repository.save(account);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
@@ -70,12 +70,12 @@ public class BankAccountService implements Service<BankAccount> {
 
     public void withdrawFromAccount(long id, long amount) throws ServiceException {
         try {
-            BankAccount account = repo.findById(id);
+            BankAccount account = repository.findById(id);
             if (account.getBalance() - amount < 0) {
                 throw new ServiceException("Insufficient balance to withdraw €" + amount/100 + " from account id" + account.getId(), Long.toString(account.getId()));
             }
             account.setBalance(account.getBalance() - amount);
-            repo.save(account);
+            repository.save(account);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
@@ -83,7 +83,7 @@ public class BankAccountService implements Service<BankAccount> {
     }
 
     public void saveJson(ArrayList<BankAccount> bankAccounts) throws IOException {
-        repo.saveJson(bankAccounts);
+        repository.saveJson(bankAccounts);
     }
 }
 
