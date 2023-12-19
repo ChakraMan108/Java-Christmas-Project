@@ -16,21 +16,26 @@ public class Operation {
     private long id;
     private OperationType operationtype;
     private String username;
+    private long accountId;
+    private long customerId;
     private LocalDate date;
-    private Customer customer;
     
-    public Operation(OperationType operationtype, String username, LocalDate date, Customer customer ) {
-        
-        this.operationtype = operationtype;
-        this.username = username;
-        this.date = date;
-        this.customer=customer;
+    
+    
+    public Operation() {
     }
 
+
+    public Operation(OperationType operationtype, long accountId, long customerId) {
+        this.operationtype = operationtype;
+        this.accountId = accountId;
+        this.customerId = customerId;
+    }
 
     public long getId() {
         return id;
     }
+
 
     public void setId(long id) {
         this.id = id;
@@ -60,10 +65,11 @@ public class Operation {
         this.date = date;
     }
 
+
     @Override
     public String toString() {
-        return "Operation [id=" + id + ", operationtype=" + operationtype + ", username=" + username + ", date=" + date
-                + "]";
+        return "Operation [id=" + id + ", operationtype=" + operationtype + ", username=" + username + ", accountId="
+                + accountId + ", customerId=" + customerId + ", date=" + date + "]";
     }
 
 
@@ -74,8 +80,9 @@ public class Operation {
         result = prime * result + (int) (id ^ (id >>> 32));
         result = prime * result + ((operationtype == null) ? 0 : operationtype.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + (int) (accountId ^ (accountId >>> 32));
+        result = prime * result + (int) (customerId ^ (customerId >>> 32));
         result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
         return result;
     }
 
@@ -98,21 +105,22 @@ public class Operation {
                 return false;
         } else if (!username.equals(other.username))
             return false;
+        if (accountId != other.accountId)
+            return false;
+        if (customerId != other.customerId)
+            return false;
         if (date == null) {
             if (other.date != null)
                 return false;
         } else if (!date.equals(other.date))
             return false;
-        if (customer == null) {
-            if (other.customer != null)
-                return false;
-        } else if (!customer.equals(other.customer))
-            return false;
         return true;
     }
 
+   
+    }
 
-       
-        // Add more operation types if needed
+
+   
+
 }
-

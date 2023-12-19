@@ -2,17 +2,18 @@ package com.bank.main;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.BankAccountRepository;
 import com.bank.service.BankAccountService;
 
-public class TomTest {
-            
-    public static void main(String[] args) throws Exception {
+public class DharaTest {
 
-        ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
+    public static void main(String[] args) throws Exception {
+        
+       ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
         BankAccountRepository repo = new BankAccountRepository(bankAccounts);
         BankAccountService service = new BankAccountService(repo);
 
@@ -56,5 +57,8 @@ public class TomTest {
         
         service.saveJson(bankAccounts);
         // System.out.println(service.findById(1234567));
-    }
+    
 }
+ 
+    }
+
