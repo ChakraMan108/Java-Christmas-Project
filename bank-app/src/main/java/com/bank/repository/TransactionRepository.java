@@ -55,11 +55,7 @@ public class TransactionRepository implements Repository<Transaction> {
             return transaction.getId();
         }
     }
-    public void transactionNumberManager() {
-        this.lastTransactionNumber = 1_000_000_000L;
-    }
-
-    public long incrementTransactionNumber() {
+    private static long incrementTransactionNumber() {
         lastTransactionNumber++;
         return lastTransactionNumber;
        
