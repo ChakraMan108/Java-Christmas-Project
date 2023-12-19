@@ -2,14 +2,8 @@ package com.bank.repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
-
-import com.bank.entity.BankAccount;
-import com.bank.entity.Operation;
 import com.bank.entity.Transaction;
-
 import com.bank.exceptions.RepositoryException;
-import com.bank.exceptions.ServiceException;
 
 public class TransactionRepository implements Repository<Transaction> {
     private static long lastTransactionNumber;
@@ -39,7 +33,6 @@ public class TransactionRepository implements Repository<Transaction> {
             }
          }
         throw new RepositoryException("No transaction item with id " + id + " found in the repository.");
-        
     }
     
     public long save(Transaction transaction) throws RepositoryException {
@@ -55,9 +48,8 @@ public class TransactionRepository implements Repository<Transaction> {
             return transaction.getId();
         }
     }
+
     private static long incrementTransactionNumber() {
         return ++lastTransactionNumber;
-       
-        
     }
 }

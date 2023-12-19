@@ -1,21 +1,18 @@
 package com.bank.service;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import com.bank.entity.BankAccount;
 import com.bank.entity.Transaction;
-import com.bank.repository.BankAccountRepository;
-import com.bank.repository.TransactionRepository;
-
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
-
-
+import com.bank.repository.TransactionRepository;
 
 public class TransactionService implements Service<Transaction> {
 
     private TransactionRepository repo;
+
+    public TransactionService() {
+
+    }
 
     public TransactionService(TransactionRepository repo) {
         this.repo = repo;
@@ -54,16 +51,6 @@ public class TransactionService implements Service<Transaction> {
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
-        }
-    }
-
-    public void createTransaction(long id, long amount) throws ServiceException {
-        try {
-            Transaction transaction = new Transaction(id, amount);
-            long generatedTransactionId = repo.save(transaction);
-        }
-        catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Repository by the Service.");
         }
     }
 
