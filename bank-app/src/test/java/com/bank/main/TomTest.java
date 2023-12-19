@@ -21,8 +21,8 @@ public class TomTest {
     public static void main(String[] args) throws Exception {
 
         ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
-        BankAccountRepository repo = new BankAccountRepository(bankAccounts);
-        BankAccountService service = new BankAccountService(repo);
+        BankAccountRepository baRepo = new BankAccountRepository(bankAccounts);
+        BankAccountService baService = new BankAccountService(baRepo);
 
         ArrayList<Operation> operations = new ArrayList<Operation>();
         OperationRepository opRepo = new OperationRepository(operations);
@@ -39,11 +39,11 @@ public class TomTest {
         
         
         BankAccount acc2 = new BankAccount();  
-        System.out.println(service.save(acc2));
+        System.out.println(baService.save(acc2));
   
         System.out.println(acc2);
        
-        System.out.println(service.findAll());
+        System.out.println(baService.findAll());
 
         // Account creation
         Customer c1 = new Customer();
@@ -56,7 +56,7 @@ public class TomTest {
 
         op1.setOperationtype(OperationType.ACCOUNT_CREATION);
         op1.setUsername(System.getProperty("user.name"));
-        op1.setAccountId(service.save(acc1));
+        op1.setAccountId(baService.save(acc1));
         opService.save(op1);
         
         System.out.println(op1);
