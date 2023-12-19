@@ -55,12 +55,12 @@ public class BankAccountService implements Service<BankAccount> {
 
     public void depositIntoAccount(long id, long amount) throws ServiceException {
         try {
-            BankAccount acc = repo.findById(id);
+            BankAccount account = repo.findById(id);
             if (amount < 1) {
-               throw new ServiceException("Cannot deposit €" + amount/100 + " to account id" + acc.getId(), Long.toString(acc.getId()));           
+               throw new ServiceException("Cannot deposit €" + amount/100 + " to account id" + account.getId(), Long.toString(account.getId()));           
             }
-            acc.setBalance(acc.getBalance() + amount);
-            repo.save(acc);
+            account.setBalance(account.getBalance() + amount);
+            repo.save(account);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
@@ -69,12 +69,12 @@ public class BankAccountService implements Service<BankAccount> {
 
     public void withdrawFromAccount(long id, long amount) throws ServiceException {
         try {
-            BankAccount acc = repo.findById(id);
-            if (acc.getBalance() - amount < 0) {
-                throw new ServiceException("Insufficient balance to withdraw €" + amount/100 + " from account id" + acc.getId(), Long.toString(acc.getId()));
+            BankAccount account = repo.findById(id);
+            if (account.getBalance() - amount < 0) {
+                throw new ServiceException("Insufficient balance to withdraw €" + amount/100 + " from account id" + account.getId(), Long.toString(account.getId()));
             }
-            acc.setBalance(acc.getBalance() - amount);
-            repo.save(acc);
+            account.setBalance(account.getBalance() - amount);
+            repo.save(account);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");

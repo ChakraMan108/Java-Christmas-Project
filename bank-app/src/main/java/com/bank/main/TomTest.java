@@ -50,9 +50,10 @@ public class TomTest {
         acc1.setCreatedDate(LocalDate.now());
         acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
         service.save(acc1);
-
+        service.withdrawFromAccount(acc1.getId(), 5000);
         System.out.println(acc1);
 
+        
         service.saveJson(bankAccounts);
         // System.out.println(service.findById(1234567));
     }

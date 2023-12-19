@@ -2,6 +2,7 @@ package com.bank.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.bank.entity.BankAccount;
@@ -42,11 +43,15 @@ public class BankAccountRepository implements Repository<BankAccount> {
     public long save(BankAccount bankAccount) throws RepositoryException {
         if (!bankAccounts.contains(bankAccount)) {
             bankAccount.setId(generateAccountNumber());
+            bankAccount.setCreatedDate(LocalDate.now());
+            bankAccount.setActive(true);
             bankAccounts.add(bankAccount);
             return bankAccount.getId();
         }
         else
         {
+            if (!bankAccount.isActive())
+                bankAccount.setDeactivatedDate(LocalDate.now());
             bankAccounts.set(bankAccounts.indexOf(bankAccount), bankAccount);
             return bankAccount.getId();
         }
