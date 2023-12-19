@@ -46,7 +46,6 @@ public class BankAccountRepository implements Repository<BankAccount> {
             bankAccount.setCreatedDate(LocalDate.now());
             bankAccount.setActive(true);
             bankAccounts.add(bankAccount);
-            // call operationService.save();
             return bankAccount.getId();
         }
         else

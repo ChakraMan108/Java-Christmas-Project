@@ -33,51 +33,34 @@ public class TomTest {
 
         Customer cust1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
         Customer cust2 = new Customer(2, "Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444", "mary@x.com", Customer.CustomerType.INDIVIDUAL);
-        Customer cust3 = new Customer();
         
         System.out.println(cust1);
         System.out.println(cust2);
-        System.out.println(cust3);
-
-        BankAccount acc1 = new BankAccount();
-        BankAccount acc2 = new BankAccount();
         
-        System.out.println(acc1 + "\n" + acc2);
-    
-        System.out.println(service.save(acc1));
+        
+        BankAccount acc2 = new BankAccount();  
         System.out.println(service.save(acc2));
-
-        try {
-            System.out.println(service.count());
-        } catch (ServiceException ex) {
-            throw ex;
-        }
-
-        System.out.println(acc1);
+  
         System.out.println(acc2);
        
         System.out.println(service.findAll());
 
-        acc1.setAccountName("Tom");
-        acc1.setActive(true);
-        acc1.setBalance(1000);
-        acc1.setCreatedDate(LocalDate.now());
-        acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
-        service.save(acc1);
-        
-        System.out.println(acc1);
-
-        
+        // Account creation
+        Customer c1 = new Customer();
+        BankAccount acc1 = new BankAccount();
         Operation op1 = new Operation();
-        Operation op2 = new Operation();
-        
+
+        acc1.setAccountName("Tom");
+        acc1.setBalance(0);
+        acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
+
         op1.setOperationtype(OperationType.ACCOUNT_CREATION);
         op1.setUsername(System.getProperty("user.name"));
+        op1.setAccountId(service.save(acc1));
         opService.save(op1);
         
-        opService.save(op2);
         System.out.println(op1);
-        System.out.println(op2);
+    
 
         
         // System.out.println(opRepo.findAll().toString());
@@ -85,14 +68,17 @@ public class TomTest {
 
         Transaction t1 = new Transaction();
         Transaction t2 = new Transaction();
-        
-        System.out.println(t1);
-        System.out.println(t2);
+        Transaction t3 = new Transaction();
+        Transaction t4 = new Transaction();
+
+        System.out.println("Before save to repo\n" + t1);
+        System.out.println("Before save to repo\n" + t2);
 
         transactionRepo.save(t1);
         transactionRepo.save(t2);
         
-        System.out.println(transactionRepo.findAll().toString());
+
+        System.out.println("After save to repo\n" + transactionRepo.findAll().toString());
         //service.saveJson(bankAccounts);
         // System.out.println(service.findById(1234567));
     }
