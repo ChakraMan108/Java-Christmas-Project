@@ -75,8 +75,8 @@ public class TomTest {
         transactionRepo.save(t1);
         transactionRepo.save(t2);
         
-
         System.out.println("After save to repo\n" + transactionRepo.findAll().toString());
         //service.saveJson(bankAccounts);
+
     }
 }
