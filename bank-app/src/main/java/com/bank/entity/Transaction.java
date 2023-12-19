@@ -94,6 +94,18 @@ public class Transaction {
     }
     
     @Override
+    public boolean equals(Object obj) {
+        // TODO Auto-generated method stub
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return super.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Transaction [id=" + id + ", amount=" + amount + ", createdDate=" + createdDate + ", username="
                 + username + ", type=" + type + ", accountId=" + accountId + "]";
