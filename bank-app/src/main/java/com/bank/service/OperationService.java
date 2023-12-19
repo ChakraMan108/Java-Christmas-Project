@@ -10,7 +10,7 @@ import com.bank.repository.OperationRepository;
 
 public class OperationService implements Service<Operation> {
 
-    public OperationRepository repository = new OperationRepository();
+    public static final OperationRepository repository = new OperationRepository();
 
     // public OperationService(OperationRepository repository) {
     //     this.repository = repository;

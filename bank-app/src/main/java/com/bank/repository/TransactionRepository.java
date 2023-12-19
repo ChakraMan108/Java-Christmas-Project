@@ -6,9 +6,9 @@ import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
 
 public class TransactionRepository implements Repository<Transaction> {
-    private static long lastTransactionNumber = 0;
-
+    
     private ArrayList<Transaction> transactions = new ArrayList<>();
+    private static long lastTransactionNumber = 0;
 
     // public TransactionRepository(ArrayList<Transaction> transactions) {
     //     this.transactions = transactions;

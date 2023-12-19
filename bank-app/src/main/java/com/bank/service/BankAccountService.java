@@ -1,9 +1,12 @@
 package com.bank.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import com.bank.entity.BankAccount;
+import com.bank.entity.Operation;
+import com.bank.entity.Transaction;
+import com.bank.entity.Operation.OperationType;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.BankAccountRepository;
@@ -11,7 +14,9 @@ import com.bank.repository.BankAccountRepository;
 
 public class BankAccountService implements Service<BankAccount> {
 
-    private BankAccountRepository repository = new BankAccountRepository();
+    private static final BankAccountRepository repository = new BankAccountRepository();
+    private TransactionService ts = new TransactionService();
+    private OperationService os = new OperationService();
 
     // public BankAccountService(BankAccountRepository repo) {
     //     this.repo = repo;
@@ -45,8 +50,11 @@ public class BankAccountService implements Service<BankAccount> {
     }
 
     public long save(BankAccount bankAccount) throws ServiceException {
-        try {
-            
+        if (bankAccount.getId()==0) {
+            Operation o = new Operation(OperationType.ACCOUNT_CREATION, 0, 0);
+            os.save(o);
+        }
+        try { 
             return repository.save(bankAccount);
         }
         catch (RepositoryException ex) {
@@ -62,6 +70,9 @@ public class BankAccountService implements Service<BankAccount> {
             }
             account.setBalance(account.getBalance() + amount);
             repository.save(account);
+
+            Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.DEPOSIT);
+            ts.save(t);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
@@ -76,6 +87,9 @@ public class BankAccountService implements Service<BankAccount> {
             }
             account.setBalance(account.getBalance() - amount);
             repository.save(account);
+            
+            Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.DEPOSIT);
+            ts.save(t);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.");
