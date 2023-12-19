@@ -2,7 +2,6 @@ package com.bank.main;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.exceptions.ServiceException;
@@ -29,33 +28,33 @@ public class TomTest {
         BankAccount acc2 = new BankAccount();
         
         System.out.println(acc1 + "\n" + acc2);
-
     
         System.out.println(service.save(acc1));
         System.out.println(service.save(acc2));
+
         try {
             System.out.println(service.count());
         } catch (ServiceException ex) {
             throw ex;
         }
 
-        System.out.println(acc1.getId());
-
-        for (BankAccount ba : bankAccounts) {
-            System.out.println(ba);
-        }
-        
+        System.out.println(acc1);
+        System.out.println(acc2);
+       
         System.out.println(service.findAll());
 
-        System.out.println(service.findById(acc1.getId()));
+        //System.out.println(service.findById(acc1.getId()));
         acc1.setAccountName("Tom");
         acc1.setActive(true);
         acc1.setBalance(1000);
         acc1.setCreatedDate(LocalDate.now());
         acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
         service.save(acc1);
-        
+        service.withdrawFromAccount(acc1.getId(), 5000);
         System.out.println(acc1);
+
+        
+        service.saveJson(bankAccounts);
         // System.out.println(service.findById(1234567));
     }
 }

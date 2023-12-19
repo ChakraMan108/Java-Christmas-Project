@@ -1,8 +1,6 @@
 package com.bank.repository;
 
 import java.util.List;
-
-import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
 
 public interface Repository<T> {
