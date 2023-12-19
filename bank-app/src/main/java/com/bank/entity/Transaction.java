@@ -1,19 +1,12 @@
-//Fionn is working here
-//Getter and Setter, Method, Variable
 package com.bank.entity;
 
-//import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-//import com.bank.entity.Customer;
-//import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.BankAccount;
-
-//import com.bank.service.BankAccountService;
-//import com.bank.service.TransactionService;
 
 public class Transaction {
 
@@ -93,16 +86,49 @@ public class Transaction {
         this.accountId = accountId;
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
-    }
+    
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + (int) (amount ^ (amount >>> 32));
+        result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + (int) (accountId ^ (accountId >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Transaction other = (Transaction) obj;
+        if (id != other.id)
+            return false;
+        if (amount != other.amount)
+            return false;
+        if (createdDate == null) {
+            if (other.createdDate != null)
+                return false;
+        } else if (!createdDate.equals(other.createdDate))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        if (type != other.type)
+            return false;
+        if (accountId != other.accountId)
+            return false;
+        return true;
     }
 
     @Override
@@ -110,53 +136,6 @@ public class Transaction {
         return "Transaction [id=" + id + ", amount=" + amount + ", createdDate=" + createdDate + ", username="
                 + username + ", type=" + type + ", accountId=" + accountId + "]";
     }
-
-    //Scanner here temp. to test if it runs
-    public static void main(String[] args) {
-            Scanner scanner = new Scanner(System.in);
-            Transaction transaction = new Transaction();
-
-            // Get user input for id
-            System.out.print("Enter transaction ID: ");
-            long transId = Long.parseLong(scanner.nextLine());
-            transaction.setId(transId);
-
-            // Get user input for amount here
-            System.out.print("Enter transaction amount: ");
-            long transAmount = Long.parseLong(scanner.nextLine());
-            transaction.setAmount(transAmount);
-
-            // Get user input for username here
-            System.out.print("Enter username: ");
-            String userName = scanner.nextLine();
-            transaction.setUsername(userName);
-
-            transaction.setCreatedDate(LocalDate.parse("2023-12-17"));
-
-            // Transaction is hard coded here to deposit FIX
-            System.out.print("Enter transaction type (DEPOSIT or WITHDRAWAL): ");
-            String transactionType = scanner.nextLine();
-            if (transactionType.equals("DEPOSIT")) 
-                transaction.setType(TransactionType.DEPOSIT);
-            else
-                transaction.setType(TransactionType.WITHDRAWAL);
-
-            // Adding transaction to an ArrayList 
-            ArrayList<Transaction> transactionList = new ArrayList<>();
-            transactionList.add(transaction);
-
-            // Print out transaction details for testing purposes
-            for (Transaction t : transactionList) {
-                System.out.println("\n" + "Transaction Details:");
-                System.out.println("Account Number: " + t.getAccountId());
-                System.out.println("Transaction ID: " + t.getId());
-                System.out.println("Transaction Amount: " + t.getAmount());
-                System.out.println("Created Date: " + t.getCreatedDate());
-                System.out.println("Username: " + t.getUsername());
-                System.out.println("Transaction Type: " + t.getType());
-                System.out.println("Account ID: " + t.getAccountId());
-            }
-        }
 }
 
 
