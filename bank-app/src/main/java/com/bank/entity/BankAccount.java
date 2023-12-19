@@ -27,7 +27,6 @@ public class BankAccount {
       this.type = type;
       this.balance = balance;
       this.isActive = true;
-      this.createdDate = LocalDate.now();
    }
 
    public long getId() {
