@@ -68,8 +68,6 @@ public class TomTest {
 
         Transaction t1 = new Transaction();
         Transaction t2 = new Transaction();
-        Transaction t3 = new Transaction();
-        Transaction t4 = new Transaction();
 
         System.out.println("Before save to repo\n" + t1);
         System.out.println("Before save to repo\n" + t2);
@@ -80,6 +78,5 @@ public class TomTest {
 
         System.out.println("After save to repo\n" + transactionRepo.findAll().toString());
         //service.saveJson(bankAccounts);
-        // System.out.println(service.findById(1234567));
     }
 }
