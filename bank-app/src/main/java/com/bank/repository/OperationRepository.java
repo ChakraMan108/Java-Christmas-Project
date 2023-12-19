@@ -9,90 +9,67 @@ import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
 import com.bank.service.OperationService;
 
-public class OperationRepository<T> implements Repository<T> {
-    private List<Customer> customers = new ArrayList<>();
+public class OperationRepository implements Repository<Operation> {
+
+    private List<Operation> operations;
     private long nextId = 1;
-
-
-    public List<T> findAll() throws RepositoryException{
-    return null;
-    }
-    //@Override
-    public List<T> findAll(long id) {
-        
-        return null; 
-    }
-
-    private List<BankAccount> accounts;
-    private OperationService operationService;
-    private T[] entity;
-
-    public OperationRepository(OperationService operationService) {
-        this.accounts = new ArrayList<>();
-        this.operationService = operationService;
-    }
-
-   
-    public List<BankAccount> getAllAccounts() {
-        return accounts;
-    }
-
-    public void deleteById(long id) {
-        Iterator<Customer> iterator = customers.iterator();
-        while (iterator.hasNext()) {
-            Customer customer = iterator.next();
-            if (customer.getId() == id) {
-                iterator.remove(); // Remove the customer from the list
-                
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Customer with ID " + id + " not found");
-    }
+     private List<BankAccount> accounts;
+    private OperationService service;
     
 
-    public T findById(long id) {
-        for (T entity : entity) {
-            if (((BankAccount) entity).getId() == id) {
+
+    public Operation findAll() throws RepositoryException {
+        try {
+            return service.findAll();
+        } catch (Exception ex) {
+            String errorMessage = "Failed to fetch all operations";
+            throw new RepositoryException(errorMessage, ex);
+        }
+    }
+    
+    public OperationRepository(OperationService opService) {
+        this.accounts = new ArrayList<>();
+        this.service = opService;
+    }
+
+
+    // public List<BankAccount> getAllAccounts() {
+    //     return accounts;
+    // }
+
+   
+    public Operation findById(long id) throws RepositoryException {
+        for (Operation entity : operations) {
+            if (entity.getId() == id) {
                 return entity;
             }
         }
-        return null; // Return null if the entity with the specified ID is not found
+        throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
     }
+
+    
     public long count() throws RepositoryException{
-        return count();
-    }
-    @Override
-    public Operation save(T entity) throws RepositoryException {
+
+        if (operations.size() != 0)
+            return operations.size();
+        throw new RepositoryException("No BankAccount item found in repository");
+
         
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+    
+    public long save(Operation operation) throws RepositoryException {
+        try {
+            // Assuming your repository can save the operation and returns the generated ID
+            long id = operation.getId();
+            operation.setId(id); // Set the generated ID on the operation object
+            return id;
+        } catch (Exception ex) {
+            // Log the exception or handle it appropriately based on your application's needs
+            String errorMessage = "Failed to save operation";
+            throw new RepositoryException(errorMessage, ex);
+        }
     }
 
     
     }
 
-// Add a new account to the repository
-    // public void save(BankAccount account) {
-    //     accounts.add(account);
-    // }
-
-    // Get all accounts from the repository
-    
-    // // Perform an operation on a specific account using the OperationService
-    // public void performOperation(BankAccount account, OperationType operationType, long amount) {
-    //     switch (operationType) {
-    //         case1 SHOW_DESCRIPTION:
-    //             operationService.showAccountDescription(account);
-    //             break;
-    //         case2 SHOW_STATE:
-    //             operationService.showAccountState(account);
-    //             break;
-    //         case3 DEPOSIT:
-    //             operationService.deposit(account, amount);
-    //             break;
-    //         case4 WITHDRAW:
-    //             operationService.withdraw(account, amount);
-    //             break;
-    //         // Add more cases for other operation types if needed
-    //     }
-    // }
