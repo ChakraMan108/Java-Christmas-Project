@@ -4,74 +4,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bank.entity.BankAccount;
+import com.bank.entity.Customer;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
 import com.bank.service.OperationService;
 
-public class OperationRepository<T> implements Repository<T> {
+public class OperationRepository implements Repository<Operation> {
 
-    public List<T> findAll() throws RepositoryException{
-    return null;
+    private List<Operation> operations;
+    private long nextId = 1;
+     private List<BankAccount> accounts;
+    private OperationService service;
+    
+
+
+    public Operation findAll() throws RepositoryException {
+        try {
+            return service.findAll();
+        } catch (Exception ex) {
+            String errorMessage = "Failed to fetch all operations";
+            throw new RepositoryException(errorMessage, ex);
+        }
     }
-    //@Override
-    public List<T> findAll(long id) {
-        
-        return null; 
-    }
-
-    private List<BankAccount> accounts;
-    private OperationService operationService;
-
-    public OperationRepository(OperationService operationService) {
+    
+    public OperationRepository(OperationService opService) {
         this.accounts = new ArrayList<>();
-        this.operationService = operationService;
+        this.service = opService;
     }
+
+
+    // public List<BankAccount> getAllAccounts() {
+    //     return accounts;
+    // }
 
    
-    public List<BankAccount> getAllAccounts() {
-        return accounts;
+    public Operation findById(long id) throws RepositoryException {
+        for (Operation entity : operations) {
+            if (entity.getId() == id) {
+                return entity;
+            }
+        }
+        throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
     }
 
-    public void deleteById(long id) {
-    }
-
-    public T findById(long id) {
-        return null;
-    }
-    public long count() throws RepositoryException{
-        return count();
-    }
-    @Override
-    public Operation save(T entity) throws RepositoryException {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
- // Add a new account to the repository
-    // public void save(BankAccount account) {
-    //     accounts.add(account);
-    // }
-
-    // Get all accounts from the repository
     
-    // // Perform an operation on a specific account using the OperationService
-    // public void performOperation(BankAccount account, OperationType operationType, long amount) {
-    //     switch (operationType) {
-    //         case SHOW_DESCRIPTION:
-    //             operationService.showAccountDescription(account);
-    //             break;
-    //         case SHOW_STATE:
-    //             operationService.showAccountState(account);
-    //             break;
-    //         case DEPOSIT:
-    //             operationService.deposit(account, amount);
-    //             break;
-    //         case WITHDRAW:
-    //             operationService.withdraw(account, amount);
-    //             break;
-    //         // Add more cases for other operation types if needed
-    //     }
-    // }
+    public long count() throws RepositoryException{
+
+        if (operations.size() != 0)
+            return operations.size();
+        throw new RepositoryException("No BankAccount item found in repository");
+
+        
+    }
+    
+    public long save(Operation operation) throws RepositoryException {
+        try {
+            // Assuming your repository can save the operation and returns the generated ID
+            long id = operation.getId();
+            operation.setId(id); // Set the generated ID on the operation object
+            return id;
+        } catch (Exception ex) {
+            // Log the exception or handle it appropriately based on your application's needs
+            String errorMessage = "Failed to save operation";
+            throw new RepositoryException(errorMessage, ex);
+        }
+    }
 
     
     }
