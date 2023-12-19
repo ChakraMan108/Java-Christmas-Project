@@ -59,7 +59,6 @@ public class TransactionService implements Service<Transaction> {
 
     public void createTransaction(long id, long amount) throws ServiceException {
         try {
-            
             Transaction transaction = new Transaction(id, amount);
             long generatedTransactionId = repo.save(transaction);
         }

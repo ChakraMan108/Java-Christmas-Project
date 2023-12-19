@@ -56,8 +56,7 @@ public class TransactionRepository implements Repository<Transaction> {
         }
     }
     private static long incrementTransactionNumber() {
-        lastTransactionNumber++;
-        return lastTransactionNumber;
+        return ++lastTransactionNumber;
        
         
     }
