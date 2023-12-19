@@ -93,16 +93,49 @@ public class Transaction {
         this.accountId = accountId;
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
-    }
+    
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + (int) (amount ^ (amount >>> 32));
+        result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + (int) (accountId ^ (accountId >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Transaction other = (Transaction) obj;
+        if (id != other.id)
+            return false;
+        if (amount != other.amount)
+            return false;
+        if (createdDate == null) {
+            if (other.createdDate != null)
+                return false;
+        } else if (!createdDate.equals(other.createdDate))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        if (type != other.type)
+            return false;
+        if (accountId != other.accountId)
+            return false;
+        return true;
     }
 
     @Override
