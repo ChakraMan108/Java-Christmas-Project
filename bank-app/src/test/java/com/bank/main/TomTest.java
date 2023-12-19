@@ -2,13 +2,17 @@ package com.bank.main;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Operation;
+import com.bank.entity.Transaction;
+import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Operation.OperationType;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.BankAccountRepository;
 import com.bank.repository.OperationRepository;
+import com.bank.repository.TransactionRepository;
 import com.bank.service.BankAccountService;
 import com.bank.service.OperationService;
 
@@ -23,6 +27,9 @@ public class TomTest {
         ArrayList<Operation> operations = new ArrayList<Operation>();
         OperationRepository opRepo = new OperationRepository(operations);
         OperationService opService = new OperationService(opRepo);
+
+        ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+        TransactionRepository transactionRepo = new TransactionRepository(transactions);
 
         Customer cust1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
         Customer cust2 = new Customer(2, "Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444", "mary@x.com", Customer.CustomerType.INDIVIDUAL);
@@ -60,10 +67,32 @@ public class TomTest {
         
         System.out.println(acc1);
 
-        Operation op1 = new Operation(OperationType.CUSTOMER_CREATION, "abc", LocalDate.now(), cust1);
-        System.out.println(op1);
         
-    
+        Operation op1 = new Operation();
+        Operation op2 = new Operation();
+        
+        op1.setOperationtype(OperationType.ACCOUNT_CREATION);
+        op1.setUsername(System.getProperty("user.name"));
+        opService.save(op1);
+        
+        opService.save(op2);
+        System.out.println(op1);
+        System.out.println(op2);
+
+        
+        // System.out.println(opRepo.findAll().toString());
+        // System.out.println(opService.findAll());
+
+        Transaction t1 = new Transaction();
+        Transaction t2 = new Transaction();
+        
+        System.out.println(t1);
+        System.out.println(t2);
+
+        transactionRepo.save(t1);
+        transactionRepo.save(t2);
+        
+        System.out.println(transactionRepo.findAll().toString());
         //service.saveJson(bankAccounts);
         // System.out.println(service.findById(1234567));
     }
