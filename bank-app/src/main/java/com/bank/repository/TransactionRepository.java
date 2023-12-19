@@ -6,13 +6,13 @@ import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
 
 public class TransactionRepository implements Repository<Transaction> {
-    private static long lastTransactionNumber;
+    private static long lastTransactionNumber = 0;
 
-    private ArrayList<Transaction> transactions;
+    private ArrayList<Transaction> transactions = new ArrayList<>();
 
-    public TransactionRepository(ArrayList<Transaction> transactions) {
-        this.transactions = transactions;
-    }
+    // public TransactionRepository(ArrayList<Transaction> transactions) {
+    //     this.transactions = transactions;
+    // }
 
     public long count() throws RepositoryException {
         if (!transactions.isEmpty())

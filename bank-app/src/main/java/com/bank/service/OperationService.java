@@ -3,7 +3,6 @@ package com.bank.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
@@ -11,13 +10,11 @@ import com.bank.repository.OperationRepository;
 
 public class OperationService implements Service<Operation> {
 
-    public List<Operation> operations;
+    public OperationRepository repository = new OperationRepository();
 
-    public OperationRepository repository;
-
-    public OperationService(OperationRepository repository) {
-        this.repository = repository;
-    }
+    // public OperationService(OperationRepository repository) {
+    //     this.repository = repository;
+    // }
 
     public long save(Operation operation) {
         try {
@@ -45,15 +42,10 @@ public class OperationService implements Service<Operation> {
     }
 
     public ArrayList<Operation> findAll() throws ServiceException {
-
         try {
-
             return repository.findAll();
-
         } catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
         }
-
     }
-
 }

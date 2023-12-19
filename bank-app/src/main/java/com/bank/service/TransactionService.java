@@ -8,15 +8,11 @@ import com.bank.repository.TransactionRepository;
 
 public class TransactionService implements Service<Transaction> {
 
-    private TransactionRepository repo;
+    private TransactionRepository repo = new TransactionRepository();
 
-    public TransactionService() {
-
-    }
-
-    public TransactionService(TransactionRepository repo) {
-        this.repo = repo;
-    }
+    // public TransactionService(TransactionRepository repo) {
+    //     this.repo = repo;
+    // }
 
     public long count() throws ServiceException {
         try {
