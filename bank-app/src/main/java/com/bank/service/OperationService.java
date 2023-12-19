@@ -1,9 +1,8 @@
 
 package com.bank.service;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
@@ -35,31 +34,14 @@ public class OperationService implements Service<Operation>{
         }
     }
 
-
-    //getOperationById: This method retrieves an Operation by its ID using the findById method provided by the operationRepository. The result is wrapped in an Optional. If an exception occurs, it is caught, and a RuntimeException is thrown with an error message.
     public Operation findById(long id) throws ServiceException {
        try{ return repository.findById(id);
          }
          catch
         (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Repository by the Service.", ex);
+            throw new ServiceException("Exception received from the Repository by the Service.", ex);}
     }
 
-
-
-    //findAll: This method retrieves all Operation objects using the findAll method provided by the operationRepository. If an exception occurs, it is caught, and a RuntimeException is thrown with an error message.
-    
-//     public List<Operation> findAll(long id) throws ServiceException {
-//         List<Operation> opList = new List<>();
-//         try {
-//             opList = service.findAll();
-//         } 
-//         catch (RepositoryException ex) {
-//             throw new ServiceException("Exception received from the Repository by the Service.", ex);
-//         }
-//         return baArrayList;
-//     }
-// }
 
     
 
@@ -72,18 +54,19 @@ public long count() throws ServiceException {
 }
 
 
-@Override
-public List<Operation> findAll() throws ServiceException {
- List<Operation> opList = new List<>();
-//         try {
-//             opList = service.findAll();
-//         } 
-//         catch (RepositoryException ex) {
-//             throw new ServiceException("Exception received from the Repository by the Service.", ex);
-//         }
-//         return baArrayList;
-//     }
-    throw new ServiceException("Exception received from the Repository by the Service.");
+
+public ArrayList<Operation> findAll() throws ServiceException {
+ 
+        try {
+
+          return  repository.findAll();
+
+        } 
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Repository by the Service.", ex);
+        }
+        
+    
 }
 
 }
