@@ -42,7 +42,7 @@ public class BankAccountRepository implements Repository<BankAccount> {
 
     public long save(BankAccount bankAccount) throws RepositoryException {
         if (!bankAccounts.contains(bankAccount)) {
-            bankAccount.setId(generateAccountNumber());
+            bankAccount.setId(generateAccountId());
             bankAccount.setCreatedDate(LocalDate.now());
             bankAccount.setActive(true);
             bankAccounts.add(bankAccount);
@@ -57,7 +57,7 @@ public class BankAccountRepository implements Repository<BankAccount> {
         }
     }
 
-    public long generateAccountNumber() {
+    public long generateAccountId() {
         return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
     }
 
