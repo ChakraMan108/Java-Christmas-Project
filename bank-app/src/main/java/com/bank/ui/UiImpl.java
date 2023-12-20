@@ -3,6 +3,7 @@ package com.bank.ui;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 
 import com.bank.entity.BankAccount;
@@ -10,6 +11,8 @@ import com.bank.entity.Customer;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.MenuException;
 import com.bank.main.Main;
+import com.bank.repository.BankAccountRepository;
+import com.bank.repository.CustomerRepository;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -47,10 +50,11 @@ import org.apache.commons.validator.routines.EmailValidator;
                     throw new MenuException("Invalid Choice");
                 }
                 
-            } catch (MenuException e) {
+            }
+         } catch (MenuException e) {
                 System.out.println(e.getMessage());
             }
-        } 
+         
 
         switch (String menuOption()) {
             case 1:
@@ -83,14 +87,14 @@ import org.apache.commons.validator.routines.EmailValidator;
         System.out.println("1. Create Customer");
         System.out.println("2. Update Customer");
         System.out.println("3. Delete Customer");
-        System.out.println("4. Display Customer");
+        System.out.println("4. Display Customer Details");
         System.out.println("5. Return to Main Menu"); 
     }
     static void accountManagement() {
         System.out.println("1. Create Account");
         System.out.println("2. Update Account");
         System.out.println("3. Delete Account");
-        System.out.println("4. Display Account");
+        System.out.println("4. Display Account Details");
         System.out.println("5. Return to Main Menu"); 
     }
     static void accountDisplay() {
@@ -101,7 +105,7 @@ import org.apache.commons.validator.routines.EmailValidator;
         System.out.println("5. Return to Main Menu");
     }
     static void accountManipulation() {
-        System.out.println("1. Withdraw");
+        System.out.println("1. Withdraw Funds from Account");
         System.out.println("2. Deposit Funds to Account");
         System.out.println("3. Transfer Funds from Account");
         System.out.println("4. Return to Main Menu");
@@ -109,14 +113,15 @@ import org.apache.commons.validator.routines.EmailValidator;
     static void reports() {
         System.out.println("1. Display All Transactions");
         System.out.println("2. Display Transactions of Accounts by Type");
-        System.out.println("3. Display Transactions of Customers by Date");
-        System.out.println("4. Display Transactions by Date");
-        System.out.println("5. Display Details of Operations by Date");
-        System.out.println("6. Return to Main Menu");
+        System.out.println("3. Display Transactions of Accounts by Date");
+        System.out.println("4. Display Transactions of Customers by Date");
+        System.out.println("5. Display Transactions by Date");
+        System.out.println("6. Display Details of Operations by Date");
+        System.out.println("7. Return to Main Menu");
     }
     
 
-    public static void main(String[] args) {
+    public static void Main(String[] args) {
         customerManagement();
         accountManagement();
         accountDisplay();
@@ -179,12 +184,12 @@ import org.apache.commons.validator.routines.EmailValidator;
     ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
     bankAccounts.add(new BankAccount("John Smith", 0123456789, 1000));
     bankAccounts.add(new BankAccount("Jane Smith", 9876543210, 1000));
-    bankAccounts.add(new BankAccount("Conor Murray", 4785632100, 5000));
+    bankAccounts.add(new BankAccount("Joan Murray", 4785632100, 5000));
 
     ArrayList<Customer> customers = new ArrayList<Customer>();
     customers.add(new Customer("John Smith", 0123456789));
     customers.add(new Customer("Jane Smith", 9876543210));
-    customers.add(new Customer("Conor Murray", 4785632100));
+    customers.add(new Customer("Joan Murray", 4785632100));
 
     ArrayList<Transaction> transactions = new ArrayList<Transaction>();
     Transaction[] transactions = new Transaction[3];
@@ -213,14 +218,34 @@ import org.apache.commons.validator.routines.EmailValidator;
         ui.displayTransactions();
     }
 
-    public static <T> void displayCollection(Collection<T> collection) {
+    public <T> void displayCollection(Collection<T> collection) {
         for (T t : collection) {
             System.out.println(t);
         }
-    public <T> UiImpl(int index) {
-        return collection.get(index);
     }
     
+    public class BARepository implements Repository<BankAccount> {
+    List<BankAccount> getAll();
+    BankAccount getById(int id);
+    int insert(BankAccount acc);
+    void update(int id, BankAccount acc);
+    void delete(int id);
+
+    @Override
+    String toString() {
+        String str = String.format("[%d] %s, %.2f (%d ops in this session)", id, accountHolder, balance, numOpsInSession);
+		return str;
+    }
+}
     
+    public BankAccountService(BankAccountRepository repo) {
+        this.repository = repo;
+    }
+
+    public CustomerService(CustomerRepository repo) {
+        this.repository = repo;
+    }
 }
 
+    BankAccountService(); 
+    CustomerService();

@@ -1,13 +1,7 @@
 package com.bank.ui;
 
-import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.Collection;
-import org.apache.commons.validator.routines.EmailValidator;
 
-import com.bank.entity.BankAccount;
-import com.bank.entity.Customer;
-import com.bank.entity.Transaction;
 import com.bank.exceptions.MenuException;
 
 public interface Ui {
