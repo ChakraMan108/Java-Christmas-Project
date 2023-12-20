@@ -3,7 +3,6 @@ package com.bank.service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Operation;
 import com.bank.entity.Operation.OperationType;
@@ -15,7 +14,6 @@ public class CustomerService implements Service<Customer> {
 
     private static final CustomerRepository repository = new CustomerRepository();
     private OperationService opService = new OperationService();
-    private BankAccountService baService = new BankAccountService();
 
     public long count() throws ServiceException {
         try {
@@ -57,10 +55,11 @@ public class CustomerService implements Service<Customer> {
         try {
             Customer customer = repository.findById(id);
             if (!customer.isActive())
-                throw new ServiceException("Cannot deactivate alredy deactivated customer id " + customer.getId(), Long.toString(customer.getId()));
+                throw new ServiceException("Cannot deactivate already deactivated customer id " + customer.getId(), Long.toString(customer.getId()));
             customer.setActive(false);
             customer.setDeactivatedDate(LocalDate.now());
             save(customer);
+            
             Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"), 0, customer.getId());
             opService.save(o);   
         } catch (RepositoryException ex) {
