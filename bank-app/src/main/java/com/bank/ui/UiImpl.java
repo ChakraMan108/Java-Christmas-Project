@@ -115,7 +115,6 @@ public class UiImpl implements Ui {
 
     private void accountManipulation() {
         boolean exit = false;
-
         System.out.println("\n1. Withdraw Funds from Account");
         System.out.println("2. Deposit Funds to Account");
         System.out.println("3. Transfer Funds from/to Account");
