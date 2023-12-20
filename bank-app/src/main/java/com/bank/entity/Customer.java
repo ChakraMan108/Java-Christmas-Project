@@ -39,7 +39,6 @@ public class Customer {
         this.email = email;
         this.type = type;
         this.isActive = true;
-        this.createdDate = LocalDate.now();
     }
 
     public long getId() {
@@ -136,6 +135,5 @@ public class Customer {
                 + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
                 + ", deactivatedDate=" + deactivatedDate + ", type=" + type + ", account=" + account + "]";
     }
-
 
 }

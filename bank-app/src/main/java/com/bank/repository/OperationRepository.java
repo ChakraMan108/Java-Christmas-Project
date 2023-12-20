@@ -1,78 +1,58 @@
 package com.bank.repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
-
 import com.bank.entity.BankAccount;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
+import com.bank.service.BankAccountService;
 import com.bank.service.OperationService;
 
-public class OperationRepository<T> implements Repository<T> {
+public class OperationRepository implements Repository<Operation> {
 
-    public List<T> findAll() throws RepositoryException{
-    return null;
-    }
-    //@Override
-    public List<T> findAll(long id) {
-        
-        return null; 
-    }
+    private ArrayList<Operation> operations = new ArrayList<>();
+    private static long lastOperationId = 0;
 
-    private List<BankAccount> accounts;
-    private OperationService operationService;
+    // public OperationRepository(ArrayList<Operation> operation) {
 
-    public OperationRepository(OperationService operationService) {
-        this.accounts = new ArrayList<>();
-        this.operationService = operationService;
-    }
-
-   
-    public List<BankAccount> getAllAccounts() {
-        return accounts;
-    }
-
-    public void deleteById(long id) {
-    }
-
-    public T findById(long id) {
-        return null;
-    }
-    public long count() throws RepositoryException{
-        return count();
-    }
-    @Override
-    public Operation save(T entity) throws RepositoryException {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
- // Add a new account to the repository
-    // public void save(BankAccount account) {
-    //     accounts.add(account);
+    //     this.operations = operation;
     // }
 
-    // Get all accounts from the repository
-    
-    // // Perform an operation on a specific account using the OperationService
-    // public void performOperation(BankAccount account, OperationType operationType, long amount) {
-    //     switch (operationType) {
-    //         case SHOW_DESCRIPTION:
-    //             operationService.showAccountDescription(account);
-    //             break;
-    //         case SHOW_STATE:
-    //             operationService.showAccountState(account);
-    //             break;
-    //         case DEPOSIT:
-    //             operationService.deposit(account, amount);
-    //             break;
-    //         case WITHDRAW:
-    //             operationService.withdraw(account, amount);
-    //             break;
-    //         // Add more cases for other operation types if needed
-    //     }
-    // }
-
-    
+    public ArrayList<Operation> findAll() throws RepositoryException {
+        if (!operations.isEmpty())
+            return operations;
+        throw new RepositoryException("No operation items found in the repository!");
     }
 
+    public Operation findById(long id) throws RepositoryException {
+        for (Operation entity : operations) {
+            if (entity.getId() == id) {
+                return entity;
+            }
+        }
+        throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
+    }
+
+    public long count() throws RepositoryException {
+        if (operations.size() != 0)
+            return operations.size();
+        throw new RepositoryException("No BankAccount item found in repository");
+    }
+
+    public long save(Operation operation) throws RepositoryException {
+        try {
+            operation.setId(incrementOperationId());
+            operation.setDate(LocalDate.now());
+            operations.add(operation);
+            return operation.getId();
+        } catch (Exception ex) {
+            String errorMessage = "Failed to save operation";
+            throw new RepositoryException(errorMessage, ex);
+        }
+    }
+
+    public long incrementOperationId() {
+        return ++lastOperationId;
+    }
+
+}

@@ -1,5 +1,54 @@
 package com.bank.service;
-//Fionn
-public class TransactionService implements Service {
+
+import java.util.ArrayList;
+import com.bank.entity.Transaction;
+import com.bank.exceptions.RepositoryException;
+import com.bank.exceptions.ServiceException;
+import com.bank.repository.TransactionRepository;
+
+public class TransactionService implements Service<Transaction> {
+
+    private TransactionRepository repo = new TransactionRepository();
+
+    // public TransactionService(TransactionRepository repo) {
+    //     this.repo = repo;
+    // }
+
+    public long count() throws ServiceException {
+        try {
+            return repo.count();
+        }
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
+        }
+    }
+
+    public ArrayList<Transaction> findAll() throws ServiceException {
+        try {
+            return repo.findAll();
+        } 
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
+        }
+    }
+
+    public Transaction findById(long id) throws ServiceException {
+        try {
+            return repo.findById(id);
+        } 
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);         
+        }
+    }
+
+    public long save(Transaction transaction) throws ServiceException {
+        try {
+            return repo.save(transaction);
+        }
+        catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
+        }
+    }
 
 }
+
