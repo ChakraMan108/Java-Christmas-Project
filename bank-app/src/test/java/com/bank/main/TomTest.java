@@ -4,11 +4,10 @@ import java.time.LocalDate;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
-import com.bank.entity.Operation;
-import com.bank.entity.Operation.OperationType;
-import com.bank.entity.Transaction;
-import com.bank.entity.Transaction.TransactionType;
+import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
+import com.bank.service.CustomerService;
+import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
 
@@ -16,60 +15,72 @@ public class TomTest {
             
     public static void main(String[] args) throws Exception {
 
+        // Service initialisation
         BankAccountService baService = new BankAccountService();
         OperationService opService = new OperationService();
         TransactionService trService = new TransactionService();
+        CustomerService cuService = new CustomerService();
+        
+        // Customer creation       
+        Customer c2 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+        cuService.createCustomer(c2);
+        System.out.println("After customer creation:" + c2);
 
-        Customer cust1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
-        Customer cust2 = new Customer(2, "Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444", "mary@x.com", Customer.CustomerType.INDIVIDUAL);
-        
-        System.out.println(cust1);
-        System.out.println(cust2);
-        
+        // Customer deactivation
+        cuService.deactivateCustomer(c2.getId());
+        System.out.println("After customer deactivation:" + c2);
+
+        // Customer Update
+        c2.setEmail("ABC@ABC.ie");
+        cuService.save(c2);
+        System.out.println("After customer upodate:" + c2);
+
+        //Find All Customers
+        System.out.println(cuService.findAll());
+
+        // Account Creation
         BankAccount acc2 = new BankAccount();  
-        long someId = baService.save(acc2);
-  
+        baService.createAccount(acc2);
         System.out.println(acc2);
-       
+
+        // Account Deactivation
+        baService.deactivateAccount(acc2.getId());
+        System.out.println(acc2);
+        
+        // Account Update
+        acc2.setType(AccountType.SAVING_ACCOUNT);
+        baService.save(acc2);
+
+        // Account Deposit
+        baService.depositIntoAccount(baService.findById(baService.save(acc2).getId()).getId(), 100000);
+        baService.depositIntoAccount(baService.findById(baService.save(acc2).getId()).getId(), 1);
+        
+        //Account Withdrawal
+        baService.withdrawFromAccount(baService.findById(baService.save(acc2).getId()).getId(), 50000);
+        baService.withdrawFromAccount(baService.findById(baService.save(acc2).getId()).getId(), 50);
+
+        //Find All Accounts
         System.out.println(baService.findAll());
 
-        // Account creation
-        Customer c1 = new Customer();
-        BankAccount acc1 = new BankAccount();
-        Operation op1 = new Operation();
+        // Find All Operations
+        System.out.println(opService.findAll());
+        
+        // Find All Transactions
+        System.out.println(trService.findAll());
 
-        acc1.setAccountName("Tom");
-        acc1.setBalance(0);
-        acc1.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
+        //Count all Customers
+        System.out.println("Number of customers: " + cuService.count());
 
-        op1.setOperationtype(OperationType.ACCOUNT_CREATION);
-        op1.setUsername(System.getProperty("user.name"));
-        op1.setAccountId(baService.save(acc1));
-        opService.save(op1);
-        System.out.println(op1); 
-             
-        //service.saveJson(bankAccounts);
+        //Count all Accounts
+        System.out.println("Number of accounts: " + baService.count());
 
-        //Bank Account and Transaction testing
-        Transaction t1 = new Transaction();
-        BankAccount ba1 = baService.findById(someId);
-        baService.depositIntoAccount(ba1.getId(), 100000);
-        t1.setType(TransactionType.DEPOSIT);
-        t1.setUsername(System.getProperty("user.name"));
-        t1.setAmount(100000);
-        trService.save(t1);
+        //Count all Transactions
+        System.out.println("Number of transactions: " + trService.count());
 
-        //Bank Account and Transaction testing
-        Transaction t2 = new Transaction();
-        BankAccount ba2 = baService.findById(someId);
-        baService.withdrawFromAccount(ba2.getId(), 50000);
-        t2.setType(TransactionType.WITHDRAWAL);
-        t2.setUsername(System.getProperty("user.name"));
-        t2.setAmount(50000);
-        trService.save(t2);
+        //Count all Operations
+        System.out.println("Number of operations: " + opService.count());
 
-        System.out.println("After deposit\n" + trService.findAll().toString());
-
-        System.out.println(baService.findAll());
+        baService.saveJson();
+        
     }
 }

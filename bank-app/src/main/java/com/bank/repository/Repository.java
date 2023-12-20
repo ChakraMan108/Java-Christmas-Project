@@ -7,5 +7,5 @@ public interface Repository<T> {
 	public List<T> findAll() throws RepositoryException; 
 	public T findById(long id) throws RepositoryException;
 	public long count() throws RepositoryException;
-	public long save(T entity) throws RepositoryException;
+	public T save(T entity) throws RepositoryException;
 }
