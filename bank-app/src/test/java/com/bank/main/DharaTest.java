@@ -7,7 +7,7 @@ import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.BankAccountRepository;
-import com.bank.service.BankAccountService;
+import com.bank.service.CustomerService;
 
 public class DharaTest {
 
@@ -15,7 +15,7 @@ public class DharaTest {
         
        ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
         BankAccountRepository repo = new BankAccountRepository(bankAccounts);
-        BankAccountService service = new BankAccountService(repo);
+        CustomerService service = new CustomerService(repo);
 
         Customer cust1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
         Customer cust2 = new Customer(2, "Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444", "mary@x.com", Customer.CustomerType.INDIVIDUAL);

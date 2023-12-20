@@ -5,29 +5,25 @@ import java.time.LocalDate;
 public class Operation {
 
     public enum OperationType {
-       CUSTOMER_CREATION,
+        CUSTOMER_CREATION,
         CUSTOMER_DEACTIVATION,
         ACCOUNT_CREATION,
         ACCOUNT_DEACTIVATION
-        
-
-
     }
+
     private long id;
     private OperationType operationtype;
     private String username;
     private long accountId;
     private long customerId;
     private LocalDate date;
-    
-    
-    
+
     public Operation() {
     }
 
-
-    public Operation(OperationType operationtype, long accountId, long customerId) {
+    public Operation(OperationType operationtype, String username, long accountId, long customerId) {
         this.operationtype = operationtype;
+        this.username = username;
         this.accountId = accountId;
         this.customerId = customerId;
     }
@@ -35,7 +31,6 @@ public class Operation {
     public long getId() {
         return id;
     }
-
 
     public void setId(long id) {
         this.id = id;
@@ -49,21 +44,17 @@ public class Operation {
         return accountId;
     }
 
-
     public void setAccountId(long accountId) {
         this.accountId = accountId;
     }
-
 
     public long getCustomerId() {
         return customerId;
     }
 
-
     public void setCustomerId(long customerId) {
         this.customerId = customerId;
     }
-
 
     public void setOperationtype(OperationType operationtype) {
         this.operationtype = operationtype;
@@ -80,18 +71,16 @@ public class Operation {
     public LocalDate getDate() {
         return date;
     }
-    
+
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
 
     @Override
     public String toString() {
         return "Operation [id=" + id + ", operationtype=" + operationtype + ", username=" + username + ", accountId="
                 + accountId + ", customerId=" + customerId + ", date=" + date + "]";
     }
-
 
     @Override
     public int hashCode() {
@@ -105,7 +94,6 @@ public class Operation {
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -137,5 +125,4 @@ public class Operation {
         return true;
     }
 
-   
-    }
+}

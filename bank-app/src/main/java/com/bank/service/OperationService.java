@@ -2,7 +2,6 @@
 package com.bank.service;
 
 import java.util.ArrayList;
-import java.util.List;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
@@ -10,18 +9,17 @@ import com.bank.repository.OperationRepository;
 
 public class OperationService implements Service<Operation> {
 
-    public OperationRepository repository = new OperationRepository();
+    public static final OperationRepository repository = new OperationRepository();
 
     // public OperationService(OperationRepository repository) {
     //     this.repository = repository;
     // }
 
-    public long save(Operation operation) {
+    public Operation save(Operation operation) throws ServiceException {
         try {
             return repository.save(operation);
-        } catch (Exception e) {
-
-            throw new RuntimeException("Failed to save operation", e);
+        } catch (RepositoryException ex) {
+            throw new ServiceException("Exception received from the Repository by the Service.", ex);
         }
     }
 
