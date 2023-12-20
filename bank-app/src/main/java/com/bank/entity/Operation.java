@@ -21,8 +21,9 @@ public class Operation {
     public Operation() {
     }
 
-    public Operation(OperationType operationtype, long accountId, long customerId) {
+    public Operation(OperationType operationtype, String username, long accountId, long customerId) {
         this.operationtype = operationtype;
+        this.username = username;
         this.accountId = accountId;
         this.customerId = customerId;
     }

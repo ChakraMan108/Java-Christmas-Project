@@ -26,24 +26,26 @@ public class TomTest {
         System.out.println(c1);
         System.out.println(c2);
         
+        // Account Creation
         BankAccount acc2 = new BankAccount();  
-  
+        baService.createAccount(acc2);
         System.out.println(acc2);
-        baService.save(acc2);
+
+        // Account Deactivation
+        baService.deactivateAccount(acc2.getId());
+        System.out.println(acc2);
 
         System.out.println(baService.findAll());
-
-        // Account creation
-        BankAccount acc1 = new BankAccount();
         
+        // Find All Opearions
         System.out.println(opService.findAll());
-        //service.saveJson(bankAccounts);
+        baService.saveJson();
 
         //Bank Account and Transaction testing
-        baService.depositIntoAccount(baService.findById(baService.save(acc2)).getId(), 100000);
-        baService.depositIntoAccount(baService.findById(baService.save(acc2)).getId(), 1);
-        baService.withdrawFromAccount(baService.findById(baService.save(acc2)).getId(), 50000);
-        baService.withdrawFromAccount(baService.findById(baService.save(acc2)).getId(), 50);
+        baService.depositIntoAccount(baService.findById(baService.save(acc2).getId()).getId(), 100000);
+        baService.depositIntoAccount(baService.findById(baService.save(acc2).getId()).getId(), 1);
+        baService.withdrawFromAccount(baService.findById(baService.save(acc2).getId()).getId(), 50000);
+        baService.withdrawFromAccount(baService.findById(baService.save(acc2).getId()).getId(), 50);
 
         System.out.println(baService.findAll());
 

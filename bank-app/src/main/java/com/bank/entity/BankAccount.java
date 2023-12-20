@@ -17,6 +17,7 @@ public class BankAccount {
    private boolean isActive;
    private LocalDate createdDate;
    private LocalDate deactivatedDate;
+   private Customer customer;
 
    public BankAccount() {
 
@@ -26,7 +27,6 @@ public class BankAccount {
       this.accountName = accountName;
       this.type = type;
       this.balance = balance;
-      this.isActive = true;
    }
 
    public long getId() {
@@ -85,6 +85,14 @@ public class BankAccount {
       this.type = type;
    }
 
+   public Customer getCustomer() {
+      return customer;
+   }
+
+   public void setCustomer(Customer customer) {
+      this.customer = customer;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -96,6 +104,7 @@ public class BankAccount {
       result = prime * result + (isActive ? 1231 : 1237);
       result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
       result = prime * result + ((deactivatedDate == null) ? 0 : deactivatedDate.hashCode());
+      result = prime * result + ((customer == null) ? 0 : customer.hashCode());
       return result;
    }
 
@@ -131,13 +140,19 @@ public class BankAccount {
             return false;
       } else if (!deactivatedDate.equals(other.deactivatedDate))
          return false;
+      if (customer == null) {
+         if (other.customer != null)
+            return false;
+      } else if (!customer.equals(other.customer))
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
       return "BankAccount [id=" + id + ", accountName=" + accountName + ", type=" + type + ", balance=" + balance
-               + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate + "]";
+            + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate
+            + ", customer=" + customer + "]";
    }
 
 }

@@ -41,7 +41,7 @@ public class TransactionService implements Service<Transaction> {
         }
     }
 
-    public long save(Transaction transaction) throws ServiceException {
+    public Transaction save(Transaction transaction) throws ServiceException {
         try {
             return repository.save(transaction);
         }
