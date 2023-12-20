@@ -30,81 +30,102 @@ public class UiImpl implements Ui {
     }
 
     public void displayMenu() {
-
-        String userInput = "";
-
+        boolean exit = false;
         do {
+            System.out.println("\n========================");
             System.out.println("1. Customer Management");
             System.out.println("2. Account Management");
             System.out.println("3. Account Display");
             System.out.println("4. Account Manipulation");
             System.out.println("5. Reports");
+            System.out.println("6. Exit");
+            System.out.println("========================\n");
 
-            switch (userInput) {
-                case "1":
-                    System.out.println(("Customer Management"));
-                    customerManagement();
-                    break;
+            try {
+                String userInput = getString();
+                switch (userInput) {
+                    case "1":
+                        System.out.println(("Customer Management"));
+                        customerManagement();
+                        break;
 
-                case "2":
-                    System.out.println("Account Management");
-                    accountManagement();
-                    break;
+                    case "2":
+                        System.out.println("Account Management");
+                        accountManagement();
+                        break;
 
-                case "3":
-                    System.out.println("Account Display");
-                    accountDisplay();
-                    break;
+                    case "3":
+                        System.out.println("Account Display");
+                        accountDisplay();
+                        break;
 
-                case "4":
-                    System.out.println("Account Manipulation");
-                    accountManipulation();
-                    break;
+                    case "4":
+                        System.out.println("Account Manipulation");
+                        accountManipulation();
+                        break;
 
-                case "5":
-                    System.out.println("Reports");
-                    reports();
-                    break;
+                    case "5":
+                        System.out.println("Reports");
+                        reports();
+                        break;
+                    
+                    case "6":
+                        System.out.println("Exiting!");            
+                        exit = true;
+                        break;
 
-                default:
-                    System.out.println("Invalid Option Selected. Enter Valid Option.");
+                    default:
+                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                }
+            } catch (MenuException ex) {
+                System.out.println(ex.getMessage());
             }
-        } while (true);
+        } while (!exit);
     }
 
-    static void customerManagement() {
-        System.out.println("1. Create Customer");
+    private void customerManagement() {
+        boolean exit = false;
+
+        System.out.println("\n\n1. Create Customer");
         System.out.println("2. Update Customer");
         System.out.println("3. Delete Customer");
         System.out.println("4. Display Customer Details");
         System.out.println("5. Return to Main Menu");
     }
 
-    static void accountManagement() {
-        System.out.println("1. Create Account");
+    private void accountManagement() {
+        boolean exit = false;
+
+        System.out.println("\n1. Create Account");
         System.out.println("2. Update Account");
         System.out.println("3. Delete Account");
         System.out.println("4. Display Account Details");
         System.out.println("5. Return to Main Menu");
     }
 
-    static void accountDisplay() {
-        System.out.println("1. Display All Accounts");
+    private void accountDisplay() {
+        boolean exit = false;
+
+        System.out.println("\n1. Display All Accounts");
         System.out.println("2. Display Accounts by Customer");
         System.out.println("3. Display Accounts by Balance");
         System.out.println("4. Display Accounts by Type");
         System.out.println("5. Return to Main Menu");
     }
 
-    static void accountManipulation() {
-        System.out.println("1. Withdraw Funds from Account");
+    private void accountManipulation() {
+        boolean exit = false;
+
+        System.out.println("\n1. Withdraw Funds from Account");
         System.out.println("2. Deposit Funds to Account");
         System.out.println("3. Transfer Funds from Account");
         System.out.println("4. Return to Main Menu");
     }
 
-    static void reports() {
-        System.out.println("1. Display All Transactions");
+    private void reports() {
+        boolean exit = false;
+
+        System.out.println("\n1. Display All Transactions");
         System.out.println("2. Display Transactions of Accounts by Type");
         System.out.println("3. Display Transactions of Accounts by Date");
         System.out.println("4. Display Transactions of Customers by Date");
@@ -120,6 +141,15 @@ public class UiImpl implements Ui {
             throw new MenuException("Invalid Input!");
         }
         return input;
+    }
+
+    public long getLong() throws MenuException {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input == null || input.trim().equals("")) {
+            throw new MenuException("Invalid Input");
+        }
+        return Long.parseLong(input);
     }
 
     public void Details(ArrayList<Object> coll) {
