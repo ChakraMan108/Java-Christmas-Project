@@ -1,5 +1,6 @@
 package com.bank.ui;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
@@ -13,8 +14,12 @@ import com.bank.main.Main;
 import org.apache.commons.validator.routines.EmailValidator;
 
     public class UiImpl implements Ui {
-    
-    public void authenticateApp() throws MenuException {
+    public class MenuException extends Exception {
+        public MenuException(String message) {
+            super(message);
+        }
+    }
+    public void authenticateApp() {
         System.out.println("Enter your username: ");
         String username = getString();
         System.out.println("Enter your password: ");
@@ -25,16 +30,19 @@ import org.apache.commons.validator.routines.EmailValidator;
             throw new MenuException("Invalid Credentials");
         }
     }
-    public void displayMenu() throws MenuException {
-        do {
-            System.out.println("1. Customer Management");
-            System.out.println("2. Account Management");
-            System.out.println("3. Account Display");
-            System.out.println("4. Account Manipulation");
-            System.out.println("5. Reports");
-            
+    public void displayMenu() {
+        //while (true);    
+        final long option = 0;
+
             try {
-                long option = getLong();
+                System.out.println("1. Customer Management");
+                System.out.println("2. Account Management");
+                System.out.println("3. Account Display");
+                System.out.println("4. Account Manipulation");
+                System.out.println("5. Reports");
+            
+             {
+                long menuOption = getLong();
                 if (option < 1 || option > 5) {
                     throw new MenuException("Invalid Choice");
                 }
@@ -42,10 +50,9 @@ import org.apache.commons.validator.routines.EmailValidator;
             } catch (MenuException e) {
                 System.out.println(e.getMessage());
             }
-        } while (true);
+        } 
 
-        }
-        switch (String displayMenu()) {
+        switch (String menuOption()) {
             case 1:
             System.out.println(("Customer Management"));
            
@@ -70,7 +77,8 @@ import org.apache.commons.validator.routines.EmailValidator;
             System.out.println("Invalid Option Selected, Enter Valid Option");
                 break;
         }
-        
+    }
+     
     static void customerManagement() {
         System.out.println("1. Create Customer");
         System.out.println("2. Update Customer");
@@ -172,24 +180,28 @@ import org.apache.commons.validator.routines.EmailValidator;
     bankAccounts.add(new BankAccount("John Smith", 0123456789, 1000));
     bankAccounts.add(new BankAccount("Jane Smith", 9876543210, 1000));
     bankAccounts.add(new BankAccount("Conor Murray", 4785632100, 5000));
+
     ArrayList<Customer> customers = new ArrayList<Customer>();
     customers.add(new Customer("John Smith", 0123456789));
     customers.add(new Customer("Jane Smith", 9876543210));
     customers.add(new Customer("Conor Murray", 4785632100));
-    ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 
-    public void displayBankAccounts() {
+    ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+    Transaction[] transactions = new Transaction[3];
+
+
+    public void displayBankAccounts(ArrayList<BankAccount> bankAccounts) {
     for (BankAccount bankAccount : bankAccounts) {
         System.out.println(bankAccount);
     }
 
 }   
-    public void displayCustomers() {
+    public void displayCustomers(ArrayList<Customer> customers) {
     for (Customer customer : customers) {
         System.out.println(customer);
     } 
 }   
-    public void displayTransactions() {
+    public void displayTransactions(ArrayList<Transaction> transactions) {
     for (Transaction transaction : transactions) {
         System.out.println(transaction);
     }
