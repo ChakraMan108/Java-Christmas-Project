@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import com.bank.entity.BankAccount;
+import com.bank.entity.Customer;
 import com.bank.entity.Operation;
-import com.bank.entity.Transaction;
 import com.bank.entity.Operation.OperationType;
+import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.BankAccountRepository;
@@ -79,11 +80,11 @@ public class BankAccountService implements Service<BankAccount> {
             account.setBalance(account.getBalance() - amount);
             save(account);
             
-            Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.DEPOSIT, account.getId());
+            Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.WITHDRAWAL, account.getId());
             ts.save(t);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Repository by the Bank Account Service.");
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.");
         }
     }
 
@@ -95,21 +96,24 @@ public class BankAccountService implements Service<BankAccount> {
             account.setActive(false);
             account.setDeactivatedDate(LocalDate.now());
             save(account);
-            Operation o = new Operation(OperationType.ACCOUNT_DEACTIVATION, System.getProperty("user.name"), account.getId(), 0);
+            Operation o = new Operation(OperationType.ACCOUNT_DEACTIVATION, System.getProperty("user.name"), account.getId(), account.getCustomer().getId());
             os.save(o);   
         } catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.");
         }
     }
 
-    public BankAccount createAccount(BankAccount bankAccount) throws ServiceException {
+    public BankAccount createAccount(BankAccount bankAccount, Customer customer) throws ServiceException {
         try {
+            if (!customer.isActive())
+                throw new ServiceException("Cannot create account for inactive customer!");
             BankAccount account = new BankAccount();
             bankAccount.setActive(true);
             bankAccount.setCreatedDate(LocalDate.now());
+            bankAccount.setCustomer(customer);
             account = save(bankAccount);
             try {
-                Operation o = new Operation(OperationType.ACCOUNT_CREATION,System.getProperty("user.name"), account.getId(), 0);
+                Operation o = new Operation(OperationType.ACCOUNT_CREATION, System.getProperty("user.name"), account.getCustomer().getId(), account.getId());
                 os.save(o);
             } catch (ServiceException ex) { 
                 throw new ServiceException("Exception received from the Operation Service by the Bank Account Service.");
