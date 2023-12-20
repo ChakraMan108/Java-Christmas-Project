@@ -58,7 +58,6 @@ class BankAccountTest {
 
         BankAccount fixture = new BankAccount();
 
-
         fixture.setBalance(fixture.getBalance()+600);
         fixture.setBalance(fixture.getBalance()-100);
         fixture.setBalance(fixture.getBalance()-200);

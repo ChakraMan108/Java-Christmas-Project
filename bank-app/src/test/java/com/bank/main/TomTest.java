@@ -7,7 +7,6 @@ import com.bank.entity.Customer;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
-import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
 
@@ -24,6 +23,7 @@ public class TomTest {
         // Customer creation       
         Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
         Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+        
         cuService.createCustomer(c1);
         cuService.createCustomer(c2);
         System.out.println("\nAfter customer creation:\n" + c1);
@@ -65,6 +65,8 @@ public class TomTest {
         baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50000);
         baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50);
         System.out.println("\nAfter account withdrawal:\n" + acc2);
+
+        System.out.println("Balance of account id + " + acc2.getId() + " is EUR " + acc2.getBalance()/100);
 
         // Customer deactivation after account creation
         cuService.deactivateCustomer(c2.getId());
