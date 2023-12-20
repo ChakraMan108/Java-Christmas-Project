@@ -1,5 +1,6 @@
 package com.bank.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
@@ -9,10 +10,6 @@ import com.bank.repository.TransactionRepository;
 public class TransactionService implements Service<Transaction> {
 
     private static final TransactionRepository repository = new TransactionRepository();
-
-    // public TransactionService(TransactionRepository repository) {
-    //     this.repository = repository;
-    // }
 
     public long count() throws ServiceException {
         try {
@@ -49,6 +46,9 @@ public class TransactionService implements Service<Transaction> {
             throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
         }
     }
-
+    
+    public void saveJson() throws IOException {
+        repository.saveJson();
+    }
 }
 
