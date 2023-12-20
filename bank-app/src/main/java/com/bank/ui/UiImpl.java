@@ -88,7 +88,7 @@ public class UiImpl implements Ui {
 
         System.out.println("\n\n1. Create Customer");
         System.out.println("2. Update Customer");
-        System.out.println("3. Delete Customer");
+        System.out.println("3. Deactivate Customer");
         System.out.println("4. Display Customer Details");
         System.out.println("5. Return to Main Menu");
     }
@@ -98,7 +98,7 @@ public class UiImpl implements Ui {
 
         System.out.println("\n1. Create Account");
         System.out.println("2. Update Account");
-        System.out.println("3. Delete Account");
+        System.out.println("3. Deactivate Account");
         System.out.println("4. Display Account Details");
         System.out.println("5. Return to Main Menu");
     }
@@ -107,31 +107,29 @@ public class UiImpl implements Ui {
         boolean exit = false;
 
         System.out.println("\n1. Display All Accounts");
-        System.out.println("2. Display Accounts by Customer");
+        System.out.println("2. Display Accounts by Customer Type");
         System.out.println("3. Display Accounts by Balance");
-        System.out.println("4. Display Accounts by Type");
+        System.out.println("4. Display Accounts by Account Type");
         System.out.println("5. Return to Main Menu");
     }
 //Fionn Working here
     private void accountManipulation() {
         boolean exit = false;
-
         System.out.println("\n1. Withdraw Funds from Account");
         System.out.println("2. Deposit Funds to Account");
-        System.out.println("3. Transfer Funds from Account");
+        System.out.println("3. Transfer Funds from/to Account");
         System.out.println("4. Return to Main Menu");
     }
 
     private void reports() {
         boolean exit = false;
 
-        System.out.println("\n1. Display All Transactions");
-        System.out.println("2. Display Transactions of Accounts by Type");
-        System.out.println("3. Display Transactions of Accounts by Date");
-        System.out.println("4. Display Transactions of Customers by Date");
-        System.out.println("5. Display Transactions by Date");
-        System.out.println("6. Display Details of Operations by Date");
-        System.out.println("7. Return to Main Menu");
+        System.out.println("\n1. Display Totals");
+        System.out.println("2. Display Accounts by Date");
+        System.out.println("3. Display Customers by Date");
+        System.out.println("4. Display Transactions by Date");
+        System.out.println("5. Display Operations by Date");
+        System.out.println("6. Return to Main Menu");
     }
 
     public String getString() throws MenuException {
@@ -172,16 +170,6 @@ public class UiImpl implements Ui {
             throw new NullPointerException("Invalid Input");
     }
 
-    // ArrayList<BankAccount> bankAccounts = new
-    // ArrayList<BankAccount>();bankAccounts.add(new BankAccount("John
-    // Smith",0123456789,1000));bankAccounts.add(new BankAccount("Jane
-    // Smith",9876543210,1000));bankAccounts.add(new BankAccount("Joan
-    // Murray",4785632100,5000));
-    // ArrayList<Customer> customers = new ArrayList<Customer>();customers.add(new
-    // Customer("John Smith",0123456789));customers.add(new Customer("Jane
-    // Smith",9876543210));customers.add(new Customer("Joan Murray",4785632100));
-
-    ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 
     public void displayBankAccounts(ArrayList<BankAccount> bankAccounts) {
         for (BankAccount bankAccount : bankAccounts) {
@@ -206,4 +194,15 @@ public class UiImpl implements Ui {
             System.out.println(t);
         }
     }
+
+    //Rob
+
+
+    //Tom
+
+
+    //Fionn
+
+
+    //Dhare
 }
