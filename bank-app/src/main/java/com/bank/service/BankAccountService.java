@@ -92,7 +92,7 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             BankAccount account = repository.findById(id);
             if (!account.isActive())
-                throw new ServiceException("Cannot deactivate alredy deactivated account id " + account.getId(), Long.toString(account.getId()));
+                throw new ServiceException("Cannot deactivate already deactivated account id " + account.getId(), Long.toString(account.getId()));
             account.setActive(false);
             account.setDeactivatedDate(LocalDate.now());
             save(account);

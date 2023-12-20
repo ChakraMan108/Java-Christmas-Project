@@ -55,7 +55,7 @@ public class CustomerService implements Service<Customer> {
         try {
             Customer customer = repository.findById(id);
             if (!customer.isActive())
-                throw new ServiceException("Cannot deactivate alredy deactivated customer id " + customer.getId(), Long.toString(customer.getId()));
+                throw new ServiceException("Cannot deactivate already deactivated customer id " + customer.getId(), Long.toString(customer.getId()));
             customer.setActive(false);
             customer.setDeactivatedDate(LocalDate.now());
             save(customer);
