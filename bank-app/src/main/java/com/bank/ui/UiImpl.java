@@ -18,11 +18,15 @@ public class UiImpl implements Ui {
 
     public void authenticateApp() throws MenuException {
         try {
+            clearConsole();
+            System.out.println("\n========================");
+            System.out.println("=     AUTHENTICATION   =");
+            System.out.println("========================");
             System.out.println("Enter your username: ");
             String username = getString();
             System.out.println("Enter your password: ");
             String password = getString();
-            if (!username.equals("admin") && !password.equals("admin"))
+            if (!username.equals("admin") || !password.equals("admin"))
                 throw new MenuException("Invalid Credentials!");
         } catch (MenuException ex) {
             throw new MenuException(ex.getMessage());
@@ -32,48 +36,40 @@ public class UiImpl implements Ui {
     public void displayMenu() {
         boolean exit = false;
         do {
+            clearConsole();
             System.out.println("\n========================");
+            System.out.println("=       MAIN MENU      =");
+            System.out.println("========================");
             System.out.println("1. Customer Management");
             System.out.println("2. Account Management");
             System.out.println("3. Account Display");
             System.out.println("4. Account Manipulation");
             System.out.println("5. Reports");
             System.out.println("6. Exit");
-            System.out.println("========================\n");
+            System.out.println("========================");
+            System.out.println("Selection option:");
 
             try {
                 String userInput = getString();
                 switch (userInput) {
                     case "1":
-                        System.out.println(("Customer Management"));
                         customerManagement();
                         break;
-
                     case "2":
-                        System.out.println("Account Management");
                         accountManagement();
                         break;
-
                     case "3":
-                        System.out.println("Account Display");
                         accountDisplay();
                         break;
-
                     case "4":
-                        System.out.println("Account Manipulation");
                         accountManipulation();
                         break;
-
                     case "5":
-                        System.out.println("Reports");
                         reports();
                         break;
-                    
                     case "6":
-                        System.out.println("Exiting!");            
                         exit = true;
                         break;
-
                     default:
                         System.out.println("Invalid Option Selected. Enter Valid Option.");
                 }
@@ -95,12 +91,54 @@ public class UiImpl implements Ui {
 
     private void accountManagement() {
         boolean exit = false;
+        do {
+            clearConsole();
+            System.out.println("\n========================");
+            System.out.println("= ACCOUNT MANAGEMENT   =");
+            System.out.println("========================");
+            System.out.println("1. Create Account");
+            System.out.println("2. Update Account");
+            System.out.println("3. Deactivate Account");
+            System.out.println("4. Display Account Details");
+            System.out.println("5. Return to Main Menu");
+            System.out.println("========================");
+            System.out.println("Selection option:");
 
-        System.out.println("\n1. Create Account");
-        System.out.println("2. Update Account");
-        System.out.println("3. Deactivate Account");
-        System.out.println("4. Display Account Details");
-        System.out.println("5. Return to Main Menu");
+            try {
+                String userInput = getString();
+                switch (userInput) {
+                    case "1":
+                        System.out.println("\nCreate Account");
+
+                        break;
+
+                    case "2":
+                        System.out.println("\nUpdate Account");
+
+                        break;
+
+                    case "3":
+                        System.out.println("\nDeactivate Account");
+
+                        break;
+
+                    case "4":
+                        System.out.println("\nDisplay Account Details");
+
+                        break;
+
+                    case "5":
+                        System.out.println("\nReturn to Main Menu");
+                        exit = true;
+                        break;
+
+                    default:
+                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                }
+            } catch (MenuException ex) {
+                System.out.println(ex.getMessage());
+            }
+        } while (!exit);
     }
 
     private void accountDisplay() {
@@ -170,7 +208,6 @@ public class UiImpl implements Ui {
             throw new NullPointerException("Invalid Input");
     }
 
-
     public void displayBankAccounts(ArrayList<BankAccount> bankAccounts) {
         for (BankAccount bankAccount : bankAccounts) {
             System.out.println(bankAccount);
@@ -195,14 +232,23 @@ public class UiImpl implements Ui {
         }
     }
 
-    //Rob
+    // Rob
 
+    // Tom
+    public final static void clearConsole() {
+        try {
+            final String os = System.getProperty("os.name");
+            if (os.contains("Windows")) {
+                Runtime.getRuntime().exec("cls");
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+        } catch (final Exception e) {
+            // Handle any exceptions.
+        }
+    }
 
-    //Tom
+    // Fionn
 
-
-    //Fionn
-
-
-    //Dhare
+    // Dhare
 }

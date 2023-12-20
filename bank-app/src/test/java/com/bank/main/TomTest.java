@@ -4,11 +4,13 @@ import java.time.LocalDate;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
+import com.bank.exceptions.MenuException;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
+import com.bank.ui.UiImpl;
 
 public class TomTest {
             
@@ -96,7 +98,11 @@ public class TomTest {
         //Count all Operations
         System.out.println("Number of operations: " + opService.count());
 
+        cuService.saveJson();
         baService.saveJson();
-        
+        trService.saveJson();
+        opService.saveJson();
+    
     }
 }
+

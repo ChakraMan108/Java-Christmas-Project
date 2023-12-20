@@ -1,9 +1,13 @@
 package com.bank.repository;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class OperationRepository implements Repository<Operation> {
 
@@ -26,7 +30,7 @@ public class OperationRepository implements Repository<Operation> {
     }
 
     public long count() throws RepositoryException {
-            return operations.size();
+        return operations.size();
     }
 
     public Operation save(Operation operation) throws RepositoryException {
@@ -45,4 +49,9 @@ public class OperationRepository implements Repository<Operation> {
         return ++lastOperationId;
     }
 
+    public void saveJson() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.writeValue(new File("../data/operations.json"), operations);
+    }
 }
