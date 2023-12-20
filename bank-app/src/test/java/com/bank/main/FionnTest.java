@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
+import com.bank.entity.Transaction;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
@@ -70,6 +71,13 @@ public class FionnTest {
         cuService.deactivateCustomer(c2.getId());
         System.out.println("\nAfter customer deactivation:\n" + c2);
 
+        //Created new blank transaction
+        Transaction Test = new Transaction(657, "Bobby", Transaction.TransactionType.WITHDRAWAL, 2);
+         Transaction Test1 = new Transaction(500, "Joe", Transaction.TransactionType.WITHDRAWAL, 3);
+        //Transaction Test = new Transaction();
+        trService.save(Test);
+        trService.save(Test1);
+
         //Find All Accounts
         System.out.println("\nAll accounts:\n" + baService.findAll());
 
@@ -88,6 +96,7 @@ public class FionnTest {
         //Count all Accounts
         System.out.println("Number of accounts: " + baService.count());
 
+        
         //Count all Transactions
         System.out.println("Number of transactions: " + trService.count());
 
@@ -99,8 +108,10 @@ public class FionnTest {
         System.out.println(trService.findById(4));
         System.out.println(trService.findById(5));
 
-        trService.save();
+        
 
+      //  System.out.println("\nAll transactions:\n" + trService.findAll());
+      //  System.out.println("Number of transactions: " + trService.count());   
 
         baService.saveJson();
         
