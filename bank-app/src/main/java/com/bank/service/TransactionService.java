@@ -8,15 +8,15 @@ import com.bank.repository.TransactionRepository;
 
 public class TransactionService implements Service<Transaction> {
 
-    private TransactionRepository repo = new TransactionRepository();
+    private static final TransactionRepository repository = new TransactionRepository();
 
-    // public TransactionService(TransactionRepository repo) {
-    //     this.repo = repo;
+    // public TransactionService(TransactionRepository repository) {
+    //     this.repository = repository;
     // }
 
     public long count() throws ServiceException {
         try {
-            return repo.count();
+            return repository.count();
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
@@ -25,7 +25,7 @@ public class TransactionService implements Service<Transaction> {
 
     public ArrayList<Transaction> findAll() throws ServiceException {
         try {
-            return repo.findAll();
+            return repository.findAll();
         } 
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);
@@ -34,16 +34,16 @@ public class TransactionService implements Service<Transaction> {
 
     public Transaction findById(long id) throws ServiceException {
         try {
-            return repo.findById(id);
+            return repository.findById(id);
         } 
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);         
         }
     }
 
-    public long save(Transaction transaction) throws ServiceException {
+    public Transaction save(Transaction transaction) throws ServiceException {
         try {
-            return repo.save(transaction);
+            return repository.save(transaction);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex);

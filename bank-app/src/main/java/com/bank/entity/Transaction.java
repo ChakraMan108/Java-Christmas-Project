@@ -23,10 +23,11 @@ public class Transaction {
     
     }
 
-    public Transaction(long amount, String username, TransactionType type) {
+    public Transaction(long amount, String username, TransactionType type, long accountId) {
         this.amount = amount;
         this.username = username;
         this.type = type;
+        this.accountId = accountId;
     }
 /* ****************************** */
 // Getters and setters

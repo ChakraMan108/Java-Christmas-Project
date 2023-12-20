@@ -6,18 +6,12 @@ import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
 
 public class TransactionRepository implements Repository<Transaction> {
-    private static long lastTransactionNumber = 0;
-
+    
     private ArrayList<Transaction> transactions = new ArrayList<>();
-
-    // public TransactionRepository(ArrayList<Transaction> transactions) {
-    //     this.transactions = transactions;
-    // }
+    private static long lastTransactionId = 0;
 
     public long count() throws RepositoryException {
-        if (!transactions.isEmpty())
-            return transactions.size();    
-        throw new RepositoryException("No transaction items found in the repository.");
+        return transactions.size();
     }
 
     public ArrayList<Transaction> findAll() throws RepositoryException {
@@ -35,21 +29,19 @@ public class TransactionRepository implements Repository<Transaction> {
         throw new RepositoryException("No transaction item with id " + id + " found in the repository.");
     }
     
-    public long save(Transaction transaction) throws RepositoryException {
-        if (!transactions.contains(transaction)) {
-            transaction.setId(incrementTransactionNumber());
+    public Transaction save(Transaction transaction) throws RepositoryException {
+        try {
+            transaction.setId(incrementTransactionId());
             transaction.setCreatedDate(LocalDate.now());
             transactions.add(transaction);
-            return transaction.getId();
-        }
-        else
-        {
-            transactions.set(transactions.indexOf(transaction), transaction);
-            return transaction.getId();
+            return transaction;
+        } catch (Exception ex) {
+            String errorMessage = "Failed to save operation.";
+            throw new RepositoryException(errorMessage, ex);
         }
     }
 
-    private static long incrementTransactionNumber() {
-        return ++lastTransactionNumber;
+    private static long incrementTransactionId() {
+        return ++lastTransactionId;
     }
 }
