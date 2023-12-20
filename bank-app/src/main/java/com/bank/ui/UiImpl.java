@@ -81,7 +81,7 @@ import org.apache.commons.validator.routines.EmailValidator;
             System.out.println("Invalid Option Selected, Enter Valid Option");
                 break;
         }
-    }
+    
      
     static void customerManagement() {
         System.out.println("1. Create Customer");
