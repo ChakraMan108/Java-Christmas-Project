@@ -116,7 +116,7 @@ public class BankAccountService implements Service<BankAccount> {
                 Operation o = new Operation(OperationType.ACCOUNT_CREATION, System.getProperty("user.name"), account.getCustomer().getId(), account.getId());
                 os.save(o);
             } catch (ServiceException ex) { 
-                throw new ServiceException("Exception received from the Operation Service by the Bank Account Service.");
+                throw ex;
             }
             return account;
         } catch (ServiceException ex) {
