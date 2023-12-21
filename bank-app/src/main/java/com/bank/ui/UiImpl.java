@@ -3,11 +3,10 @@ package com.bank.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
-
+import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Transaction;
-import com.bank.entity.Operation;
 import com.bank.exceptions.MenuException;
 
 public class UiImpl implements Ui {
@@ -22,12 +21,12 @@ public class UiImpl implements Ui {
             System.out.println("\n========================");
             System.out.println("=     AUTHENTICATION   =");
             System.out.println("========================");
-            System.out.println("Enter your username: ");
+            System.out.println("Enter username: ");
             String username = getString();
-            System.out.println("Enter your password: ");
+            System.out.println("Enter password: ");
             String password = getString();
             if (!username.equals("admin") || !password.equals("admin"))
-                throw new MenuException("Invalid Credentials!");
+                throw new MenuException("Invalid credentials!");
         } catch (MenuException ex) {
             throw new MenuException(ex.getMessage());
         }
@@ -71,7 +70,7 @@ public class UiImpl implements Ui {
                         exit = true;
                         break;
                     default:
-                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                        System.out.println("Invalid option selected. Enter valid option.");
                 }
             } catch (MenuException ex) {
                 System.out.println(ex.getMessage());
@@ -183,7 +182,7 @@ public class UiImpl implements Ui {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
-            throw new MenuException("Invalid Input");
+            throw new MenuException("Invalid Input.");
         }
         return Long.parseLong(input);
     }
@@ -195,17 +194,10 @@ public class UiImpl implements Ui {
     }
 
     public void validateEmail(String email) throws MenuException {
-        // EmailValidator emailValidator = new EmailValidator.getInstance();
-        // if(!emailValidator.isValid(email))
-        // {
-        // throw new MenuException("Invalid Email Address");
-        // }
-        // else
-        // {
-        // System.out.println("Email Address is Valid");
-        // }
+        if(!EmailValidator.getInstance().isValid(email))
+            throw new MenuException("Invalid Email Address.");
         if (email == null || email.trim().equals(""))
-            throw new NullPointerException("Invalid Input");
+            throw new NullPointerException("Invalid Input.");
     }
 
     public void displayBankAccounts(ArrayList<BankAccount> bankAccounts) {
@@ -244,7 +236,7 @@ public class UiImpl implements Ui {
                 Runtime.getRuntime().exec("clear");
             }
         } catch (final Exception e) {
-            // Handle any exceptions.
+            System.err.println("Cannot execute the terminal command cls/clear.\n" + e.getMessage());
         }
     }
 
