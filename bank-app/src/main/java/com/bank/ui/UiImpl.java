@@ -8,6 +8,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Transaction;
+import com.bank.entity.BankAccount.AccountType;
 import com.bank.entity.Operation;
 import com.bank.exceptions.CustomerException;
 import com.bank.exceptions.MenuException;
@@ -30,6 +31,8 @@ CustomerService cuService = new CustomerService();
   public UiImpl() {
 
     }
+    
+  private long idToUpdate;
 
     public void authenticateApp() throws MenuException {
         try {
@@ -96,12 +99,12 @@ CustomerService cuService = new CustomerService();
         } while (!exit);
     }
 
-    private void customerManagement() throws ServiceException, MenuException {
+    private void customerManagement() throws MenuException {
         boolean exit = false;
         do{
         clearConsole();
         System.out.println("\n========================");
-        System.out.println("= ACCOUNT MANAGEMENT   =");
+        System.out.println("=  CUSTOMER MANAGEMENT  =");
         System.out.println("========================");
         System.out.println("\n\n1. Create Customer");
         System.out.println("2. Update Customer");
@@ -132,16 +135,13 @@ CustomerService cuService = new CustomerService();
                         exit = true;
                         break;
                     default:
-                        System.out.println("Invalid choice. Please enter a valid option.");
+                        System.out.println("Invalid option selected. Please enter a valid option.");
                 }
+            } catch (MenuException ex) {
+                System.out.println(ex.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-            e.printStackTrace();
         } while (!exit);
-
-     System.out.println("Exiting Customer Management System. Goodbye!");
-        }
+    }
             
     private void accountManagement() {
         boolean exit = false;
@@ -603,32 +603,116 @@ CustomerService cuService = new CustomerService();
         System.out.println("Customer deactivated successfully.");
     }
 
-    private void displayCustomerDetails() throws ServiceException {
-
+    private void displayCustomerDetails() {
         try {
-            Customer customer = customerService.findById(idToUpdate);
+            Customer customer = cuService.findById(idToUpdate);
 
             if (customer != null) {
                 System.out.println("Name: " + customer.getName());
-                System.out.println("Name: " + customer.getAddress());
-                System.out.println("Name: " + customer.getDob());
-                System.out.println("Name: " + customer.getPhoneNumber());
-                System.out.println("Name: " + customer.getEmail());
-                System.out.println("Name: " + customer.getType());
+                System.out.println("Address: " + customer.getAddress());
+                System.out.println("Date of Birth: " + customer.getDob());
+                System.out.println("Phone Number: " + customer.getPhoneNumber());
+                System.out.println("Email: " + customer.getEmail());
+                System.out.println("Type: " + customer.getType());
                 System.out.println("Customer ID: " + customer.isActive());
-                System.out.println("Name: " + customer.getCreatedDate());
-                System.out.println("Name: " + customer.getDeactivatedDate());
+                System.out.println("Created Date: " + customer.getCreatedDate());
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
             } else {
                 System.out.println("Customer not found.");
             }
         } catch (ServiceException e) {
-
             System.out.println("Error retrieving customer details: " + e.getMessage());
             e.printStackTrace();
         } catch (Exception e) {
-
             System.out.println("An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+
+    //method for report
+    private void displayTotals() {
+    try {
+        ArrayList<BankAccount> totalAccounts = new ArrayList<>();
+        baService.findAll();
+
+        System.out.println("Total number of accounts: " + totalAccounts.size());
+
+        for (BankAccount account : totalAccounts) {
+            System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
+        }
+
+    } catch (ServiceException e) {
+        e.printStackTrace();
+    }
+
+    
+    ArrayList<Customer> totalCustomers = new ArrayList<>();
+
+    try {
+        totalCustomers = cuService.findAll();
+    } catch (ServiceException e) {
+        
+        e.printStackTrace();
+    }
+    System.out.println("Total number of customers: " + totalCustomers);
+
+    for (Customer customer : totalCustomers) {
+        // Do something with each customer, e.g., print customer details
+        System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
+    }
+
+
+   ArrayList<Transaction> totalTransactions = new ArrayList<>();
+try {
+    totalTransactions = transactionService.findAll();
+} catch (ServiceException e) {
+
+    e.printStackTrace();
+}
+    System.out.println("Total number of transactions: " + totalTransactions);
+
+    
+     Long totalBalance = (long) 0;
+    try {
+        totalBalance = baService.count();
+    } catch (ServiceException e) {
+        
+        e.printStackTrace();
+    }
+     System.out.println("Total balance across all accounts: " + totalBalance);
+
+    
+
+    // Pause to allow the user to read the totals
+    System.out.println("\nPress Enter to return to the reporting menu...");
+    try {
+        getString();
+    } catch (MenuException e) {
+        
+        e.printStackTrace();
+    } 
+
+    
+    // private void displayAccountsByDate() {
+    //     // Implement logic to display accounts by date
+    //     System.out.println("Display Accounts by Date");
+    // }
+    
+    // private void displayCustomersByDate() {
+    //     // Implement logic to display customers by date
+    //     System.out.println("Display Customers by Date");
+    // }
+    
+    // private void displayTransactionsByDate() {
+    //     // Implement logic to display transactions by date
+    //     System.out.println("Display Transactions by Date");
+    // }
+    
+    // private void displayOperationsByDate() {
+    //     // Implement logic to display operations by date
+    //     System.out.println("Display Operations by Date");
+    // }
+//}
+}
 }
