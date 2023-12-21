@@ -1,5 +1,6 @@
 package com.bank.ui;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
@@ -186,15 +187,17 @@ public class UiImpl implements Ui {
                         long wId = wScanner.nextLong();
 
                         System.out.println("\nEnter withdrawl ammount");
-                        long wAmount = wScanner.nextLong();   
+                        long wAmountC = wScanner.nextLong(); 
+                        long wAmount = wAmountC * 100;
+
 
                         try{
                         baService.withdrawFromAccount(wId, wAmount);
                         baService.findById(wId);
-                        System.out.println("\nAfter account withdrawal:\n" + wAmount); // Not going to work
+                        System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to work
                         }
                         catch (ServiceException ex) {
-                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                            throw new MenuException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
                         break;
 
@@ -205,15 +208,19 @@ public class UiImpl implements Ui {
                         long dId = dScanner.nextLong();
 
                         System.out.println("\nEnter deposit ammount");
-                        long dAmount = dScanner.nextLong();   
+                        long dAmountC = dScanner.nextLong(); 
+                        long dAmount = dAmountC * 100;  
 
                         try{
                         baService.depositIntoAccount(dId, dAmount);
+
+                        baService.findById(dId);
+                        System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
                         }
                         catch (ServiceException ex) {
-                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                            throw new MenuException("Case2: Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
-                        System.out.println("\nAfter account deposit:\n" + dAmount); // Not going to work
+                        
                         
                         break;
 
@@ -225,21 +232,24 @@ public class UiImpl implements Ui {
                         System.out.println("\nEnter the recipients ID");
                         long rId = tScanner.nextLong();
                         System.out.println("\nEnter transfer ammount");
-                        long tAmount = tScanner.nextLong();  
+                        long tAmountC = tScanner.nextLong();
+                        long tAmount = tAmountC * 100;  
 
                         try{
                         baService.withdrawFromAccount(tId, tAmount);
                         }
                         catch (ServiceException ex) {
-                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                            throw new MenuException("Case3: Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
                         try{
                         baService.depositIntoAccount(rId, tAmount);
+                        System.out.println("\nTransferer's account after withdrawal:\n" + tId); // Not going to work
+                        System.out.println("\nRecipients's account after withdrawal:\n" + rId); 
                         }
                         catch (ServiceException ex1) {
                             throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
-                        System.out.println("\nAfter account withdrawal:\n" + tAmount); // Not going to work
+                        
 
                         break;
 
