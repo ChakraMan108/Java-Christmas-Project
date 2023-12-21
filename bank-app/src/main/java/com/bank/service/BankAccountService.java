@@ -23,7 +23,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.count();
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex);
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
         }
     }
 
@@ -32,7 +32,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.findAll();
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex);
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.findById(id);
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex);         
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());         
         }
     }
 
@@ -50,7 +50,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.save(bankAccount);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex);
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
         }
     }
 
@@ -67,7 +67,7 @@ public class BankAccountService implements Service<BankAccount> {
             ts.save(t);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.");
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service." + ex.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ public class BankAccountService implements Service<BankAccount> {
             ts.save(t);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.");
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class BankAccountService implements Service<BankAccount> {
             Operation o = new Operation(OperationType.ACCOUNT_DEACTIVATION, System.getProperty("user.name"), account.getId(), account.getCustomer().getId());
             os.save(o);   
         } catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.");
+            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
         }
     }
 
@@ -120,7 +120,7 @@ public class BankAccountService implements Service<BankAccount> {
             }
             return account;
         } catch (ServiceException ex) {
-            throw new ServiceException("Exception received from the Bank Account Service by the Bank Account Service.");
+            throw new ServiceException("Exception received from the Bank Account Service by the Bank Account Service.", ex.getMessage());
         }
     }
 
