@@ -153,10 +153,47 @@ public class UiImpl implements Ui {
 //Fionn Working here
     private void accountManipulation() {
         boolean exit = false;
-        System.out.println("\n1. Withdraw Funds from Account");
-        System.out.println("2. Deposit Funds to Account");
-        System.out.println("3. Transfer Funds from/to Account");
-        System.out.println("4. Return to Main Menu");
+        do {
+            clearConsole();
+            System.out.println("\n========================");
+            System.out.println("= ACCOUNT MANIPULATION   =");
+            System.out.println("========================");
+            System.out.println("1. Withdraw Funds from Account");
+            System.out.println("2. Deposit Funds to Account");
+            System.out.println("3. Transfer Funds from/to Account");
+            System.out.println("========================");
+            System.out.println("4. Return to Main Menu");
+
+    try {
+                String userInput = getString();
+                switch (userInput) {
+                    case "1":
+                        System.out.println("\nWithdraw Funds from Account");
+
+                        break;
+
+                    case "2":
+                        System.out.println("\nDeposit Funds to Account");
+
+                        break;
+
+                    case "3":
+                        System.out.println("\nTransfer Funds from/to Account");
+
+                        break;
+
+                    case "4":
+                        System.out.println("\nReturn to Main Menu");
+                        exit = true;
+                        break;
+
+                    default:
+                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                }
+            } catch (MenuException ex) {
+                System.out.println(ex.getMessage());
+            }
+        } while (!exit);
     }
 
     private void reports() {
