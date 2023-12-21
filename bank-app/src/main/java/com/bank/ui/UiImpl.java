@@ -96,17 +96,6 @@ CustomerService cuService = new CustomerService();
         } while (!exit);
     }
 
-
-    private void customerManagement() {
-        boolean exit = false;
-
-        System.out.println("\n\n1. Create Customer");
-        System.out.println("2. Update Customer");
-        System.out.println("3. Deactivate Customer");
-        System.out.println("4. Display Customer Details");
-        System.out.println("5. Return to Main Menu");
-    }
-
     private void customerManagement() throws ServiceException, MenuException {
         boolean exit = false;
         do{
