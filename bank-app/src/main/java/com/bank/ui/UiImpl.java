@@ -163,7 +163,7 @@ public class UiImpl implements Ui {
         System.out.println("4. Display Accounts by Account Type");
         System.out.println("5. Return to Main Menu");
     }
-    //Fionn Working here
+    //Fionn
     private void accountManipulation() {
         boolean exit = false;
         do {
@@ -176,7 +176,6 @@ public class UiImpl implements Ui {
             System.out.println("3. Transfer Funds from/to Account");
             System.out.println("========================");
             System.out.println("4. Return to Main Menu");
-
         try {
                 String userInput = getString();
                 switch (userInput) {
@@ -185,12 +184,9 @@ public class UiImpl implements Ui {
                         System.out.println("\nEnter user ID");
                         Scanner wScanner = new Scanner(System.in);
                         long wId = wScanner.nextLong();
-
                         System.out.println("\nEnter withdrawl ammount");
                         long wAmountC = wScanner.nextLong(); 
                         long wAmount = wAmountC * 100;
-
-
                         try{
                         baService.withdrawFromAccount(wId, wAmount);
                         baService.findById(wId);
@@ -200,20 +196,16 @@ public class UiImpl implements Ui {
                             throw new MenuException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
                         break;
-
                     case "2":
                         System.out.println("\nDeposit Funds to Account");
                         System.out.println("\nEnter user ID");
                         Scanner dScanner = new Scanner(System.in);
                         long dId = dScanner.nextLong();
-
                         System.out.println("\nEnter deposit ammount");
                         long dAmountC = dScanner.nextLong(); 
                         long dAmount = dAmountC * 100;  
-
                         try{
                         baService.depositIntoAccount(dId, dAmount);
-
                         baService.findById(dId);
                         System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
                         }
@@ -223,7 +215,6 @@ public class UiImpl implements Ui {
                         
                         
                         break;
-
                     case "3":
                         System.out.println("\nTransfer Funds from/to Account");
                         System.out.println("\nEnter the transferer ID");
@@ -234,7 +225,6 @@ public class UiImpl implements Ui {
                         System.out.println("\nEnter transfer ammount");
                         long tAmountC = tScanner.nextLong();
                         long tAmount = tAmountC * 100;  
-
                         try{
                         baService.withdrawFromAccount(tId, tAmount);
                         }
@@ -250,14 +240,11 @@ public class UiImpl implements Ui {
                             throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
                         
-
                         break;
-
                     case "4":
                         System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
-
                     default:
                         System.out.println("Invalid Option Selected. Enter Valid Option.");
                 }
