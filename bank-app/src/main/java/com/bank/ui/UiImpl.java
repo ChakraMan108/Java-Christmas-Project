@@ -233,7 +233,129 @@ public class UiImpl implements Ui {
     }
 
     // Rob
+    static void accountDisplay() {
+        boolean exit = false;
+        do {
+            System.out.println("1. Display All Accounts");
+            System.out.println("2. Display Accounts by Customer");
+            System.out.println("3. Display Accounts by Balance");
+            System.out.println("4. Display Accounts by Type");
+            System.out.println("5. Return to Main Menu");
+            System.out.println("Please enter a number between 1 and 5");
+            
+            int menuOption = Integer.parseInt(scanner.nextLine());
+            String userInput = getString();
+            try {
+                switch (menuOption) {
+                    case 1:
+                        displayAccounts();
+                        break;
+                    case 2:
+                        displayAccountsByCustomer();
+                        break;
+                    case 3:
+                        displayAccountsByBalance();
+                        break;
+                    case 4:
+                        displayAccountsByType();
+                        break;
+                    case 5:
+                        exit = true;
+                        break;
+                    default:
+                        throw new MenuException("Invalid Option Selected. Enter Valid Option. Please enter a number between 1 and 5.");
+                }
+            } catch (MenuException e) {
+                System.out.println("Unexpected error occurred:" + e.getMessage());
+            } finally {
+                System.out.println("Thank you for using the Bank App.");
 
+                if Scanner != null {
+                    Scanner.close();
+                }
+        } while (!exit);
+    }
+    
+    
+    
+    static void accountDisplay() {
+        boolean exit = false;
+        do {
+            System.out.println("1. Display All Accounts");
+            System.out.println("2. Display Accounts by Customer");
+            System.out.println("3. Display Accounts by Balance");
+            System.out.println("4. Display Accounts by Type");
+            System.out.println("5. Return to Main Menu");
+            System.out.println("Please enter a number between 1 and 5");
+            int menuOption = Integer.parseInt(scanner.nextLine());
+            String userInput = Scanner.nextLine();
+            try {
+                switch (menuOption) {
+                    case 1:
+                        CURRENT();
+                        break;
+                    case 2:
+                        SAVINGS();
+                        break;
+                    case 3:
+                        STUDENT();
+                        break;
+                    case 4:
+                        returnToMainMenu();
+                        break;
+                    default:
+                        throw new MenuException("Invalid Option Selected. Enter Valid Option. Please enter a number between 1 and 5.");
+                }
+            } catch (MenuException e) {
+                System.out.println(e.getMessage());
+            }
+        } while (!exit);
+    }
+    static void displayAllAccounts() {
+        System.Out.println("Please enter an account Id");
+        long Id = Long.parseLong(scanner.nextLine());
+        try { switch (menuOption) {baService.getId().findAll();}
+        } catch (MenuException e) {
+            System.out.println(e.getMessage());
+        }
+            
+        System.out.println("\nAll accounts:\n" + baService.findAll());;
+    }
+    
+    static void displayAccountsByCustomer() {
+        System.Out.println("Please enter a customer name");
+        String name = scanner.nextLine();
+        try { {baService.getId().findByName();}
+        } catch (MenuException e) {
+            System.out.println(e.getMessage());
+        } catch (MenuException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("\nAll accounts:\n" + baService.getId().findAll());
+    }
+    
+    static void displayAccountsByBalance() {
+        System.out.println("Please enter an account Id");
+        long Id = Long.parseLong(scanner.nextLine());
+        try { {baService.getId().sortByBalance();}
+        } catch (MenuException e) {
+            System.out.println(e.getMessage());
+        System.out.println("3. Display Accounts by Balance");
+        System.out.println("Balance of account id" + acc.getId() + "is EUR" + acc.getBalanceamount()/100);
+    }
+    
+    static void displayAccountsByType() {
+        System.out.println("Please enter an account Id");
+        long Id = Long.parseLong(scanner.nextLine());
+        System.out.println("Please enter an account type");
+        String type = scanner.nextLine();
+        try {  {baService.getId().sortByType();}
+        } catch (MenuException e) {
+            System.out.println(e.getMessage());
+        System.out.println("\nAll accounts:\n" + baService.sortByType());
+    }
+    
+    
     // Tom
     public final static void clearConsole() {
         try {
