@@ -13,7 +13,6 @@ import com.bank.exceptions.MenuException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.CustomerRepository;
 import com.bank.service.CustomerService;
-import com.bank.service.Service;
 
 public class UiImpl implements Ui {
 
@@ -37,7 +36,7 @@ public class UiImpl implements Ui {
             String password = getString();
             if (!username.equals("admin") || !password.equals("admin"))
                 throw new MenuException("Invalid credentials!");
-        } catch (MenuException ex) {
+        } catch (Exception ex) {
             throw new MenuException(ex.getMessage());
         }
     }
@@ -78,10 +77,10 @@ public class UiImpl implements Ui {
                         break;
                     case "6":
                         exit = true;
-                        System.out.println("Exiting!");
+                        System.out.println("Exiting the Bank Application.");
                         break;
                     default:
-                        System.out.println("Invalid option selected. Enter valid option.");
+                        System.out.println("Invalid option selected. Please enter a valid option (1-6).");
                 }
             } catch (MenuException | ServiceException ex) {
                 System.out.println(ex.getMessage());
@@ -151,7 +150,6 @@ public class UiImpl implements Ui {
                 switch (userInput) {
                     case "1":
                         System.out.println("\nCreate Account");
-
                         break;
 
                     case "2":
@@ -175,7 +173,7 @@ public class UiImpl implements Ui {
                         break;
 
                     default:
-                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                        System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (MenuException ex) {
                 System.out.println(ex.getMessage());
@@ -244,9 +242,9 @@ public class UiImpl implements Ui {
                         System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
-
+                      
                     default:
-                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                        System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (MenuException ex) {
                 System.out.println(ex.getMessage());
@@ -257,8 +255,9 @@ public class UiImpl implements Ui {
     public String getString() throws MenuException {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
+        
         if (input == null || input.trim().equals("")) {
-            throw new MenuException("Invalid Input!");
+            throw new MenuException("Invalid input.");
         }
         return input;
     }
@@ -267,7 +266,7 @@ public class UiImpl implements Ui {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
-            throw new MenuException("Invalid Input.");
+            throw new MenuException("Invalid input.");
         }
         return Long.parseLong(input);
     }

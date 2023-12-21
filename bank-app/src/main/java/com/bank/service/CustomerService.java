@@ -20,7 +20,7 @@ public class CustomerService implements Service<Customer> {
             return repository.count();
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex);
+            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());
         }
     }
 
@@ -29,7 +29,7 @@ public class CustomerService implements Service<Customer> {
             return repository.findAll();
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex);
+            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());
         }
     }
 
@@ -38,7 +38,7 @@ public class CustomerService implements Service<Customer> {
             return repository.findById(id);
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex);         
+            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage();         
         }
     }
 
@@ -47,7 +47,7 @@ public class CustomerService implements Service<Customer> {
             return repository.save(customer);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex);
+            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());
         }
     }
 
