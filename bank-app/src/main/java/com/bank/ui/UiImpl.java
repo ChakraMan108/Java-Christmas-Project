@@ -21,11 +21,11 @@ public class UiImpl implements Ui {
     public UiImpl() {
 
     }
+
     CustomerService customerService = new CustomerService();
     CustomerRepository customerRepository = new CustomerRepository();
     private long idToUpdate;
-    
-        
+
     public void authenticateApp() throws MenuException {
         try {
             clearConsole();
@@ -80,7 +80,7 @@ public class UiImpl implements Ui {
 
                     case "6":
                         System.out.println("Exiting!");
-                    
+
                     default:
                         System.out.println("Invalid Option Selected. Enter Valid Option.");
                 }
@@ -90,48 +90,53 @@ public class UiImpl implements Ui {
         } while (!exit);
     }
 
-    private void customerManagement() throws ServiceException {
+    private void customerManagement() throws ServiceException, MenuException {
         boolean exit = false;
+        do{
+        clearConsole();
+        System.out.println("\n========================");
+        System.out.println("= ACCOUNT MANAGEMENT   =");
+        System.out.println("========================");
+        System.out.println("\n\n1. Create Customer");
+        System.out.println("2. Update Customer");
+        System.out.println("3. Deactivate Customer");
+        System.out.println("4. Display Customer Details");
+        System.out.println("5. Return to Main Menu");
+        System.out.print("Enter your choice: ");
         Scanner scanner = new Scanner(System.in);
     try{
-        while (!exit) {
-            displayMainMenu();
-            int choice = scanner.nextInt();
-
-            switch (choice) {
-                case 1:
+     String userInput = getString();
+                switch (userInput) {
+                case "1":
                     createCustomer();
                     break;
-                case 2:
+                case "2":
                     updateCustomer();
                     break;
-                case 3:
+                case "3":
                     deactivateCustomer(null);
                     break;
-                case 4:
+                case "4":
                     
                     displayCustomerDetails();
                     break;
-                case 5:
+                case "5":
                     exit = true;
                     break;
                 default:
                     System.out.println("Invalid choice. Please enter a valid option.");
-            }
-            }} catch (Exception e) {
-                System.out.println("An unexpected error occurred: " + e.getMessage());
-                e.printStackTrace();  
-            } finally {
-                
-                if (scanner != null) {
-                    scanner.close();
-                }
-            }
-        
+            }    }
+            catch (ServiceException e) {
+            System.out.println("ServiceException: " + e.getMessage());
+        } catch (MenuException e) {
+            System.out.println("MenuException: " + e.getMessage());
+        }
 
-        System.out.println("Exiting Customer Management System. Goodbye!");
-        scanner.close();
-    }
+    } while (!exit);
+
+    System.out.println("Exiting Customer Management System. Goodbye!");
+    
+}
 
     private void accountManagement() {
         boolean exit = false;
@@ -278,7 +283,6 @@ public class UiImpl implements Ui {
 
     // Rob
 
-  
     // Tom
     public final static void clearConsole() {
         try {
@@ -292,7 +296,7 @@ public class UiImpl implements Ui {
             // Handle any exceptions.
         }
     }
-  
+
     // Fionn
 
     // Dhara
@@ -308,18 +312,26 @@ public class UiImpl implements Ui {
     private void createCustomer() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter customer ID: ");
-        long id = scanner.nextLong();
-        scanner.nextLine(); 
 
-        System.out.print("Enter customer name: ");
-        String name = scanner.nextLine();
+        System.out.print("Enter customer firstname: ");
+        String firstname = scanner.nextLine();
+
+        System.out.print("Enter customer lastname: ");
+        String lastname = scanner.nextLine();
+        String fullName = firstname + " " + lastname;
+        System.out.println("Full name: " + fullName);
+        //scanner.close();
 
         System.out.print("Enter customer address: ");
         String address = scanner.nextLine();
 
         System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
-        LocalDate dob = LocalDate.parse(scanner.nextLine());
+        try {
+            LocalDate dob = LocalDate.parse(getString());
+        } catch (MenuException e) {
+            
+            e.printStackTrace();
+        }
 
         System.out.print("Enter customer phone number: ");
         String phoneNumber = scanner.nextLine();
@@ -399,45 +411,45 @@ public class UiImpl implements Ui {
 
     private void deactivateCustomer(Customer customer) {
         customer.setActive(false);
-    
-        
+
         Customer deactivatedCustomer = new Customer(
-        customer.getId(),
-        customer.getName(),
-        customer.getAddress(),
-        customer.getDob(),
-        customer.getPhoneNumber(),
-        customer.getEmail(),
-        CustomerType.NEW_TYPE  
-        );
-    
+                customer.getId(),
+                customer.getName(),
+                customer.getAddress(),
+                customer.getDob(),
+                customer.getPhoneNumber(),
+                customer.getEmail(),
+                CustomerType.NEW_TYPE);
+
         System.out.println("Customer deactivated successfully.");
     }
-    private void displayCustomerDetails() throws ServiceException {
-        
-       
-        try{
-        Customer customer = customerService.findById(idToUpdate);
 
-        if (customer != null) {
-            System.out.println("Name: " + customer.getName());
-            System.out.println("Name: " + customer.getAddress());
-            System.out.println("Name: " + customer.getDob());
-            System.out.println("Name: " + customer.getPhoneNumber());
-            System.out.println("Name: " + customer.getEmail());
-            System.out.println("Name: " + customer.getType());
-            System.out.println("Customer ID: " + customer.isActive());
-            System.out.println("Name: " + customer.getCreatedDate());
-            System.out.println("Name: " + customer.getDeactivatedDate());
-        } else {
-            System.out.println("Customer not found.");
-        }} catch (ServiceException e) {
-            
+    private void displayCustomerDetails() throws ServiceException {
+
+        try {
+            Customer customer = customerService.findById(idToUpdate);
+
+            if (customer != null) {
+                System.out.println("Name: " + customer.getName());
+                System.out.println("Name: " + customer.getAddress());
+                System.out.println("Name: " + customer.getDob());
+                System.out.println("Name: " + customer.getPhoneNumber());
+                System.out.println("Name: " + customer.getEmail());
+                System.out.println("Name: " + customer.getType());
+                System.out.println("Customer ID: " + customer.isActive());
+                System.out.println("Name: " + customer.getCreatedDate());
+                System.out.println("Name: " + customer.getDeactivatedDate());
+            } else {
+                System.out.println("Customer not found.");
+            }
+        } catch (ServiceException e) {
+
             System.out.println("Error retrieving customer details: " + e.getMessage());
-            e.printStackTrace(); 
+            e.printStackTrace();
         } catch (Exception e) {
-            
+
             System.out.println("An unexpected error occurred: " + e.getMessage());
-            e.printStackTrace();  
+            e.printStackTrace();
         }
     }
+}
