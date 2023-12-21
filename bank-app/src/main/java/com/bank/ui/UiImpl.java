@@ -9,6 +9,7 @@ import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Transaction;
 import com.bank.entity.Operation;
+import com.bank.exceptions.CustomerException;
 import com.bank.exceptions.MenuException;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
@@ -165,13 +166,8 @@ public class UiImpl implements Ui {
     }
     //Fionn
     private void accountManipulation() {
-        Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
-        Customer c2 = new Customer(2, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
-        System.out.println("\nAfter customer creation:\n" + c1);
-        System.out.println("\nAfter customer creation:\n" + c2);
-
-
         boolean exit = false;
+        
         do {
             clearConsole();
             System.out.println("\n========================");
@@ -183,78 +179,28 @@ public class UiImpl implements Ui {
             System.out.println("========================");
             System.out.println("4. Return to Main Menu");
         try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        System.out.println("\nWithdraw Funds from Account");
-                        System.out.println("\nEnter account ID");
-                        long wId = getLong();
-                        System.out.println("\nEnter withdrawl ammount");
-                        long wAmountC = getLong();  
-                        long wAmount = wAmountC * 100;
-                        try{
-                        System.out.println("Number of customers: " + cuService.count());
-                        baService.withdrawFromAccount(wId, wAmount);
-                        baService.findById(wId);
-                        System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to work
-                        }
-                        catch (ServiceException ex) {
-                            throw new MenuException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
-                        }
+            String userInput = getString();
+            switch (userInput) {
+                case "1":
+                    System.out.println("\nWithdraw Funds from Account");
+            
                         break;
-                    case "2":
-                        System.out.println("\nDeposit Funds to Account");
-                        System.out.println("\nEnter account ID");
-                        long dId = getLong();
-                        System.out.println("\nEnter deposit ammount");
-                        long dAmountC = getLong(); 
-                        long dAmount = dAmountC * 100;  
-                        try{
-                        baService.depositIntoAccount(dId, dAmount);
-                        baService.findById(dId);
-                        System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
-                        }
-                        catch (ServiceException ex) {
-                            throw new MenuException("Case2: Exception received from the Bank Account Repository by the Bank Account Service.");
-                        }
-                        
-                        
+                case "2":
+                    System.out.println("\nDeposit Funds to Account");
                         break;
-                    case "3":
-                        System.out.println("\nTransfer Funds from/to Account");
-                        System.out.println("\nEnter the transferer ID");
-                        long tId = getLong();
-                        System.out.println("\nEnter the recipients ID");
-                        long rId = getLong();
-                        System.out.println("\nEnter transfer ammount");
-                        long tAmountC = getLong();
-                        long tAmount = tAmountC * 100;  
-                        try{
-                        baService.withdrawFromAccount(tId, tAmount);
-                        }
-                        catch (ServiceException ex) {
-                            throw new MenuException("Case3: Exception received from the Bank Account Repository by the Bank Account Service.");
-                        }
-                        try{
-                        baService.depositIntoAccount(rId, tAmount);
-                        System.out.println("\nTransferer's account after withdrawal:\n" + tId); // Not going to work
-                        System.out.println("\nRecipients's account after withdrawal:\n" + rId); 
-                        }
-                        catch (ServiceException ex1) {
-                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
-                        }
-                        
+                case "3":
+                    System.out.println("\nTransfer Funds from/to Account");
                         break;
-                    case "4":
-                        System.out.println("\nReturn to Main Menu");
-                        exit = true;
+                case "4":
+                    System.out.println("\nReturn to Main Menu");
+                    exit = true;
                         break;
                     default:
                         System.out.println("Invalid Option Selected. Enter Valid Option.");
                 }
-            } catch (MenuException ex) {
-                System.out.println(ex.getMessage());
-            }
+                } catch (MenuException ex) {
+                    System.out.println(ex.getMessage());
+                }
         } while (!exit);
     }
 
@@ -348,6 +294,105 @@ public class UiImpl implements Ui {
     }
 
     // Fionn
+
+    // private void accountManipulation() {
+    //     boolean exit = false;
+
+    //     try{
+    //     Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+    //     Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+    //     cuService.createCustomer(c1);
+    //     cuService.createCustomer(c2);
+    //     System.out.println("\nAfter customer creation:\n" + c1);
+    //     System.out.println("\nAfter customer creation:\n" + c2);
+    //     }
+    //     catch (ServiceException ex){
+    //         throw new CustomerException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //     }
+        
+
+    //     do {
+    //         clearConsole();
+    //         System.out.println("\n========================");
+    //         System.out.println("= ACCOUNT MANIPULATION   =");
+    //         System.out.println("========================");
+    //         System.out.println("1. Withdraw Funds from Account");
+    //         System.out.println("2. Deposit Funds to Account");
+    //         System.out.println("3. Transfer Funds from/to Account");
+    //         System.out.println("========================");
+    //         System.out.println("4. Return to Main Menu");
+    //     try {
+    //         String userInput = getString();
+    //         switch (userInput) {
+    //             case "1":
+    //                 System.out.println("\nWithdraw Funds from Account");
+    //                 System.out.println("\nEnter account ID");
+    //                 long wId = getLong();
+    //                 System.out.println("\nEnter withdrawl ammount");
+    //                 long wAmountC = getLong();  
+    //                 long wAmount = wAmountC * 100;
+    //             try{
+    //                 System.out.println("Number of customers: " + cuService.count());
+    //                 baService.withdrawFromAccount(wId, wAmount);
+    //                 baService.findById(wId);
+    //                 System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to work
+    //                     }
+    //                     catch (ServiceException ex) {
+    //                         throw new MenuException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     break;
+    //             case "2":
+    //                 System.out.println("\nDeposit Funds to Account");
+    //                 System.out.println("\nEnter account ID");
+    //                 long dId = getLong();
+    //                 System.out.println("\nEnter deposit ammount");
+    //                 long dAmountC = getLong(); 
+    //                 long dAmount = dAmountC * 100;  
+    //             try{
+    //                 baService.depositIntoAccount(dId, dAmount);
+    //                 baService.findById(dId);
+    //                 System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
+    //                     }
+    //                     catch (ServiceException ex) {
+    //                         throw new MenuException("Case2: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     break;
+    //             case "3":
+    //                 System.out.println("\nTransfer Funds from/to Account");
+    //                 System.out.println("\nEnter the transferer ID");
+    //                 long tId = getLong();
+    //                 System.out.println("\nEnter the recipients ID");
+    //                 long rId = getLong();
+    //                 System.out.println("\nEnter transfer ammount");
+    //                 long tAmountC = getLong();
+    //                 long tAmount = tAmountC * 100;  
+    //                 try{
+    //                     baService.withdrawFromAccount(tId, tAmount);
+    //                     }
+    //                     catch (ServiceException ex) {
+    //                         throw new MenuException("Case3: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     try{
+    //                     baService.depositIntoAccount(rId, tAmount);
+    //                     System.out.println("\nTransferer's account after withdrawal:\n" + tId); // Not going to work
+    //                     System.out.println("\nRecipients's account after withdrawal:\n" + rId); 
+    //                     }
+    //                     catch (ServiceException ex1) {
+    //                         throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     break;
+    //             case "4":
+    //                 System.out.println("\nReturn to Main Menu");
+    //                 exit = true;
+    //                     break;
+    //                 default:
+    //                     System.out.println("Invalid Option Selected. Enter Valid Option.");
+    //             }
+    //             } catch (MenuException ex) {
+    //                 System.out.println(ex.getMessage());
+    //             }
+    //     } while (!exit);
+    // }
 
     // Dhare
 }
