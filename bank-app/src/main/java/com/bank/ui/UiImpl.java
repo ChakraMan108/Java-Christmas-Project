@@ -214,6 +214,14 @@ CustomerService cuService = new CustomerService();
         cuService.createCustomer(c2);
         System.out.println("\nAfter customer creation:\n" + c1);
         System.out.println("\nAfter customer creation:\n" + c2);
+
+
+        BankAccount acc2 = new BankAccount(); 
+        acc2.setBalance(1000000);
+        Customer foundCustomer = cuService.findById(c2.getId()); 
+        baService.createAccount(acc2, foundCustomer);
+        System.out.println(baService.findAll());
+        
         }
         catch (ServiceException ex){
             System.out.println(ex.getMessage());
@@ -243,11 +251,11 @@ CustomerService cuService = new CustomerService();
                 try{
                     System.out.println("Number of customers: " + cuService.count());
                     baService.withdrawFromAccount(wId, wAmount);
-                    baService.findById(wId);
-                    System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to work
+                    System.out.println(baService.findById(wId).getBalance());
+                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()); // Not going to work
                         }
                         catch (ServiceException ex) {
-                            throw new MenuException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
+                            System.out.println("Recieved from service" + ex.getMessage());
                         }
                         break;
                 case "2":
@@ -548,16 +556,6 @@ CustomerService cuService = new CustomerService();
     private void deactivateCustomer(Customer customer) {
         customer.setActive(false);
 
-        Customer deactivatedCustomer = new Customer(
-                customer.getId(),
-                customer.getName(),
-                customer.getAddress(),
-                customer.getDob(),
-                customer.getPhoneNumber(),
-                customer.getEmail(),
-                CustomerType.NEW_TYPE);
-
-        System.out.println("Customer deactivated successfully.");
     }
 
     private void displayCustomerDetails() {
