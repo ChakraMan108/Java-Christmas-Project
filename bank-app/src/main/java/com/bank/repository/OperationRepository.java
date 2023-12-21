@@ -48,6 +48,9 @@ public class OperationRepository implements Repository<Operation> {
     public long incrementOperationId() {
         return ++lastOperationId;
     }
+    public long generateId() {
+        return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+    }
 
     public void saveJson() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();

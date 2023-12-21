@@ -9,11 +9,18 @@ import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Transaction;
+import com.bank.entity.BankAccount.AccountType;
 import com.bank.exceptions.MenuException;
 import com.bank.exceptions.ServiceException;
+import com.bank.repository.BankAccountRepository;
 import com.bank.repository.CustomerRepository;
+import com.bank.repository.OperationRepository;
+import com.bank.repository.TransactionRepository;
+import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
+import com.bank.service.OperationService;
 import com.bank.service.Service;
+import com.bank.service.TransactionService;
 
 public class UiImpl implements Ui {
 
@@ -23,6 +30,12 @@ public class UiImpl implements Ui {
 
     CustomerService customerService = new CustomerService();
     CustomerRepository customerRepository = new CustomerRepository();
+    BankAccountService bankAccountService = new BankAccountService();
+    BankAccountRepository bankAccountRepository = new BankAccountRepository();
+    OperationService operationService = new OperationService();
+    OperationRepository operationRepository = new OperationRepository();
+    TransactionService transactionService = new TransactionService();
+    TransactionRepository transactionRepository = new TransactionRepository();
     private long idToUpdate;
 
     public void authenticateApp() throws MenuException {
@@ -128,7 +141,7 @@ public class UiImpl implements Ui {
                         System.out.println("Invalid choice. Please enter a valid option.");
                 }
             }
-        } catch (Exception e) {
+        catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
         } while (!exit);
@@ -137,11 +150,6 @@ public class UiImpl implements Ui {
         }
             
         
-
-     
-    
-
-
     private void accountManagement() {
         boolean exit = false;
         do {
@@ -467,31 +475,115 @@ public class UiImpl implements Ui {
     }
 
     private void displayCustomerDetails() throws ServiceException {
-
         try {
             Customer customer = customerService.findById(idToUpdate);
 
             if (customer != null) {
                 System.out.println("Name: " + customer.getName());
-                System.out.println("Name: " + customer.getAddress());
-                System.out.println("Name: " + customer.getDob());
-                System.out.println("Name: " + customer.getPhoneNumber());
-                System.out.println("Name: " + customer.getEmail());
-                System.out.println("Name: " + customer.getType());
+                System.out.println("Address: " + customer.getAddress());
+                System.out.println("Date of Birth: " + customer.getDob());
+                System.out.println("Phone Number: " + customer.getPhoneNumber());
+                System.out.println("Email: " + customer.getEmail());
+                System.out.println("Type: " + customer.getType());
                 System.out.println("Customer ID: " + customer.isActive());
-                System.out.println("Name: " + customer.getCreatedDate());
-                System.out.println("Name: " + customer.getDeactivatedDate());
+                System.out.println("Created Date: " + customer.getCreatedDate());
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
             } else {
                 System.out.println("Customer not found.");
             }
         } catch (ServiceException e) {
-
             System.out.println("Error retrieving customer details: " + e.getMessage());
             e.printStackTrace();
         } catch (Exception e) {
-
             System.out.println("An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+
+    //method for report
+    private void displayTotals() {
+    try {
+        ArrayList<BankAccount> totalAccounts = new ArrayList<>();
+        BankAccountService.findAll();
+
+        System.out.println("Total number of accounts: " + totalAccounts.size());
+
+        for (BankAccount account : totalAccounts) {
+            System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
+        }
+
+    } catch (ServiceException e) {
+        e.printStackTrace();
+    }
+
+    
+    ArrayList<Customer> totalCustomers = new ArrayList<>();
+
+    try {
+        totalCustomers = customerService.findAll();
+    } catch (ServiceException e) {
+        
+        e.printStackTrace();
+    }
+    System.out.println("Total number of customers: " + totalCustomers);
+
+    for (Customer customer : totalCustomers) {
+        // Do something with each customer, e.g., print customer details
+        System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
+    }
+
+
+   ArrayList<Transaction> totalTransactions = new ArrayList<>();
+try {
+    totalTransactions = transactionService.findAll();
+} catch (ServiceException e) {
+
+    e.printStackTrace();
+}
+    System.out.println("Total number of transactions: " + totalTransactions);
+
+    
+     Long totalBalance = (long) 0;
+    try {
+        totalBalance = bankAccountService.count();
+    } catch (ServiceException e) {
+        
+        e.printStackTrace();
+    }
+     System.out.println("Total balance across all accounts: " + totalBalance);
+
+    
+
+    // Pause to allow the user to read the totals
+    System.out.println("\nPress Enter to return to the reporting menu...");
+    try {
+        getString();
+    } catch (MenuException e) {
+        
+        e.printStackTrace();
+    } 
+
+    
+    // private void displayAccountsByDate() {
+    //     // Implement logic to display accounts by date
+    //     System.out.println("Display Accounts by Date");
+    // }
+    
+    // private void displayCustomersByDate() {
+    //     // Implement logic to display customers by date
+    //     System.out.println("Display Customers by Date");
+    // }
+    
+    // private void displayTransactionsByDate() {
+    //     // Implement logic to display transactions by date
+    //     System.out.println("Display Transactions by Date");
+    // }
+    
+    // private void displayOperationsByDate() {
+    //     // Implement logic to display operations by date
+    //     System.out.println("Display Operations by Date");
+    // }
+//}
+}
 }
