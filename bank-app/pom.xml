@@ -20,13 +20,14 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.10.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.8.0</version>
+            <version>1.7</version>
         </dependency>
-
+        
+    
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -34,19 +35,4 @@
         </dependency>
 
     </dependencies>
-
-
-    <dependencyManagement>
-        <dependencies>
-        
-
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
-            </dependency>
-
-        </dependencies>
-
-    </dependencyManagement>
 </project>

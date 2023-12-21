@@ -7,36 +7,32 @@ import java.util.Scanner;
 import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
-import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Transaction;
 import com.bank.entity.BankAccount.AccountType;
+import com.bank.entity.Operation;
+import com.bank.exceptions.CustomerException;
 import com.bank.exceptions.MenuException;
+import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
-import com.bank.repository.BankAccountRepository;
-import com.bank.repository.CustomerRepository;
-import com.bank.repository.OperationRepository;
-import com.bank.repository.TransactionRepository;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
-import com.bank.service.Service;
 import com.bank.service.TransactionService;
 
 public class UiImpl implements Ui {
 
-    public UiImpl() {
+// Service initialisation
+BankAccountService baService = new BankAccountService();
+OperationService opService = new OperationService();
+TransactionService trService = new TransactionService();
+CustomerService cuService = new CustomerService();
+  
+// UI class constructor  
+  public UiImpl() {
 
     }
-
-    CustomerService customerService = new CustomerService();
-    CustomerRepository customerRepository = new CustomerRepository();
-    BankAccountService bankAccountService = new BankAccountService();
-    BankAccountRepository bankAccountRepository = new BankAccountRepository();
-    OperationService operationService = new OperationService();
-    OperationRepository operationRepository = new OperationRepository();
-    TransactionService transactionService = new TransactionService();
-    TransactionRepository transactionRepository = new TransactionRepository();
-    private long idToUpdate;
+    
+  private long idToUpdate;
 
     public void authenticateApp() throws MenuException {
         try {
@@ -50,7 +46,7 @@ public class UiImpl implements Ui {
             String password = getString();
             if (!username.equals("admin") || !password.equals("admin"))
                 throw new MenuException("Invalid credentials!");
-        } catch (MenuException ex) {
+        } catch (Exception ex) {
             throw new MenuException(ex.getMessage());
         }
     }
@@ -91,23 +87,24 @@ public class UiImpl implements Ui {
                         break;
                     case "6":
                         exit = true;
-                        System.out.println("Exiting!");
+
+                        System.out.println("Exiting the Bank Application.");
                         break;
                     default:
-                        System.out.println("Invalid option selected. Enter valid option.");
+                        System.out.println("Invalid option selected. Please enter a valid option (1-6).");
                 }
-            } catch (MenuException | ServiceException ex) {
+            } catch (MenuException ex) {
                 System.out.println(ex.getMessage());
             }
         } while (!exit);
     }
 
-    private void customerManagement() throws ServiceException, MenuException {
+    private void customerManagement() throws MenuException {
         boolean exit = false;
         do{
         clearConsole();
         System.out.println("\n========================");
-        System.out.println("= ACCOUNT MANAGEMENT   =");
+        System.out.println("=  CUSTOMER MANAGEMENT  =");
         System.out.println("========================");
         System.out.println("\n\n1. Create Customer");
         System.out.println("2. Update Customer");
@@ -138,18 +135,14 @@ public class UiImpl implements Ui {
                         exit = true;
                         break;
                     default:
-                        System.out.println("Invalid choice. Please enter a valid option.");
+                        System.out.println("Invalid option selected. Please enter a valid option.");
                 }
+            } catch (MenuException ex) {
+                System.out.println(ex.getMessage());
             }
-        catch (Exception e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-            e.printStackTrace();
         } while (!exit);
-
-     System.out.println("Exiting Customer Management System. Goodbye!");
-        }
+    }
             
-        
     private void accountManagement() {
         boolean exit = false;
         do {
@@ -170,7 +163,6 @@ public class UiImpl implements Ui {
                 switch (userInput) {
                     case "1":
                         System.out.println("\nCreate Account");
-
                         break;
 
                     case "2":
@@ -194,7 +186,7 @@ public class UiImpl implements Ui {
                         break;
 
                     default:
-                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                        System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (MenuException ex) {
                 System.out.println(ex.getMessage());
@@ -211,13 +203,49 @@ public class UiImpl implements Ui {
         System.out.println("4. Display Accounts by Account Type");
         System.out.println("5. Return to Main Menu");
     }
-
+  
+    //Fionn
     private void accountManipulation() {
         boolean exit = false;
-        System.out.println("\n1. Withdraw Funds from Account");
-        System.out.println("2. Deposit Funds to Account");
-        System.out.println("3. Transfer Funds from/to Account");
-        System.out.println("4. Return to Main Menu");
+        
+        do {
+            clearConsole();
+            System.out.println("\n========================");
+            System.out.println("= ACCOUNT MANIPULATION   =");
+            System.out.println("========================");
+            System.out.println("1. Withdraw Funds from Account");
+            System.out.println("2. Deposit Funds to Account");
+            System.out.println("3. Transfer Funds from/to Account");
+            System.out.println("========================");
+            System.out.println("4. Return to Main Menu");
+        try {
+            String userInput = getString();
+            switch (userInput) {
+                case "1":
+                    System.out.println("\nWithdraw Funds from Account");
+            
+                        break;
+                case "2":
+                    System.out.println("\nDeposit Funds to Account");
+                        break;
+                case "3":
+                    System.out.println("\nTransfer Funds from/to Account");
+                        break;
+                case "4":
+                    System.out.println("\nReturn to Main Menu");
+                    exit = true;
+                        break;
+                case "6":
+                        System.out.println("\nReturn to Main Menu");
+                        exit = true;
+                        break;
+                default:
+                        System.out.println("Invalid option selected. Please enter a valid option.");
+                }
+                } catch (MenuException ex) {
+                    System.out.println(ex.getMessage());
+                }
+        } while (!exit);
     }
 
     private void reports() {
@@ -263,9 +291,9 @@ public class UiImpl implements Ui {
                         System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
-
+                      
                     default:
-                        System.out.println("Invalid Option Selected. Enter Valid Option.");
+                        System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (MenuException ex) {
                 System.out.println(ex.getMessage());
@@ -276,8 +304,9 @@ public class UiImpl implements Ui {
     public String getString() throws MenuException {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
+        
         if (input == null || input.trim().equals("")) {
-            throw new MenuException("Invalid Input!");
+            throw new MenuException("Invalid input.");
         }
         return input;
     }
@@ -286,7 +315,8 @@ public class UiImpl implements Ui {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
-            throw new MenuException("Invalid Input.");
+
+            throw new MenuException("Invalid input.");
         }
         return Long.parseLong(input);
     }
@@ -340,11 +370,110 @@ public class UiImpl implements Ui {
                 Runtime.getRuntime().exec("clear");
             }
         } catch (final Exception e) {
-            System.err.println("Cannot execute the terminal command cls/clear.\n" + e.getMessage());
+            // Handle any exceptions.
         }
     }
 
     // Fionn
+
+    // private void accountManipulation() {
+    //     boolean exit = false;
+
+    //     try{
+    //     Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+    //     Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+    //     cuService.createCustomer(c1);
+    //     cuService.createCustomer(c2);
+    //     System.out.println("\nAfter customer creation:\n" + c1);
+    //     System.out.println("\nAfter customer creation:\n" + c2);
+    //     }
+    //     catch (ServiceException ex){
+    //         throw new CustomerException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //     }
+        
+
+    //     do {
+    //         clearConsole();
+    //         System.out.println("\n========================");
+    //         System.out.println("= ACCOUNT MANIPULATION   =");
+    //         System.out.println("========================");
+    //         System.out.println("1. Withdraw Funds from Account");
+    //         System.out.println("2. Deposit Funds to Account");
+    //         System.out.println("3. Transfer Funds from/to Account");
+    //         System.out.println("========================");
+    //         System.out.println("4. Return to Main Menu");
+    //     try {
+    //         String userInput = getString();
+    //         switch (userInput) {
+    //             case "1":
+    //                 System.out.println("\nWithdraw Funds from Account");
+    //                 System.out.println("\nEnter account ID");
+    //                 long wId = getLong();
+    //                 System.out.println("\nEnter withdrawl ammount");
+    //                 long wAmountC = getLong();  
+    //                 long wAmount = wAmountC * 100;
+    //             try{
+    //                 System.out.println("Number of customers: " + cuService.count());
+    //                 baService.withdrawFromAccount(wId, wAmount);
+    //                 baService.findById(wId);
+    //                 System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to work
+    //                     }
+    //                     catch (ServiceException ex) {
+    //                         throw new MenuException("Case1: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     break;
+    //             case "2":
+    //                 System.out.println("\nDeposit Funds to Account");
+    //                 System.out.println("\nEnter account ID");
+    //                 long dId = getLong();
+    //                 System.out.println("\nEnter deposit ammount");
+    //                 long dAmountC = getLong(); 
+    //                 long dAmount = dAmountC * 100;  
+    //             try{
+    //                 baService.depositIntoAccount(dId, dAmount);
+    //                 baService.findById(dId);
+    //                 System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
+    //                     }
+    //                     catch (ServiceException ex) {
+    //                         throw new MenuException("Case2: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     break;
+    //             case "3":
+    //                 System.out.println("\nTransfer Funds from/to Account");
+    //                 System.out.println("\nEnter the transferer ID");
+    //                 long tId = getLong();
+    //                 System.out.println("\nEnter the recipients ID");
+    //                 long rId = getLong();
+    //                 System.out.println("\nEnter transfer ammount");
+    //                 long tAmountC = getLong();
+    //                 long tAmount = tAmountC * 100;  
+    //                 try{
+    //                     baService.withdrawFromAccount(tId, tAmount);
+    //                     }
+    //                     catch (ServiceException ex) {
+    //                         throw new MenuException("Case3: Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     try{
+    //                     baService.depositIntoAccount(rId, tAmount);
+    //                     System.out.println("\nTransferer's account after withdrawal:\n" + tId); // Not going to work
+    //                     System.out.println("\nRecipients's account after withdrawal:\n" + rId); 
+    //                     }
+    //                     catch (ServiceException ex1) {
+    //                         throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+    //                     }
+    //                     break;
+    //             case "4":
+    //                 System.out.println("\nReturn to Main Menu");
+    //                 exit = true;
+    //                     break;
+    //                 default:
+    //                     System.out.println("Invalid Option Selected. Enter Valid Option.");
+    //             }
+    //             } catch (MenuException ex) {
+    //                 System.out.println(ex.getMessage());
+    //             }
+    //     } while (!exit);
+    // }
 
     // Dhara
     private void displayMainMenu() {
@@ -474,9 +603,9 @@ public class UiImpl implements Ui {
         System.out.println("Customer deactivated successfully.");
     }
 
-    private void displayCustomerDetails() throws ServiceException {
+    private void displayCustomerDetails() {
         try {
-            Customer customer = customerService.findById(idToUpdate);
+            Customer customer = cuService.findById(idToUpdate);
 
             if (customer != null) {
                 System.out.println("Name: " + customer.getName());
@@ -505,7 +634,7 @@ public class UiImpl implements Ui {
     private void displayTotals() {
     try {
         ArrayList<BankAccount> totalAccounts = new ArrayList<>();
-        BankAccountService.findAll();
+        baService.findAll();
 
         System.out.println("Total number of accounts: " + totalAccounts.size());
 
@@ -521,7 +650,7 @@ public class UiImpl implements Ui {
     ArrayList<Customer> totalCustomers = new ArrayList<>();
 
     try {
-        totalCustomers = customerService.findAll();
+        totalCustomers = cuService.findAll();
     } catch (ServiceException e) {
         
         e.printStackTrace();
@@ -546,7 +675,7 @@ try {
     
      Long totalBalance = (long) 0;
     try {
-        totalBalance = bankAccountService.count();
+        totalBalance = baService.count();
     } catch (ServiceException e) {
         
         e.printStackTrace();

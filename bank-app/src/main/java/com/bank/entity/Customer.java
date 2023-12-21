@@ -9,7 +9,7 @@ public class Customer {
     public enum CustomerType {
         INTERNAL,
         INDIVIDUAL,
-        COMPANY, NEW_TYPE
+        COMPANY
     }
 
     private long id;
