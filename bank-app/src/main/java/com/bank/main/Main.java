@@ -1,5 +1,6 @@
 package com.bank.main;
 
+import com.bank.exceptions.MenuException;
 import com.bank.ui.UiImpl;
 
 public class Main {
@@ -7,8 +8,11 @@ public class Main {
         
         UiImpl ui = new UiImpl();
         
-        ui.authenticateApp();
-        ui.displayMenu();
-
+        try {
+            ui.authenticateApp();
+            ui.displayMenu();
+        } catch (MenuException ex) {
+            System.out.println(ex.getMessage() + "\nExiting the application.");   
+        }
     }
 }

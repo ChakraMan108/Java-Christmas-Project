@@ -1,6 +1,7 @@
 
 package com.bank.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
@@ -10,10 +11,6 @@ import com.bank.repository.OperationRepository;
 public class OperationService implements Service<Operation> {
 
     public static final OperationRepository repository = new OperationRepository();
-
-    // public OperationService(OperationRepository repository) {
-    //     this.repository = repository;
-    // }
 
     public Operation save(Operation operation) throws ServiceException {
         try {
@@ -45,5 +42,9 @@ public class OperationService implements Service<Operation> {
         } catch (RepositoryException ex) {
             throw new ServiceException("Exception received from the Repository by the Service.", ex);
         }
+    }
+    
+    public void saveJson() throws IOException {
+        repository.saveJson();
     }
 }
