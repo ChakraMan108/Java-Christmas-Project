@@ -9,9 +9,21 @@ import com.bank.entity.Customer;
 import com.bank.entity.Transaction;
 import com.bank.entity.Operation;
 import com.bank.exceptions.MenuException;
+import com.bank.exceptions.RepositoryException;
+import com.bank.exceptions.ServiceException;
+import com.bank.service.BankAccountService;
+import com.bank.service.CustomerService;
+import com.bank.service.OperationService;
+import com.bank.service.TransactionService;
 
 public class UiImpl implements Ui {
 
+    // Service initialisation
+        BankAccountService baService = new BankAccountService();
+        OperationService opService = new OperationService();
+        TransactionService trService = new TransactionService();
+        CustomerService cuService = new CustomerService();
+    
     public UiImpl() {
 
     }
@@ -164,22 +176,69 @@ public class UiImpl implements Ui {
             System.out.println("========================");
             System.out.println("4. Return to Main Menu");
 
-    try {
+        try {
                 String userInput = getString();
                 switch (userInput) {
                     case "1":
                         System.out.println("\nWithdraw Funds from Account");
+                        System.out.println("\nEnter user ID");
+                        Scanner wScanner = new Scanner(System.in);
+                        long wId = wScanner.nextLong();
+
+                        System.out.println("\nEnter withdrawl ammount");
+                        long wAmount = wScanner.nextLong();   
+
+                        try{
+                        baService.withdrawFromAccount(wId, wAmount);
+                        }
+                        catch (ServiceException ex) {
+                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                        }
+                        System.out.println("\nAfter account withdrawal:\n" + wAmount); // Not going to work
 
                         break;
 
                     case "2":
                         System.out.println("\nDeposit Funds to Account");
+                        System.out.println("\nEnter user ID");
+                        Scanner dScanner = new Scanner(System.in);
+                        long dId = dScanner.nextLong();
 
+                        System.out.println("\nEnter deposit ammount");
+                        long dAmount = dScanner.nextLong();   
+
+                        try{
+                        baService.depositIntoAccount(dId, dAmount);
+                        }
+                        catch (ServiceException ex) {
+                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                        }
+                        System.out.println("\nAfter account deposit:\n" + dAmount); // Not going to work
+                        
                         break;
 
                     case "3":
                         System.out.println("\nTransfer Funds from/to Account");
+                        System.out.println("\nEnter the transferer ID");
+                        Scanner tScanner = new Scanner(System.in);
+                        long tId = tScanner.nextLong();
+                        System.out.println("\nEnter the recipients ID");
+                        long rId = tScanner.nextLong();
+                        System.out.println("\nEnter transfer ammount");
+                        long tAmount = tScanner.nextLong();  
 
+                        try{
+                        baService.withdrawFromAccount(tId, tAmount);
+                        }
+                        catch (ServiceException ex) {
+                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                        try{
+                        baService.depositIntoAccount(rId, tAmount);
+                        }
+                        catch (ServiceException ex1) {
+                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                        }
+                        System.out.println("\nAfter account withdrawal:\n" + tAmount); // Not going to work
                         break;
 
                     case "4":
