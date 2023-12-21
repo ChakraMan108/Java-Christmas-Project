@@ -1,5 +1,7 @@
 package com.bank.entity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 public class Customer {
@@ -68,7 +70,7 @@ public class Customer {
     }
 
     public void setDob(LocalDate dob) {
-        this.dob = dob;
+         this.dob = dob;
     }
 
     public String getPhoneNumber() {

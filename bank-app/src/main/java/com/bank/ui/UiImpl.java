@@ -89,28 +89,39 @@ public class UiImpl implements Ui {
         } while (!exit);
     }
 
-    private void customerManagement() throws ServiceException {
+    private void customerManagement() throws ServiceException, MenuException {
         boolean exit = false;
-        Scanner scanner = new Scanner(System.in);
+        do{
+        clearConsole();
+        System.out.println("\n========================");
+        System.out.println("= ACCOUNT MANAGEMENT   =");
+        System.out.println("========================");
+        System.out.println("\n\n1. Create Customer");
+        System.out.println("2. Update Customer");
+        System.out.println("3. Deactivate Customer");
+        System.out.println("4. Display Customer Details");
+        System.out.println("5. Return to Main Menu");
+        System.out.println("========================");
+        System.out.println("Selection option:");
         try {
-            while (!exit) {
-                displayMainMenu();
-                int choice = scanner.nextInt();
+            String userInput = getString();
+            
 
-                switch (choice) {
-                    case 1:
-                        createCustomer();
+                switch (userInput) {
+                    case "1":
+                        
+                        System.out.println("\nCreate Customer");
                         break;
-                    case 2:
-                        updateCustomer();
+                    case "2":
+                        System.out.println("\nupdateCustomer");
                         break;
-                    case 3:
-                        deactivateCustomer(null);
+                    case "3":
+                        System.out.println("\ndeactivateCustomer");
                         break;
-                    case 4:
-                        displayCustomerDetails();
+                    case "4":
+                        System.out.println("\ndisplayCustomerDetails()");
                         break;
-                    case 5:
+                    case "5":
                         exit = true;
                         break;
                     default:
@@ -120,16 +131,16 @@ public class UiImpl implements Ui {
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
-        } finally {
+        } while (!exit);
 
-            if (scanner != null) {
-                scanner.close();
-            }
+     System.out.println("Exiting Customer Management System. Goodbye!");
         }
+            
+        
 
-        System.out.println("Exiting Customer Management System. Goodbye!");
-        scanner.close();
-    }
+     
+    
+
 
     private void accountManagement() {
         boolean exit = false;
@@ -344,14 +355,25 @@ public class UiImpl implements Ui {
         long id = scanner.nextLong();
         scanner.nextLine();
 
-        System.out.print("Enter customer name: ");
-        String name = scanner.nextLine();
+        System.out.print("Enter customer firstname: ");
+        String firstname = scanner.nextLine();
+
+        System.out.print("Enter customer lastname: ");
+        String lastname = scanner.nextLine();
+        String fullName = firstname + " " + lastname;
+        System.out.println("Full name: " + fullName);
+        //scanner.close();
 
         System.out.print("Enter customer address: ");
         String address = scanner.nextLine();
 
         System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
-        LocalDate dob = LocalDate.parse(scanner.nextLine());
+        try {
+            LocalDate dob = LocalDate.parse(getString());
+        } catch (MenuException e) {
+            
+            e.printStackTrace();
+        }
 
         System.out.print("Enter customer phone number: ");
         String phoneNumber = scanner.nextLine();
