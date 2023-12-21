@@ -38,7 +38,7 @@ public class CustomerService implements Service<Customer> {
             return repository.findById(id);
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage();         
+            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());         
         }
     }
 
