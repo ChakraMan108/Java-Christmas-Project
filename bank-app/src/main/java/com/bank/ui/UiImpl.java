@@ -162,7 +162,7 @@ public class UiImpl implements Ui {
         System.out.println("4. Display Accounts by Account Type");
         System.out.println("5. Return to Main Menu");
     }
-//Fionn Working here
+    //Fionn Working here
     private void accountManipulation() {
         boolean exit = false;
         do {
@@ -190,12 +190,12 @@ public class UiImpl implements Ui {
 
                         try{
                         baService.withdrawFromAccount(wId, wAmount);
+                        baService.findById(wId);
+                        System.out.println("\nAfter account withdrawal:\n" + wAmount); // Not going to work
                         }
                         catch (ServiceException ex) {
                             throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
-                        System.out.println("\nAfter account withdrawal:\n" + wAmount); // Not going to work
-
                         break;
 
                     case "2":
@@ -232,6 +232,7 @@ public class UiImpl implements Ui {
                         }
                         catch (ServiceException ex) {
                             throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                        }
                         try{
                         baService.depositIntoAccount(rId, tAmount);
                         }
@@ -239,6 +240,7 @@ public class UiImpl implements Ui {
                             throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
                         }
                         System.out.println("\nAfter account withdrawal:\n" + tAmount); // Not going to work
+
                         break;
 
                     case "4":
