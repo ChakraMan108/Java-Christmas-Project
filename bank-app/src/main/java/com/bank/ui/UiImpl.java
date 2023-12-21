@@ -165,6 +165,12 @@ public class UiImpl implements Ui {
     }
     //Fionn
     private void accountManipulation() {
+        Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+        Customer c2 = new Customer(2, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+        System.out.println("\nAfter customer creation:\n" + c1);
+        System.out.println("\nAfter customer creation:\n" + c2);
+
+
         boolean exit = false;
         do {
             clearConsole();
@@ -181,13 +187,13 @@ public class UiImpl implements Ui {
                 switch (userInput) {
                     case "1":
                         System.out.println("\nWithdraw Funds from Account");
-                        System.out.println("\nEnter user ID");
-                        Scanner wScanner = new Scanner(System.in);
-                        long wId = wScanner.nextLong();
+                        System.out.println("\nEnter account ID");
+                        long wId = getLong();
                         System.out.println("\nEnter withdrawl ammount");
-                        long wAmountC = wScanner.nextLong(); 
+                        long wAmountC = getLong();  
                         long wAmount = wAmountC * 100;
                         try{
+                        System.out.println("Number of customers: " + cuService.count());
                         baService.withdrawFromAccount(wId, wAmount);
                         baService.findById(wId);
                         System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to work
@@ -198,11 +204,10 @@ public class UiImpl implements Ui {
                         break;
                     case "2":
                         System.out.println("\nDeposit Funds to Account");
-                        System.out.println("\nEnter user ID");
-                        Scanner dScanner = new Scanner(System.in);
-                        long dId = dScanner.nextLong();
+                        System.out.println("\nEnter account ID");
+                        long dId = getLong();
                         System.out.println("\nEnter deposit ammount");
-                        long dAmountC = dScanner.nextLong(); 
+                        long dAmountC = getLong(); 
                         long dAmount = dAmountC * 100;  
                         try{
                         baService.depositIntoAccount(dId, dAmount);
@@ -218,12 +223,11 @@ public class UiImpl implements Ui {
                     case "3":
                         System.out.println("\nTransfer Funds from/to Account");
                         System.out.println("\nEnter the transferer ID");
-                        Scanner tScanner = new Scanner(System.in);
-                        long tId = tScanner.nextLong();
+                        long tId = getLong();
                         System.out.println("\nEnter the recipients ID");
-                        long rId = tScanner.nextLong();
+                        long rId = getLong();
                         System.out.println("\nEnter transfer ammount");
-                        long tAmountC = tScanner.nextLong();
+                        long tAmountC = getLong();
                         long tAmount = tAmountC * 100;  
                         try{
                         baService.withdrawFromAccount(tId, tAmount);
