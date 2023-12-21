@@ -12,7 +12,7 @@ public class RobTest {
             ui.authenticateApp();
             ui.displayMenu();
         } catch (MenuException ex) {
-            System.out.println(ex.getMessage() + "\nGoodbye!");   
+            System.out.println("Menu returned an error: " + ex.getMessage());   
         }
     }
 }
