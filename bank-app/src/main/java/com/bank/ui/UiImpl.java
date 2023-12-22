@@ -3,40 +3,35 @@ package com.bank.ui;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+
 import org.apache.commons.validator.routines.EmailValidator;
+
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
-import com.bank.entity.Operation;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.MenuException;
 import com.bank.exceptions.ServiceException;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
-import com.bank.service.TransactionService;;
+import com.bank.service.TransactionService;
 
 public class UiImpl implements Ui {
 
-    // Service initialisation
-    static BankAccountService baService = new BankAccountService();
-    OperationService opService = new OperationService();
-    TransactionService trService = new TransactionService();
-    CustomerService cuService = new CustomerService();
-
-    // UI class constructor
-    public UiImpl() {
+// Service initialisation
+BankAccountService baService = new BankAccountService();
+OperationService opService = new OperationService();
+TransactionService trService = new TransactionService();
+CustomerService cuService = new CustomerService();
+  
+// UI class constructor  
+  public UiImpl() {
 
     }
-
-    private long idToUpdate;
+    
+  private long idToUpdate;
 
     public void authenticateApp() throws MenuException {
         try {
@@ -55,7 +50,7 @@ public class UiImpl implements Ui {
         }
     }
 
-    public void displayMenu() throws MenuException {
+    public void displayMenu() {
         boolean exit = false;
         do {
             clearConsole();
@@ -105,33 +100,35 @@ public class UiImpl implements Ui {
 
     private void customerManagement() throws MenuException {
         boolean exit = false;
-        do {
-            clearConsole();
-            System.out.println("\n========================");
-            System.out.println("=  CUSTOMER MANAGEMENT  =");
-            System.out.println("========================");
-            System.out.println("1. Create Customer");
-            System.out.println("2. Update Customer");
-            System.out.println("3. Deactivate Customer");
-            System.out.println("4. Display Customer Details");
-            System.out.println("5. Return to Main Menu");
-            System.out.println("========================");
-            System.out.println("Selection option:");
-            try {
-                String userInput = getString();
+        do{
+        clearConsole();
+        System.out.println("\n========================");
+        System.out.println("=  CUSTOMER MANAGEMENT  =");
+        System.out.println("========================");
+        System.out.println("\n\n1. Create Customer");
+        System.out.println("2. Update Customer");
+        System.out.println("3. Deactivate Customer");
+        System.out.println("4. Display Customer Details");
+        System.out.println("5. Return to Main Menu");
+        System.out.println("========================");
+        System.out.println("Selection option:");
+        try {
+            String userInput = getString();
+            
 
                 switch (userInput) {
                     case "1":
-                        createCustomer();
+                        
+                        System.out.println("\nCreate Customer");
                         break;
                     case "2":
-                        updateCustomer();
+                        System.out.println("\nupdateCustomer");
                         break;
                     case "3":
-                        deactivateCustomer();
+                        System.out.println("\ndeactivateCustomer");
                         break;
                     case "4":
-                        displayCustomerDetails();
+                        System.out.println("\ndisplayCustomerDetails()");
                         break;
                     case "5":
                         exit = true;
@@ -144,7 +141,7 @@ public class UiImpl implements Ui {
             }
         } while (!exit);
     }
-
+            
     private void accountManagement() {
         boolean exit = false;
         do {
@@ -205,10 +202,35 @@ public class UiImpl implements Ui {
         System.out.println("4. Display Accounts by Account Type");
         System.out.println("5. Return to Main Menu");
     }
-
-    // Fionn
+  
+    //Fionn
     private void accountManipulation() {
         boolean exit = false;
+
+        try{
+        Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+        Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+        cuService.createCustomer(c1);
+        cuService.createCustomer(c2);
+        System.out.println("\nAfter customer creation:\n" + c1);
+        System.out.println("\nAfter customer creation:\n" + c2);
+
+
+        BankAccount acc1 = new BankAccount(); 
+        acc1.setBalance(1000000);
+        Customer foundCustomer = cuService.findById(c1.getId()); 
+        baService.createAccount(acc1, foundCustomer);
+        BankAccount acc2 = new BankAccount(); 
+        acc2.setBalance(1000000);
+        Customer foundCustomer1 = cuService.findById(c2.getId()); 
+        baService.createAccount(acc2, foundCustomer1);
+        System.out.println(baService.findAll());
+        
+        }
+        catch (ServiceException ex){
+            System.out.println(ex.getMessage());
+        }
+        
 
         do {
             clearConsole();
@@ -220,34 +242,96 @@ public class UiImpl implements Ui {
             System.out.println("3. Transfer Funds from/to Account");
             System.out.println("========================");
             System.out.println("4. Return to Main Menu");
-            try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        System.out.println("\nWithdraw Funds from Account");
-
+        try {
+            String userInput = getString();
+            switch (userInput) {
+                case "1":
+                    System.out.println("\nWithdraw Funds from Account");
+                    System.out.println("\nEnter account ID");
+                    long wId = getLong();
+                    System.out.println("\nEnter withdrawl ammount");
+                    long wAmountC = getLong();  
+                    long wAmount = wAmountC * 100;
+                try{
+                    System.out.println("Number of customers: " + cuService.count());
+                    baService.withdrawFromAccount(wId, wAmount);
+                    System.out.println(baService.findById(wId).getBalance());
+                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()/100);
+                        }
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service: " + ex.getMessage());
+                        }
                         break;
-                    case "2":
-                        System.out.println("\nDeposit Funds to Account");
+                case "2":
+                    System.out.println("\nDeposit Funds to Account");
+                    System.out.println("\nEnter account ID");
+                    long dId = getLong();
+                    System.out.println("\nEnter deposit ammount");
+                    long dAmountC = getLong(); 
+                    long dAmount = dAmountC * 100;  
+                try{
+                    baService.depositIntoAccount(dId, dAmount);
+                    System.out.println(baService.findById(dId).getBalance());
+                    System.out.println("\nAfter account deposit:\n" + baService.findById(dId).getBalance()/100); // Not going to work
+                        }
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service: " + ex.getMessage());
+                        }
                         break;
-                    case "3":
-                        System.out.println("\nTransfer Funds from/to Account");
+                case "3":
+                    System.out.println("\nTransfer Funds from/to Account");
+                    System.out.println("\nEnter the transferer ID");
+                    long tId = getLong();
+                    System.out.println("\nEnter the recipients ID");
+                    long rId = getLong();
+                    System.out.println("\nEnter transfer ammount");
+                    long tAmountC = getLong();
+                    long tAmount = tAmountC * 100;  
+                    try{
+                        baService.withdrawFromAccount(tId, tAmount);
+                        System.out.println("\nTransferers account balance deposit:\n" + baService.findById(tId).getBalance()/100);
+                        }
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service: " + ex.getMessage());
+                        }
+                    try{
+                        baService.depositIntoAccount(rId, tAmount);
+                        System.out.println("\nRecipients account balance deposit:\n" + baService.findById(rId).getBalance()/100);
+                        }
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service: " + ex.getMessage());
+                        }
                         break;
-                    case "4":
-                        System.out.println("\nReturn to Main Menu");
-                        exit = true;
-                        break;
-                    case "6":
-                        System.out.println("\nReturn to Main Menu");
-                        exit = true;
+                case "4":
+                    System.out.println("\nReturn to Main Menu");
+                    exit = true;
                         break;
                     default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
+                        System.out.println("Invalid Option Selected. Enter Valid Option.");
                 }
-            } catch (MenuException ex) {
-                System.out.println(ex.getMessage());
-            }
+                } catch (MenuException ex) {
+                    System.out.println(ex.getMessage());
+                }
         } while (!exit);
+    }
+
+    private void withdrawalM(){
+        System.out.println("\nWithdraw Funds from Account");
+                    System.out.println("\nEnter account ID");
+                    long wId = getLong();
+                    System.out.println("\nEnter withdrawl ammount");
+                    long wAmountC = getLong();  
+                    long wAmount = wAmountC * 100;
+                try{
+                    System.out.println("Number of customers: " + cuService.count());
+                    baService.withdrawFromAccount(wId, wAmount);
+                    System.out.println(baService.findById(wId).getBalance());
+                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()); // Not going to work
+                        }
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service" + ex.getMessage());
+                        }
+        
     }
 
     private void reports() {
@@ -270,29 +354,30 @@ public class UiImpl implements Ui {
                 String userInput = getString();
                 switch (userInput) {
                     case "1":
-                        displayTotals();
+                        System.out.println("\nDisplay Totals");
                         break;
 
                     case "2":
-                        displayAccountsByDate();
+                        System.out.println("\nDisplay Accounts by Date");
                         break;
 
                     case "3":
-                        displayCustomersByDate();
+                        System.out.println("\nDisplay Customers by Date");
                         break;
 
                     case "4":
-                        displayTransactionsByDate(null, null);
+                        System.out.println("\nDisplay Transactions by Date");
                         break;
 
                     case "5":
-                        displayOperationsByDate(null, null);
+                        System.out.println("\nDisplay Operations by Date");
                         break;
 
                     case "6":
+                        System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
-
+                      
                     default:
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
@@ -305,7 +390,7 @@ public class UiImpl implements Ui {
     public String getString() throws MenuException {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-
+        
         if (input == null || input.trim().equals("")) {
             throw new MenuException("Invalid input.");
         }
@@ -377,117 +462,7 @@ public class UiImpl implements Ui {
 
     // Fionn
 
-    // private void accountManipulation() {
-    // boolean exit = false;
 
-    // try{
-    // Customer c1 = new Customer(1, "Joe", "Beech Park",
-    // LocalDate.parse("2000-04-15"), "085111222", "tom@x.com",
-    // Customer.CustomerType.INDIVIDUAL);
-    // Customer c2 = new Customer(1, "Avaya", "Mervue",
-    // LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com",
-    // Customer.CustomerType.COMPANY);
-    // cuService.createCustomer(c1);
-    // cuService.createCustomer(c2);
-    // System.out.println("\nAfter customer creation:\n" + c1);
-    // System.out.println("\nAfter customer creation:\n" + c2);
-    // }
-    // catch (ServiceException ex){
-    // throw new CustomerException("Case1: Exception received from the Bank Account
-    // Repository by the Bank Account Service.");
-    // }
-
-    // do {
-    // clearConsole();
-    // System.out.println("\n========================");
-    // System.out.println("= ACCOUNT MANIPULATION =");
-    // System.out.println("========================");
-    // System.out.println("1. Withdraw Funds from Account");
-    // System.out.println("2. Deposit Funds to Account");
-    // System.out.println("3. Transfer Funds from/to Account");
-    // System.out.println("========================");
-    // System.out.println("4. Return to Main Menu");
-    // try {
-    // String userInput = getString();
-    // switch (userInput) {
-    // case "1":
-    // System.out.println("\nWithdraw Funds from Account");
-    // System.out.println("\nEnter account ID");
-    // long wId = getLong();
-    // System.out.println("\nEnter withdrawl ammount");
-    // long wAmountC = getLong();
-    // long wAmount = wAmountC * 100;
-    // try{
-    // System.out.println("Number of customers: " + cuService.count());
-    // baService.withdrawFromAccount(wId, wAmount);
-    // baService.findById(wId);
-    // System.out.println("\nAfter account withdrawal:\n" + wId); // Not going to
-    // work
-    // }
-    // catch (ServiceException ex) {
-    // throw new MenuException("Case1: Exception received from the Bank Account
-    // Repository by the Bank Account Service.");
-    // }
-    // break;
-    // case "2":
-    // System.out.println("\nDeposit Funds to Account");
-    // System.out.println("\nEnter account ID");
-    // long dId = getLong();
-    // System.out.println("\nEnter deposit ammount");
-    // long dAmountC = getLong();
-    // long dAmount = dAmountC * 100;
-    // try{
-    // baService.depositIntoAccount(dId, dAmount);
-    // baService.findById(dId);
-    // System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
-    // }
-    // catch (ServiceException ex) {
-    // throw new MenuException("Case2: Exception received from the Bank Account
-    // Repository by the Bank Account Service.");
-    // }
-    // break;
-    // case "3":
-    // System.out.println("\nTransfer Funds from/to Account");
-    // System.out.println("\nEnter the transferer ID");
-    // long tId = getLong();
-    // System.out.println("\nEnter the recipients ID");
-    // long rId = getLong();
-    // System.out.println("\nEnter transfer ammount");
-    // long tAmountC = getLong();
-    // long tAmount = tAmountC * 100;
-    // try{
-    // baService.withdrawFromAccount(tId, tAmount);
-    // }
-    // catch (ServiceException ex) {
-    // throw new MenuException("Case3: Exception received from the Bank Account
-    // Repository by the Bank Account Service.");
-    // }
-    // try{
-    // baService.depositIntoAccount(rId, tAmount);
-    // System.out.println("\nTransferer's account after withdrawal:\n" + tId); //
-    // Not going to work
-    // System.out.println("\nRecipients's account after withdrawal:\n" + rId);
-    // }
-    // catch (ServiceException ex1) {
-    // throw new MenuException("Exception received from the Bank Account Repository
-    // by the Bank Account Service.");
-    // }
-    // break;
-    // case "4":
-    // System.out.println("\nReturn to Main Menu");
-    // exit = true;
-    // break;
-    // default:
-    // System.out.println("Invalid Option Selected. Enter Valid Option.");
-    // }
-    // } catch (MenuException ex) {
-    // System.out.println(ex.getMessage());
-    // }
-    // } while (!exit);
-    // }
-
-
-    
     // Dhara
     private void displayMainMenu() {
         System.out.println("\n\n1. Create Customer");
@@ -512,7 +487,7 @@ public class UiImpl implements Ui {
         String lastname = scanner.nextLine();
         String fullName = firstname + " " + lastname;
         System.out.println("Full name: " + fullName);
-        // scanner.close();
+        //scanner.close();
 
         System.out.print("Enter customer address: ");
         String address = scanner.nextLine();
@@ -521,7 +496,7 @@ public class UiImpl implements Ui {
         try {
             LocalDate dob = LocalDate.parse(getString());
         } catch (MenuException e) {
-
+            
             e.printStackTrace();
         }
 
@@ -531,7 +506,7 @@ public class UiImpl implements Ui {
         System.out.print("Enter customer email: ");
         String email = scanner.nextLine();
 
-        System.out.print("Enter customer type(INTERNAL, INDIVIDUAL or COMPANY) :");
+        System.out.print("Enter customer type (e.g., REGULAR, PREMIUM): ");
         String typeStr = scanner.nextLine();
         CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
 
@@ -601,20 +576,9 @@ public class UiImpl implements Ui {
         return null;
     }
 
-   private void deactivateCustomer() throws MenuException {
-        Long idToUpdate = getLong();
-        try {
-            cuService.findById(idToUpdate);
-            try {
-                cuService.deactivateCustomer(idToUpdate);
-                System.out.println("Customer deactivated successfully.");
-            } catch (ServiceException e) {
-                throw new MenuException(e.getMessage());
-            }
-        } catch (ServiceException e) {
-            System.out.println("Could not find Customer id " + idToUpdate + ".\n" + e.getMessage());
-            
-        }
+    private void deactivateCustomer(Customer customer) {
+        customer.setActive(false);
+
     }
 
     private void displayCustomerDetails() {
@@ -643,138 +607,90 @@ public class UiImpl implements Ui {
         }
     }
 
-    // method for report-Dhara
+
+    //method for report
     private void displayTotals() {
-        try {
-            ArrayList<BankAccount> totalAccounts = baService.findAll();
-            System.out.println("Total number of accounts: " + totalAccounts.size());
+    try {
+        ArrayList<BankAccount> totalAccounts = new ArrayList<>();
+        baService.findAll();
 
-            for (BankAccount account : totalAccounts) {
-                System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
-            }
+        System.out.println("Total number of accounts: " + totalAccounts.size());
 
-            ArrayList<Customer> totalCustomers = cuService.findAll();
-            System.out.println("Total number of customers: " + totalCustomers.size());
-
-            for (Customer customer : totalCustomers) {
-                System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
-            }
-
-            ArrayList<Transaction> totalTransactions = trService.findAll();
-            System.out.println("Total number of transactions: " + totalTransactions.size());
-
-            Long totalBalance = baService.count();
-            System.out.println("Total balance across all accounts: " + totalBalance);
-
-        } catch (Exception e) {
-
-            System.err.println("An error occurred: " + e.getMessage());
-            
+        for (BankAccount account : totalAccounts) {
+            System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
         }
 
-    
-        try {
-            getString();
-        } catch (MenuException e) {
-            e.printStackTrace();
-        }
+    } catch (ServiceException e) {
+        e.printStackTrace();
     }
 
-    private static void displayAccountsByDate() {
+    
+    ArrayList<Customer> totalCustomers = new ArrayList<>();
+
+    try {
+        totalCustomers = cuService.findAll();
+    } catch (ServiceException e) {
         
-        try {
-             ArrayList<BankAccount> accounts = baService.findAll();
-        
-            Map<LocalDate, List<BankAccount>> bankAccount = accounts.stream()
-                    .collect(Collectors.groupingBy(BankAccount::getCreatedDate));
-        
-            for (Entry<LocalDate, List<BankAccount>> entry : bankAccount.entrySet()) {
-                LocalDate date = entry.getKey();
-                List<BankAccount> baAccountsOnDate = entry.getValue();
-        
-                System.out.println("Date: " + date);
-                for (BankAccount account : baAccountsOnDate) {
-                    System.out.println("  BankAccount: " + account.getAccountName() + " | ID: " + account.getId());
-                }
-                System.out.println();
-            }
-        } catch (ServiceException ex) {
-            
-            System.err.println("An error occurred: " + ex.getMessage());
-        }
+        e.printStackTrace();
+    }
+    System.out.println("Total number of customers: " + totalCustomers);
 
-            
-        }
-
-      public void displayCustomersByDate() {
-        try {
-            ArrayList<Customer> customers = cuService.findAll();
-
-            Map<LocalDate, List<Customer>> customersByDate = customers.stream()
-                    .collect(Collectors.groupingBy(Customer::getCreatedDate));
-
-            for (Map.Entry<LocalDate, List<Customer>> entry : customersByDate.entrySet()) {
-                LocalDate date = entry.getKey();
-                List<Customer> customersOnDate = entry.getValue();
-
-                System.out.println("Date: " + date);
-                for (Customer customer : customersOnDate) {
-                    System.out.println("  Customer: " + customer.getName() + " | ID: " + customer.getId());
-
-                }
-                System.out.println();
-            }
-        } catch (ServiceException ex) {
-
-           System.err.println("An error occurred: " + ex.getMessage());
-        }
+    for (Customer customer : totalCustomers) {
+        // Do something with each customer, e.g., print customer details
+        System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
     }
 
-    public void displayTransactionsByDate(LocalDate startDate, LocalDate endDate) {
-        System.out.println("Transactions from " + startDate + " to " + endDate);
-        System.out.println("-----------------------------------");
 
-        try {
-            List<Transaction> transactions = trService.findAll();
+   ArrayList<Transaction> totalTransactions = new ArrayList<>();
+try {
+    totalTransactions = trService.findAll();
+} catch (ServiceException e) {
 
-            for (Transaction transaction : transactions) {
-                LocalDate transactionDate = transaction.getCreatedDate();
+    e.printStackTrace();
+}
+    System.out.println("Total number of transactions: " + totalTransactions);
 
-                if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
-                    System.out.println(transaction);
-                }
-            }
-
-            System.out.println("-----------------------------------");
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-        }
+    
+     Long totalBalance = (long) 0;
+    try {
+        totalBalance = baService.count();
+    } catch (ServiceException e) {
+        
+        e.printStackTrace();
     }
+     System.out.println("Total balance across all accounts: " + totalBalance);
+
     
+
+    // Pause to allow the user to read the totals
+    System.out.println("\nPress Enter to return to the reporting menu...");
+    try {
+        getString();
+    } catch (MenuException e) {
+        
+        e.printStackTrace();
+    } 
+
     
+    // private void displayAccountsByDate() {
+    //     // Implement logic to display accounts by date
+    //     System.out.println("Display Accounts by Date");
+    // }
     
-
-    public void displayOperationsByDate(LocalDate startDate, LocalDate endDate) {
-        System.out.println("Operations from " + startDate + " to " + endDate);
-        System.out.println("-----------------------------------");
-
-        try {
-            List<Operation> operations = opService.findAll();
-
-            for (Operation operation : operations) {
-                LocalDate operationDate = operation.getDate();
-
-                if (!operationDate.isBefore(startDate) && !operationDate.isAfter(endDate)) {
-                    System.out.println(operation);
-                }
-            }
-
-            System.out.println("-----------------------------------");
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-        }
-    }
+    // private void displayCustomersByDate() {
+    //     // Implement logic to display customers by date
+    //     System.out.println("Display Customers by Date");
+    // }
     
+    // private void displayTransactionsByDate() {
+    //     // Implement logic to display transactions by date
+    //     System.out.println("Display Transactions by Date");
+    // }
+    
+    // private void displayOperationsByDate() {
+    //     // Implement logic to display operations by date
+    //     System.out.println("Display Operations by Date");
+    // }
+//}
+}
 }
