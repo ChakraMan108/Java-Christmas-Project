@@ -607,89 +607,138 @@ CustomerService cuService = new CustomerService();
     }
 
 
-    //method for report
+    // method for report-Dhara
     private void displayTotals() {
-    try {
-        ArrayList<BankAccount> totalAccounts = new ArrayList<>();
-        baService.findAll();
+        try {
+            ArrayList<BankAccount> totalAccounts = baService.findAll();
+            System.out.println("Total number of accounts: " + totalAccounts.size());
 
-        System.out.println("Total number of accounts: " + totalAccounts.size());
+            for (BankAccount account : totalAccounts) {
+                System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
+            }
 
-        for (BankAccount account : totalAccounts) {
-            System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
+            ArrayList<Customer> totalCustomers = cuService.findAll();
+            System.out.println("Total number of customers: " + totalCustomers.size());
+
+            for (Customer customer : totalCustomers) {
+                System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
+            }
+
+            ArrayList<Transaction> totalTransactions = trService.findAll();
+            System.out.println("Total number of transactions: " + totalTransactions.size());
+
+            Long totalBalance = baService.count();
+            System.out.println("Total balance across all accounts: " + totalBalance);
+
+        } catch (Exception e) {
+
+            System.err.println("An error occurred: " + e.getMessage());
+            
         }
 
-    } catch (ServiceException e) {
-        e.printStackTrace();
+    
+        try {
+            getString();
+        } catch (MenuException e) {
+            e.printStackTrace();
+        }
     }
 
-    
-    ArrayList<Customer> totalCustomers = new ArrayList<>();
-
-    try {
-        totalCustomers = cuService.findAll();
-    } catch (ServiceException e) {
+    private static void displayAccountsByDate() {
         
-        e.printStackTrace();
-    }
-    System.out.println("Total number of customers: " + totalCustomers);
-
-    for (Customer customer : totalCustomers) {
-        // Do something with each customer, e.g., print customer details
-        System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
-    }
-
-
-   ArrayList<Transaction> totalTransactions = new ArrayList<>();
-try {
-    totalTransactions = trService.findAll();
-} catch (ServiceException e) {
-
-    e.printStackTrace();
-}
-    System.out.println("Total number of transactions: " + totalTransactions);
-
-    
-     Long totalBalance = (long) 0;
-    try {
-        totalBalance = baService.count();
-    } catch (ServiceException e) {
+        try {
+             ArrayList<BankAccount> accounts = baService.findAll();
         
-        e.printStackTrace();
-    }
-     System.out.println("Total balance across all accounts: " + totalBalance);
-
-    
-
-    // Pause to allow the user to read the totals
-    System.out.println("\nPress Enter to return to the reporting menu...");
-    try {
-        getString();
-    } catch (MenuException e) {
+            Map<LocalDate, List<BankAccount>> bankAccount = accounts.stream()
+                    .collect(Collectors.groupingBy(BankAccount::getCreatedDate));
         
-        e.printStackTrace();
-    } 
+            for (Entry<LocalDate, List<BankAccount>> entry : bankAccount.entrySet()) {
+                LocalDate date = entry.getKey();
+                List<BankAccount> baAccountsOnDate = entry.getValue();
+        
+                System.out.println("Date: " + date);
+                for (BankAccount account : baAccountsOnDate) {
+                    System.out.println("  BankAccount: " + account.getAccountName() + " | ID: " + account.getId());
+                }
+                System.out.println();
+            }
+        } catch (ServiceException ex) {
+            
+            System.err.println("An error occurred: " + ex.getMessage());
+        }
 
+            
+        }
+
+    public void displayCustomersByDate() {
+        try {
+            ArrayList<Customer> customers = cuService.findAll();
+
+            Map<LocalDate, List<Customer>> customersByDate = customers.stream()
+                    .collect(Collectors.groupingBy(Customer::getCreatedDate));
+
+            for (Map.Entry<LocalDate, List<Customer>> entry : customersByDate.entrySet()) {
+                LocalDate date = entry.getKey();
+                List<Customer> customersOnDate = entry.getValue();
+
+                System.out.println("Date: " + date);
+                for (Customer customer : customersOnDate) {
+                    System.out.println("  Customer: " + customer.getName() + " | ID: " + customer.getId());
+
+                }
+                System.out.println();
+            }
+        } catch (ServiceException ex) {
+
+           System.err.println("An error occurred: " + ex.getMessage());
+        }
+    }
+
+    public void displayTransactionsByDate(LocalDate startDate, LocalDate endDate) {
+        System.out.println("Transactions from " + startDate + " to " + endDate);
+        System.out.println("-----------------------------------");
+
+        try {
+            List<Transaction> transactions = trService.findAll();
+
+            for (Transaction transaction : transactions) {
+                LocalDate transactionDate = transaction.getCreatedDate();
+
+                if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
+                    System.out.println(transaction);
+                }
+            }
+
+            System.out.println("-----------------------------------");
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+        }
+    }
     
-    // private void displayAccountsByDate() {
-    //     // Implement logic to display accounts by date
-    //     System.out.println("Display Accounts by Date");
-    // }
     
-    // private void displayCustomersByDate() {
-    //     // Implement logic to display customers by date
-    //     System.out.println("Display Customers by Date");
-    // }
     
-    // private void displayTransactionsByDate() {
-    //     // Implement logic to display transactions by date
-    //     System.out.println("Display Transactions by Date");
-    // }
+
+    public void displayOperationsByDate(LocalDate startDate, LocalDate endDate) {
+        System.out.println("Operations from " + startDate + " to " + endDate);
+        System.out.println("-----------------------------------");
+
+        try {
+            List<Operation> operations = opService.findAll();
+
+            for (Operation operation : operations) {
+                LocalDate operationDate = operation.getDate();
+
+                if (!operationDate.isBefore(startDate) && !operationDate.isAfter(endDate)) {
+                    System.out.println(operation);
+                }
+            }
+
+            System.out.println("-----------------------------------");
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+        }
+    }
     
-    // private void displayOperationsByDate() {
-    //     // Implement logic to display operations by date
-    //     System.out.println("Display Operations by Date");
-    // }
-//}
-}
 }
