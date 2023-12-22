@@ -103,6 +103,14 @@ public class TomTest {
         trService.saveJson();
         opService.saveJson();
     
+        UiImpl ui = new UiImpl();
+        
+        try {
+            ui.authenticateApp();
+            ui.displayMenu();
+        } catch (MenuException ex) {
+            System.out.println(ex.getMessage() + "\nExiting the application.");   
+        }
     }
 }
 
