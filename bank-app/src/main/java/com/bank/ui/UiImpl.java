@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
 import org.apache.commons.validator.routines.EmailValidator;
-
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
@@ -603,9 +601,8 @@ public class UiImpl implements Ui {
         return null;
     }
 
-    private void deactivateCustomer() throws MenuException {
+   private void deactivateCustomer() throws MenuException {
         Long idToUpdate = getLong();
-
         try {
             cuService.findById(idToUpdate);
             try {
@@ -618,7 +615,6 @@ public class UiImpl implements Ui {
             System.out.println("Could not find Customer id " + idToUpdate + ".\n" + e.getMessage());
             
         }
-
     }
 
     private void displayCustomerDetails() {
@@ -710,7 +706,7 @@ public class UiImpl implements Ui {
             
         }
 
-    public void displayCustomersByDate() {
+      public void displayCustomersByDate() {
         try {
             ArrayList<Customer> customers = cuService.findAll();
 
