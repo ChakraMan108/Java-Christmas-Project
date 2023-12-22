@@ -16,7 +16,7 @@ public class TransactionService implements Service<Transaction> {
             return repository.count();
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex.getMessage());
         }
     }
 
@@ -25,7 +25,7 @@ public class TransactionService implements Service<Transaction> {
             return repository.findAll();
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex.getMessage());
         }
     }
 
@@ -34,7 +34,7 @@ public class TransactionService implements Service<Transaction> {
             return repository.findById(id);
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex.getMessage());         
         }
     }
 
@@ -43,7 +43,7 @@ public class TransactionService implements Service<Transaction> {
             return repository.save(transaction);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Transaction Repository by the Service.", ex.getMessage());
         }
     }
     

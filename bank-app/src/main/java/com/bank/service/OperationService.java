@@ -16,7 +16,7 @@ public class OperationService implements Service<Operation> {
         try {
             return repository.save(operation);
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Repository by the Service.", ex.getMessage());
         }
     }
 
@@ -24,7 +24,7 @@ public class OperationService implements Service<Operation> {
         try {
             return repository.findById(id);
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Repository by the Service.", ex.getMessage());
         }
     }
 
@@ -32,7 +32,7 @@ public class OperationService implements Service<Operation> {
         try {
             return repository.count();
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Failed to get the count of operations", ex.getMessage());
         }
     }
 
@@ -40,15 +40,11 @@ public class OperationService implements Service<Operation> {
         try {
             return repository.findAll();
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("Exception received from the Repository by the Service.", ex.getMessage());
         }
     }
-//     public void displayOperationsByDateRange(LocalDate startDate, LocalDate endDate) {
-//         System.out.println("Operations from " + startDate + " to " + endDate);
-//         System.out.println("-----------------------------------");
-// }
+    
     public void saveJson() throws IOException {
         repository.saveJson();
     }
 }
-

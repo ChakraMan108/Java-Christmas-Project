@@ -17,15 +17,18 @@ public class CustomerRepository implements Repository<Customer> {
     }
 
     public ArrayList<Customer> findAll() throws RepositoryException {
-        return customers;
+        if (!customers.isEmpty()) 
+            return customers;
+        throw new RepositoryException("No customer items found in the repository!");  
     }
 
     public Customer findById(long id) throws RepositoryException {
         for (Customer customer : customers) {
-            if (customer.getId() == id) 
+            if (customer.getId() == id) {
                 return customer;
             }
-        throw new RepositoryException("Customer id " + id + " not found in the repository.");
+        }
+        throw new RepositoryException("No customer item with id " + id + " found in the repository!");
     }
 
     public Customer save(Customer customer) throws RepositoryException {
