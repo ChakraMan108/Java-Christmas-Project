@@ -26,7 +26,6 @@ public class TomTest {
         Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
         Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
         
-         
         cuService.createCustomer(c1);
         cuService.createCustomer(c2);
         System.out.println("\nAfter customer creation:\n" + c1);
@@ -66,7 +65,7 @@ public class TomTest {
         //Account Withdrawal
          long withdrawIntoId = baService.save(acc2).getId();
         baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50000);
-        baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 500);
+        baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50);
         System.out.println("\nAfter account withdrawal:\n" + acc2);
 
         System.out.println("Balance of account id + " + acc2.getId() + " is EUR " + acc2.getBalance()/100);
