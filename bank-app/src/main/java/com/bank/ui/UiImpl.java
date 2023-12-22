@@ -3,7 +3,10 @@ package com.bank.ui;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -230,8 +233,6 @@ CustomerService cuService = new CustomerService();
         catch (ServiceException ex){
             System.out.println(ex.getMessage());
         }
-        
-
         do {
             clearConsole();
             System.out.println("\n========================");
@@ -248,56 +249,12 @@ CustomerService cuService = new CustomerService();
             switch (userInput) {
                 case "1":
                     withdrawFromAccount();
-                //     System.out.println("\nWithdraw Funds from Account");
-                //     System.out.println("\nEnter account ID");
-                //     long wId = getLong();
-                //     System.out.println("\nEnter withdrawl ammount");
-                //     long wAmountC = getLong();  
-                //     long wAmount = wAmountC * 100;
-                // try{
-                //     System.out.println("Number of customers: " + cuService.count());
-                //     baService.withdrawFromAccount(wId, wAmount);
-                //     System.out.println(baService.findById(wId).getBalance());
-                //     System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()/100);
-                //         }
-                //         catch (ServiceException ex) {
-                //             System.out.println("Recieved from service: " + ex.getMessage());
-                //         }
                         break;
                 case "2":
-                    System.out.println("\nDeposit Funds to Account");
-                    System.out.println("\nEnter account ID");
-                    long dId = getLong();
-                    System.out.println("\nEnter deposit ammount");
-                    long dAmountC = getLong(); 
-                    long dAmount = dAmountC * 100;  
-                try{
-                    baService.depositIntoAccount(dId, dAmount);
-                    System.out.println(baService.findById(dId).getBalance());
-                    System.out.println("\nAfter account deposit:\n" + baService.findById(dId).getBalance()/100); // Not going to work
-                        }
-                        catch (ServiceException ex) {
-                            throw new MenuException("[UI Error:]"+ ex.getMessage());
-                        }
+                    depositIntoAccount();
                         break;
                 case "3":
-                    System.out.println("\nTransfer Funds from/to Account");
-                    System.out.println("\nEnter the transferer ID");
-                    long tId = getLong();
-                    System.out.println("\nEnter the recipients ID");
-                    long rId = getLong();
-                    System.out.println("\nEnter transfer ammount");
-                    long tAmountC = getLong();
-                    long tAmount = tAmountC * 100;  
-                    try{
-                        baService.withdrawFromAccount(tId, tAmount);
-                        baService.depositIntoAccount(rId, tAmount);
-                        System.out.println("\nTransferers account balance deposit:\n" + baService.findById(tId).getBalance()/100);
-                        System.out.println("\nRecipients account balance deposit:\n" + baService.findById(rId).getBalance()/100);
-                        }
-                        catch (ServiceException ex) {
-                            throw new MenuException("[UI Error:]"+ ex.getMessage());
-                        }
+                    transferToAccount();
                         break;
                 case "4":
                     System.out.println("\nReturn to Main Menu");
@@ -312,26 +269,6 @@ CustomerService cuService = new CustomerService();
         } while (!exit);
     }
 
-    void withdrawFromAccount() throws MenuException{
-        System.out.println("\nWithdraw Funds from Account");
-                try{
-                    
-                    System.out.println("\nEnter account ID");
-                    long wId = getLong();
-                    System.out.println("\nEnter withdrawl ammount");
-                    long wAmountC = getLong();
-                    long wAmount = wAmountC * 100;
-                    
-                    System.out.println("Number of customers: " + cuService.count());
-                    baService.withdrawFromAccount(wId, wAmount);
-                    System.out.println(baService.findById(wId).getBalance());
-                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()); // Not going to work
-                        }
-                        catch (ServiceException | MenuException ex) {
-                            throw new MenuException("[UI Error:]"+ ex.getMessage());
-                        }
-        
-    }
 
     private void reports() {
         boolean exit = false;
@@ -460,7 +397,59 @@ CustomerService cuService = new CustomerService();
     }
 
     // Fionn
+    void withdrawFromAccount() throws MenuException{
+        System.out.println("\nWithdraw Funds from Account");
+                try{
+                    System.out.println("\nEnter account ID");
+                    long wId = getLong();
+                    System.out.println("\nEnter withdrawl ammount");
+                    long wAmountC = getLong();
+                    long wAmount = wAmountC * 100;
+                    
+                    System.out.println("Number of customers: " + cuService.count());
+                    baService.withdrawFromAccount(wId, wAmount);
+                    System.out.println("\nAfter account withdrawal:\n" + "€" + baService.findById(wId).getBalance()/100); 
+                        }
+                        catch (ServiceException | MenuException ex) {
+                            throw new MenuException("[UI Error:]"+ ex.getMessage());
+                        }
+    }
+    void depositIntoAccount() throws MenuException {
+        System.out.println("\nDeposit Funds to Account");
+                try{
+                    System.out.println("\nEnter account ID");
+                    long dId = getLong();
+                    System.out.println("\nEnter deposit ammount (Euro)");
+                    long dAmountC = getLong(); 
+                    long dAmount = dAmountC * 100;  
+                
+                    baService.depositIntoAccount(dId, dAmount);
+                    System.out.println("\nAfter account deposit:\n" + baService.findById(dId).getBalance()/100 +" Euro"); 
+                        }
+                        catch (ServiceException ex) {
+                            throw new MenuException("[UI Error:]"+ ex.getMessage());
+                        }
+    }
+    void transferToAccount() throws MenuException {
+        System.out.println("\nTransfer Funds to Account");
+                try{    
+                    System.out.println("\nEnter the transferer ID");
+                    long tId = getLong();
+                    System.out.println("\nEnter the recipients ID");
+                    long rId = getLong();
+                    System.out.println("\nEnter transfer ammount (Euro)");
+                    long tAmountC = getLong();
+                    long tAmount = tAmountC * 100; 
 
+                    baService.withdrawFromAccount(tId, tAmount);
+                    baService.depositIntoAccount(rId, tAmount);
+                    System.out.println("\nTransferers account balance deposit:\n"+ baService.findById(tId).getBalance()/100+" Euro");
+                    System.out.println("\nRecipients account balance deposit:\n" + baService.findById(rId).getBalance()/100+" Euro");
+                        }
+                        catch (ServiceException ex) {
+                            throw new MenuException("[UI Error:]"+ ex.getMessage());
+                        }
+    }
 
     // Dhara
     private void displayMainMenu() {
