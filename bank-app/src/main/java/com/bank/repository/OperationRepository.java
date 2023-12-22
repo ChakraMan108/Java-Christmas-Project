@@ -12,17 +12,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class OperationRepository implements Repository<Operation> {
 
     private ArrayList<Operation> operations = new ArrayList<>();
+    private static long lastOperationId = 0;
 
     public ArrayList<Operation> findAll() throws RepositoryException {
-        return operations;
+        if (!operations.isEmpty())
+            return operations;
+        throw new RepositoryException("No operation items found in the repository!");
     }
 
     public Operation findById(long id) throws RepositoryException {
-        for (Operation operation : operations) {
-            if (operation.getId() == id) 
-                return operation;
+        for (Operation entity : operations) {
+            if (entity.getId() == id) {
+                return entity;
+            }
         }
-        throw new RepositoryException("No operation with id " + id + " found in the repository.");
+        throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
     }
 
     public long count() throws RepositoryException {
@@ -30,12 +34,20 @@ public class OperationRepository implements Repository<Operation> {
     }
 
     public Operation save(Operation operation) throws RepositoryException {
-        operation.setId(generateId());
-        operation.setDate(LocalDate.now());
-        operations.add(operation);
-        return operation;
+        try {
+            operation.setId(incrementOperationId());
+            operation.setDate(LocalDate.now());
+            operations.add(operation);
+            return operation;
+        } catch (Exception ex) {
+            String errorMessage = "Failed to save operation.";
+            throw new RepositoryException(errorMessage, ex);
+        }
     }
 
+    public long incrementOperationId() {
+        return ++lastOperationId;
+    }
     public long generateId() {
         return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
     }

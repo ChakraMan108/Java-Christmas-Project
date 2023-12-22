@@ -9,7 +9,7 @@ public class Main {
         UiImpl ui = new UiImpl();
         
         try {
-           //1 ui.authenticateApp();
+            ui.authenticateApp();
             ui.displayMenu();
         } catch (MenuException ex) {
             System.out.println(ex.getMessage() + "\nExiting the application.");   

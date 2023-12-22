@@ -12,32 +12,41 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class TransactionRepository implements Repository<Transaction> {
     
     private ArrayList<Transaction> transactions = new ArrayList<>();
+    private static long lastTransactionId = 0;
 
     public long count() throws RepositoryException {
         return transactions.size();
     }
 
     public ArrayList<Transaction> findAll() throws RepositoryException {
-        return transactions;
+        if (!transactions.isEmpty()) 
+            return transactions;
+        throw new RepositoryException("No transaction items found in the repository.");  
     }
 
     public Transaction findById(long id) throws RepositoryException {
-        for (Transaction transaction : transactions) {
-            if (transaction.getId() == id)
-                return transaction;
+        for (Transaction t : transactions) {
+            if (t.getId() == id) {
+                return t;
+            }
          }
-        throw new RepositoryException("No transaction with id " + id + " found in the repository.");
+        throw new RepositoryException("No transaction item with id " + id + " found in the repository.");
     }
     
     public Transaction save(Transaction transaction) throws RepositoryException {
-        transaction.setId(generateId());
-        transaction.setCreatedDate(LocalDate.now());
-        transactions.add(transaction);
-        return transaction;
+        try {
+            transaction.setId(incrementTransactionId());
+            transaction.setCreatedDate(LocalDate.now());
+            transactions.add(transaction);
+            return transaction;
+        } catch (Exception ex) {
+            String errorMessage = "Failed to save operation.";
+            throw new RepositoryException(errorMessage, ex);
+        }
     }
 
-    public long generateId() {
-        return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+    private static long incrementTransactionId() {
+        return ++lastTransactionId;
     }
 
     public void saveJson() throws IOException {

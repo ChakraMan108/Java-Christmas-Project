@@ -15,7 +15,6 @@ public class Transaction {
     private String username;
     private TransactionType type = null;
     private long accountId;
-    
 
 /* ****************************** */
 // Constructors
