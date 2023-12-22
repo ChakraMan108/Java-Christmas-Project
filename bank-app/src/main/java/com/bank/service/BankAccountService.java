@@ -23,7 +23,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.count();
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -32,7 +32,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.findAll();
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -41,7 +41,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.findById(id);
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());         
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -50,7 +50,7 @@ public class BankAccountService implements Service<BankAccount> {
             return repository.save(bankAccount);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -58,16 +58,19 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             BankAccount account = repository.findById(id);
             if (amount < 1) {
-               throw new ServiceException("Cannot deposit €" + amount/100 + " to account id " + account.getId(), Long.toString(account.getId()));           
+               throw new ServiceException("[Bank Account Service error] Invalid deposit EUR " + amount/100 + " to account id " + account.getId(), Long.toString(account.getId()));           
             }
             account.setBalance(account.getBalance() + amount);
             save(account);
-
-            Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.DEPOSIT, account.getId());
-            ts.save(t);
+            try {
+                Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.DEPOSIT, account.getId());
+                ts.save(t);
+            } catch (ServiceException ex) {
+                throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
+            }
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service." + ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -75,16 +78,19 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             BankAccount account = repository.findById(id);
             if (account.getBalance() - amount < 0) {
-                throw new ServiceException("Insufficient balance to withdraw €" + amount/100 + " from account id " + account.getId(), Long.toString(account.getId()));
+                throw new ServiceException("[Bank Account Service error] Insufficient balance to withdraw EUR " + amount/100 + " from account id " + account.getId(), Long.toString(account.getId()));
             }
             account.setBalance(account.getBalance() - amount);
             save(account);
-            
-            Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.WITHDRAWAL, account.getId());
-            ts.save(t);
+            try {
+                Transaction t = new Transaction(amount, System.getProperty("user.name"),Transaction.TransactionType.WITHDRAWAL, account.getId());
+                ts.save(t);
+            } catch (ServiceException ex) {
+                throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
+            }
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -92,36 +98,36 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             BankAccount account = repository.findById(id);
             if (!account.isActive())
-                throw new ServiceException("Cannot deactivate already deactivated account id " + account.getId(), Long.toString(account.getId()));
+                throw new ServiceException("[Bank Account Service error] Cannot deactivate deactivated account id " + account.getId(), Long.toString(account.getId()));
             account.setActive(false);
             account.setDeactivatedDate(LocalDate.now());
             save(account);
-            Operation o = new Operation(OperationType.ACCOUNT_DEACTIVATION, System.getProperty("user.name"), account.getId(), account.getCustomer().getId());
-            os.save(o);   
+            try {
+                Operation o = new Operation(OperationType.ACCOUNT_DEACTIVATION, System.getProperty("user.name"), account.getId(), account.getCustomer().getId());
+                os.save(o);   
+            } catch (ServiceException ex) {
+                throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
+            }          
         } catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Bank Account Repository by the Bank Account Service.", ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
     public BankAccount createAccount(BankAccount bankAccount, Customer customer) throws ServiceException {
+        if (!customer.isActive())
+            throw new ServiceException("[Bank Account Service error] Cannot create account for deactivated customer.");
+        BankAccount account = new BankAccount();
+        bankAccount.setActive(true);
+        bankAccount.setCreatedDate(LocalDate.now());
+        bankAccount.setCustomer(customer);
+        account = save(bankAccount);
         try {
-            if (!customer.isActive())
-                throw new ServiceException("Cannot create account for inactive customer!");
-            BankAccount account = new BankAccount();
-            bankAccount.setActive(true);
-            bankAccount.setCreatedDate(LocalDate.now());
-            bankAccount.setCustomer(customer);
-            account = save(bankAccount);
-            try {
-                Operation o = new Operation(OperationType.ACCOUNT_CREATION, System.getProperty("user.name"), account.getCustomer().getId(), account.getId());
-                os.save(o);
-            } catch (ServiceException ex) { 
-                throw ex;
-            }
-            return account;
+            Operation o = new Operation(OperationType.ACCOUNT_CREATION, System.getProperty("user.name"), account.getCustomer().getId(), account.getId());
+            os.save(o);
         } catch (ServiceException ex) {
-            throw new ServiceException("Exception received from the Bank Account Service by the Bank Account Service.", ex.getMessage());
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
+        return account;
     }
 
     public void saveJson() throws IOException {

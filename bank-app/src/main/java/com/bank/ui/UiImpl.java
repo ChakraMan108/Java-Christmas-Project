@@ -4,15 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
+
 import org.apache.commons.validator.routines.EmailValidator;
+
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
+import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Transaction;
-import com.bank.entity.BankAccount.AccountType;
-import com.bank.entity.Operation;
-import com.bank.exceptions.CustomerException;
 import com.bank.exceptions.MenuException;
-import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
@@ -589,18 +588,8 @@ CustomerService cuService = new CustomerService();
     }
 
     private void deactivateCustomer(Customer customer) {
-        customer.setActive(false);
 
-        Customer deactivatedCustomer = new Customer(
-                customer.getId(),
-                customer.getName(),
-                customer.getAddress(),
-                customer.getDob(),
-                customer.getPhoneNumber(),
-                customer.getEmail(),
-                CustomerType.NEW_TYPE);
-
-        System.out.println("Customer deactivated successfully.");
+        
     }
 
     private void displayCustomerDetails() {
@@ -665,7 +654,7 @@ CustomerService cuService = new CustomerService();
 
    ArrayList<Transaction> totalTransactions = new ArrayList<>();
 try {
-    totalTransactions = transactionService.findAll();
+    totalTransactions = trService.findAll();
 } catch (ServiceException e) {
 
     e.printStackTrace();
