@@ -43,8 +43,12 @@ public class OperationService implements Service<Operation> {
             throw new ServiceException("Exception received from the Repository by the Service.", ex.getMessage());
         }
     }
-    
+//     public void displayOperationsByDateRange(LocalDate startDate, LocalDate endDate) {
+//         System.out.println("Operations from " + startDate + " to " + endDate);
+//         System.out.println("-----------------------------------");
+// }
     public void saveJson() throws IOException {
         repository.saveJson();
     }
 }
+
