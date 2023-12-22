@@ -44,7 +44,7 @@ public class TomTest {
 
         // Account Creation
         BankAccount acc2 = new BankAccount(); 
-        Customer foundCustomer = cuService.findById(c1.getId()); 
+        Customer foundCustomer = cuService.findById(c2.getId()); 
         baService.createAccount(acc2, foundCustomer);
         System.out.println("\nAfter account creation:\n" + acc2);
 
@@ -104,6 +104,14 @@ public class TomTest {
         trService.saveJson();
         opService.saveJson();
     
+        UiImpl ui = new UiImpl();
+        
+        try {
+            ui.authenticateApp();
+            ui.displayMenu();
+        } catch (MenuException ex) {
+            System.out.println(ex.getMessage() + "\nExiting the application.");   
+        }
     }
 }
 
