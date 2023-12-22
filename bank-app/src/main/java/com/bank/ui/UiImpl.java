@@ -7,6 +7,7 @@ import java.util.Scanner;
 import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
+import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Transaction;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.entity.Operation;
@@ -21,6 +22,7 @@ import com.bank.service.TransactionService;
 
 public class UiImpl implements Ui {
 
+private static Scanner scanner;
 // Service initialisation
 BankAccountService baService = new BankAccountService();
 OperationService opService = new OperationService();
@@ -194,7 +196,7 @@ CustomerService cuService = new CustomerService();
         } while (!exit);
     }
 
-    private void accountDisplay() {
+    private void accountsDisplay() {
         boolean exit = false;
 
         System.out.println("\n1. Display All Accounts");
@@ -358,8 +360,12 @@ CustomerService cuService = new CustomerService();
         }
     }
 
+    
+
     // Rob
-    static void accountDisplay() {
+    public class AccountsDisplay {
+    
+        static void accountsDisplay() {
         boolean exit = false;
         do {
             System.out.println("1. Display All Accounts");
@@ -370,7 +376,7 @@ CustomerService cuService = new CustomerService();
             System.out.println("Please enter a number between 1 and 5");
             
             int menuOption = Integer.parseInt(scanner.nextLine());
-            String userInput = getString();
+            Scanner scanner = new Scanner(System.in);
             try {
                 switch (menuOption) {
                     case 1:
@@ -391,19 +397,29 @@ CustomerService cuService = new CustomerService();
                     default:
                         throw new MenuException("Invalid Option Selected. Enter Valid Option. Please enter a number between 1 and 5.");
                 }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid Option Selected. Enter Valid Option. Please enter a number between 1 and 5.");
+            } 
             } catch (MenuException e) {
                 System.out.println("Unexpected error occurred:" + e.getMessage());
             } finally {
                 System.out.println("Thank you for using the Bank App.");
 
-                if Scanner != null {
-                    Scanner.close();
+                if scanner != null {
+                    scanner.close();
                 }
         } while (!exit);
     }
     
-    
-    
+}
+ 
+public enum AccountType {
+    CURRENT,
+    SAVINGS,
+    STUDENT
+}
+
+public class AccountDisplay {
     static void accountDisplay() {
         boolean exit = false;
         do {
@@ -437,6 +453,8 @@ CustomerService cuService = new CustomerService();
             }
         } while (!exit);
     }
+}
+
     static void displayAllAccounts() {
         System.Out.println("Please enter an account Id");
         long Id = Long.parseLong(scanner.nextLine());
@@ -444,43 +462,67 @@ CustomerService cuService = new CustomerService();
         } catch (MenuException e) {
             System.out.println(e.getMessage());
         }
-            
+            for (BankAccount account : totalAccounts) {
+                System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
+            }
         System.out.println("\nAll accounts:\n" + baService.findAll());;
     }
     
     static void displayAccountsByCustomer() {
         System.Out.println("Please enter a customer name");
+        Scanner scanner;
         String name = scanner.nextLine();
         try { {baService.getId().findByName();}
         } catch (MenuException e) {
             System.out.println(e.getMessage());
-        } catch (MenuException e) {
-            System.out.println(e.getMessage());
+        } for (BankAccount account : accounts) {
+            if (account.getName().equalsIgnoreCase(name)) {
+                System.out.println(account);
         }
         System.out.println("\nAll accounts:\n" + baService.getId().findAll());
     }
+}
     
     static void displayAccountsByBalance() {
-        System.out.println("Please enter an account Id");
-        long Id = Long.parseLong(scanner.nextLine());
-        try { {baService.getId().sortByBalance();}
+        System.out.println("Please enter a minimum balance");
+        Scanner scanner = new Scanner(System.in);
+        long minBalance = Long.parseLong(scanner.nextLine());
+        System.out.println("Displaying accounts with balance greater than " + minBalance);
+        for (BankAccount account : accounts) {
+            if (account.getBalance() > minBalance) {
+                System.out.println(account);
+            }
+        }
+        try { {baService.findById(Id).sortByBalance();}
         } catch (MenuException e) {
             System.out.println(e.getMessage());
         System.out.println("3. Display Accounts by Balance");
-        System.out.println("Balance of account id" + acc.getId() + "is EUR" + acc.getBalanceamount()/100);
+        System.out.println("Balance of account id" + account.getId() + "is EUR" + account.getBalanceamount()/100);
     }
-    
+    }
+
     static void displayAccountsByType() {
-        System.out.println("Please enter an account Id");
+        System.out.println("Please enter an account Id:");
         long Id = Long.parseLong(scanner.nextLine());
-        System.out.println("Please enter an account type");
+        System.out.println("Please enter an account type:");
         String type = scanner.nextLine();
+        for (BankAccount account : accounts) {
+            if (account.getType().equalsIgnoreCase(type)) {
+                System.out.println(account);
+            }
+        }
         try {  {baService.getId().sortByType();}
         } catch (MenuException e) {
             System.out.println(e.getMessage());
-        System.out.println("\nAll accounts:\n" + baService.sortByType());
+        System.out.println("\nAll accounts:\n" + baService.sortByType());}
     }
+
+    @Override 
+    public String toString() {
+        return "Account{" + "id=" + id + ", balance=" + balance + ", type=" + type + ", name=" + name + ", 
+        createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate + ", active=" + active + '}';}""
     
+    baService.saveJson();
     
     // Tom
     public final static void clearConsole() {
@@ -838,3 +880,6 @@ try {
 //}
 }
 }
+
+    public static void displayAccounts() {
+    }
