@@ -216,10 +216,14 @@ CustomerService cuService = new CustomerService();
         System.out.println("\nAfter customer creation:\n" + c2);
 
 
+        BankAccount acc1 = new BankAccount(); 
+        acc1.setBalance(1000000);
+        Customer foundCustomer = cuService.findById(c1.getId()); 
+        baService.createAccount(acc1, foundCustomer);
         BankAccount acc2 = new BankAccount(); 
         acc2.setBalance(1000000);
-        Customer foundCustomer = cuService.findById(c2.getId()); 
-        baService.createAccount(acc2, foundCustomer);
+        Customer foundCustomer1 = cuService.findById(c2.getId()); 
+        baService.createAccount(acc2, foundCustomer1);
         System.out.println(baService.findAll());
         
         }
@@ -252,10 +256,10 @@ CustomerService cuService = new CustomerService();
                     System.out.println("Number of customers: " + cuService.count());
                     baService.withdrawFromAccount(wId, wAmount);
                     System.out.println(baService.findById(wId).getBalance());
-                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()); // Not going to work
+                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()/100);
                         }
                         catch (ServiceException ex) {
-                            System.out.println("Recieved from service" + ex.getMessage());
+                            System.out.println("Recieved from service: " + ex.getMessage());
                         }
                         break;
                 case "2":
@@ -267,11 +271,11 @@ CustomerService cuService = new CustomerService();
                     long dAmount = dAmountC * 100;  
                 try{
                     baService.depositIntoAccount(dId, dAmount);
-                    baService.findById(dId);
-                    System.out.println("\nAfter account deposit:\n" + dId); // Not going to work
+                    System.out.println(baService.findById(dId).getBalance());
+                    System.out.println("\nAfter account deposit:\n" + baService.findById(dId).getBalance()/100); // Not going to work
                         }
                         catch (ServiceException ex) {
-                            throw new MenuException("Case2: Exception received from the Bank Account Repository by the Bank Account Service.");
+                            System.out.println("Recieved from service: " + ex.getMessage());
                         }
                         break;
                 case "3":
@@ -285,17 +289,17 @@ CustomerService cuService = new CustomerService();
                     long tAmount = tAmountC * 100;  
                     try{
                         baService.withdrawFromAccount(tId, tAmount);
+                        System.out.println("\nTransferers account balance deposit:\n" + baService.findById(tId).getBalance()/100);
                         }
                         catch (ServiceException ex) {
-                            throw new MenuException("Case3: Exception received from the Bank Account Repository by the Bank Account Service.");
+                            System.out.println("Recieved from service: " + ex.getMessage());
                         }
-                        try{
+                    try{
                         baService.depositIntoAccount(rId, tAmount);
-                        System.out.println("\nTransferer's account after withdrawal:\n" + tId); // Not going to work
-                        System.out.println("\nRecipients's account after withdrawal:\n" + rId); 
+                        System.out.println("\nRecipients account balance deposit:\n" + baService.findById(rId).getBalance()/100);
                         }
-                        catch (ServiceException ex1) {
-                            throw new MenuException("Exception received from the Bank Account Repository by the Bank Account Service.");
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service: " + ex.getMessage());
                         }
                         break;
                 case "4":
@@ -309,6 +313,25 @@ CustomerService cuService = new CustomerService();
                     System.out.println(ex.getMessage());
                 }
         } while (!exit);
+    }
+
+    private void withdrawalM(){
+        System.out.println("\nWithdraw Funds from Account");
+                    System.out.println("\nEnter account ID");
+                    long wId = getLong();
+                    System.out.println("\nEnter withdrawl ammount");
+                    long wAmountC = getLong();  
+                    long wAmount = wAmountC * 100;
+                try{
+                    System.out.println("Number of customers: " + cuService.count());
+                    baService.withdrawFromAccount(wId, wAmount);
+                    System.out.println(baService.findById(wId).getBalance());
+                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()); // Not going to work
+                        }
+                        catch (ServiceException ex) {
+                            System.out.println("Recieved from service" + ex.getMessage());
+                        }
+        
     }
 
     private void reports() {
