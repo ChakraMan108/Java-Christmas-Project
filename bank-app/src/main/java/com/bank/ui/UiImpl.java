@@ -1,15 +1,21 @@
 package com.bank.ui;
 
+import java.security.Provider.Service;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
-
+import java.util.stream.Collectors;
 import org.apache.commons.validator.routines.EmailValidator;
-
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
+import com.bank.entity.Operation;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.MenuException;
 import com.bank.exceptions.ServiceException;
@@ -20,18 +26,18 @@ import com.bank.service.TransactionService;
 
 public class UiImpl implements Ui {
 
-// Service initialisation
-BankAccountService baService = new BankAccountService();
-OperationService opService = new OperationService();
-TransactionService trService = new TransactionService();
-CustomerService cuService = new CustomerService();
-  
-// UI class constructor  
-  public UiImpl() {
+    // Service initialisation
+    BankAccountService baService = new BankAccountService();
+    OperationService opService = new OperationService();
+    TransactionService trService = new TransactionService();
+    CustomerService cuService = new CustomerService();
+
+    // UI class constructor
+    public UiImpl() {
 
     }
-    
-  private long idToUpdate;
+
+    private long idToUpdate;
 
     public void authenticateApp() throws MenuException {
         try {
@@ -100,35 +106,33 @@ CustomerService cuService = new CustomerService();
 
     private void customerManagement() throws MenuException {
         boolean exit = false;
-        do{
-        clearConsole();
-        System.out.println("\n========================");
-        System.out.println("=  CUSTOMER MANAGEMENT  =");
-        System.out.println("========================");
-        System.out.println("\n\n1. Create Customer");
-        System.out.println("2. Update Customer");
-        System.out.println("3. Deactivate Customer");
-        System.out.println("4. Display Customer Details");
-        System.out.println("5. Return to Main Menu");
-        System.out.println("========================");
-        System.out.println("Selection option:");
-        try {
-            String userInput = getString();
-            
+        do {
+            clearConsole();
+            System.out.println("\n========================");
+            System.out.println("=  CUSTOMER MANAGEMENT  =");
+            System.out.println("========================");
+            System.out.println("1. Create Customer");
+            System.out.println("2. Update Customer");
+            System.out.println("3. Deactivate Customer");
+            System.out.println("4. Display Customer Details");
+            System.out.println("5. Return to Main Menu");
+            System.out.println("========================");
+            System.out.println("Selection option:");
+            try {
+                String userInput = getString();
 
                 switch (userInput) {
                     case "1":
-                        
-                        System.out.println("\nCreate Customer");
+                        createCustomer();
                         break;
                     case "2":
-                        System.out.println("\nupdateCustomer");
+                        updateCustomer();
                         break;
                     case "3":
-                        System.out.println("\ndeactivateCustomer");
+                        deactivateCustomer();
                         break;
                     case "4":
-                        System.out.println("\ndisplayCustomerDetails()");
+                        displayCustomerDetails();
                         break;
                     case "5":
                         exit = true;
@@ -141,7 +145,7 @@ CustomerService cuService = new CustomerService();
             }
         } while (!exit);
     }
-            
+
     private void accountManagement() {
         boolean exit = false;
         do {
@@ -202,35 +206,34 @@ CustomerService cuService = new CustomerService();
         System.out.println("4. Display Accounts by Account Type");
         System.out.println("5. Return to Main Menu");
     }
-  
-    //Fionn
+
+    // Fionn
     private void accountManipulation() {
         boolean exit = false;
 
-        try{
-        Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
-        Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
-        cuService.createCustomer(c1);
-        cuService.createCustomer(c2);
-        System.out.println("\nAfter customer creation:\n" + c1);
-        System.out.println("\nAfter customer creation:\n" + c2);
+        try {
+            Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com",
+                    Customer.CustomerType.INDIVIDUAL);
+            Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457",
+                    "avaya@avaya.com", Customer.CustomerType.COMPANY);
+            cuService.createCustomer(c1);
+            cuService.createCustomer(c2);
+            System.out.println("\nAfter customer creation:\n" + c1);
+            System.out.println("\nAfter customer creation:\n" + c2);
 
+            BankAccount acc1 = new BankAccount();
+            acc1.setBalance(1000000);
+            Customer foundCustomer = cuService.findById(c1.getId());
+            baService.createAccount(acc1, foundCustomer);
+            BankAccount acc2 = new BankAccount();
+            acc2.setBalance(1000000);
+            Customer foundCustomer1 = cuService.findById(c2.getId());
+            baService.createAccount(acc2, foundCustomer1);
+            System.out.println(baService.findAll());
 
-        BankAccount acc1 = new BankAccount(); 
-        acc1.setBalance(1000000);
-        Customer foundCustomer = cuService.findById(c1.getId()); 
-        baService.createAccount(acc1, foundCustomer);
-        BankAccount acc2 = new BankAccount(); 
-        acc2.setBalance(1000000);
-        Customer foundCustomer1 = cuService.findById(c2.getId()); 
-        baService.createAccount(acc2, foundCustomer1);
-        System.out.println(baService.findAll());
-        
-        }
-        catch (ServiceException ex){
+        } catch (ServiceException ex) {
             System.out.println(ex.getMessage());
         }
-        
 
         do {
             clearConsole();
@@ -242,97 +245,101 @@ CustomerService cuService = new CustomerService();
             System.out.println("3. Transfer Funds from/to Account");
             System.out.println("========================");
             System.out.println("4. Return to Main Menu");
-        try {
-            String userInput = getString();
-            switch (userInput) {
-                case "1":
-                    System.out.println("\nWithdraw Funds from Account");
-                    System.out.println("\nEnter account ID");
-                    long wId = getLong();
-                    System.out.println("\nEnter withdrawl ammount");
-                    long wAmountC = getLong();  
-                    long wAmount = wAmountC * 100;
-                try{
-                    System.out.println("Number of customers: " + cuService.count());
-                    baService.withdrawFromAccount(wId, wAmount);
-                    System.out.println(baService.findById(wId).getBalance());
-                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()/100);
-                        }
-                        catch (ServiceException ex) {
+            try {
+                String userInput = getString();
+                switch (userInput) {
+                    case "1":
+                        System.out.println("\nWithdraw Funds from Account");
+                        System.out.println("\nEnter account ID");
+                        long wId = getLong();
+                        System.out.println("\nEnter withdrawl ammount");
+                        long wAmountC = getLong();
+                        long wAmount = wAmountC * 100;
+                        try {
+                            System.out.println("Number of customers: " + cuService.count());
+                            baService.withdrawFromAccount(wId, wAmount);
+                            System.out.println(baService.findById(wId).getBalance());
+                            System.out.println(
+                                    "\nAfter account withdrawal:\n" + baService.findById(wId).getBalance() / 100);
+                        } catch (ServiceException ex) {
                             System.out.println("Recieved from service: " + ex.getMessage());
                         }
                         break;
-                case "2":
-                    System.out.println("\nDeposit Funds to Account");
-                    System.out.println("\nEnter account ID");
-                    long dId = getLong();
-                    System.out.println("\nEnter deposit ammount");
-                    long dAmountC = getLong(); 
-                    long dAmount = dAmountC * 100;  
-                try{
-                    baService.depositIntoAccount(dId, dAmount);
-                    System.out.println(baService.findById(dId).getBalance());
-                    System.out.println("\nAfter account deposit:\n" + baService.findById(dId).getBalance()/100); // Not going to work
-                        }
-                        catch (ServiceException ex) {
+                    case "2":
+                        System.out.println("\nDeposit Funds to Account");
+                        System.out.println("\nEnter account ID");
+                        long dId = getLong();
+                        System.out.println("\nEnter deposit ammount");
+                        long dAmountC = getLong();
+                        long dAmount = dAmountC * 100;
+                        try {
+                            baService.depositIntoAccount(dId, dAmount);
+                            System.out.println(baService.findById(dId).getBalance());
+                            System.out
+                                    .println("\nAfter account deposit:\n" + baService.findById(dId).getBalance() / 100); // Not
+                                                                                                                         // going
+                                                                                                                         // to
+                                                                                                                         // work
+                        } catch (ServiceException ex) {
                             System.out.println("Recieved from service: " + ex.getMessage());
                         }
                         break;
-                case "3":
-                    System.out.println("\nTransfer Funds from/to Account");
-                    System.out.println("\nEnter the transferer ID");
-                    long tId = getLong();
-                    System.out.println("\nEnter the recipients ID");
-                    long rId = getLong();
-                    System.out.println("\nEnter transfer ammount");
-                    long tAmountC = getLong();
-                    long tAmount = tAmountC * 100;  
-                    try{
-                        baService.withdrawFromAccount(tId, tAmount);
-                        System.out.println("\nTransferers account balance deposit:\n" + baService.findById(tId).getBalance()/100);
-                        }
-                        catch (ServiceException ex) {
+                    case "3":
+                        System.out.println("\nTransfer Funds from/to Account");
+                        System.out.println("\nEnter the transferer ID");
+                        long tId = getLong();
+                        System.out.println("\nEnter the recipients ID");
+                        long rId = getLong();
+                        System.out.println("\nEnter transfer ammount");
+                        long tAmountC = getLong();
+                        long tAmount = tAmountC * 100;
+                        try {
+                            baService.withdrawFromAccount(tId, tAmount);
+                            System.out.println("\nTransferers account balance deposit:\n"
+                                    + baService.findById(tId).getBalance() / 100);
+                        } catch (ServiceException ex) {
                             System.out.println("Recieved from service: " + ex.getMessage());
                         }
-                    try{
-                        baService.depositIntoAccount(rId, tAmount);
-                        System.out.println("\nRecipients account balance deposit:\n" + baService.findById(rId).getBalance()/100);
-                        }
-                        catch (ServiceException ex) {
+                        try {
+                            baService.depositIntoAccount(rId, tAmount);
+                            System.out.println("\nRecipients account balance deposit:\n"
+                                    + baService.findById(rId).getBalance() / 100);
+                        } catch (ServiceException ex) {
                             System.out.println("Recieved from service: " + ex.getMessage());
                         }
                         break;
-                case "4":
-                    System.out.println("\nReturn to Main Menu");
-                    exit = true;
+                    case "4":
+                        System.out.println("\nReturn to Main Menu");
+                        exit = true;
                         break;
                     default:
                         System.out.println("Invalid Option Selected. Enter Valid Option.");
                 }
-                } catch (MenuException ex) {
-                    System.out.println(ex.getMessage());
-                }
+            } catch (MenuException ex) {
+                System.out.println(ex.getMessage());
+            }
         } while (!exit);
     }
 
-    private void withdrawalM(){
-        System.out.println("\nWithdraw Funds from Account");
-                    System.out.println("\nEnter account ID");
-                    long wId = getLong();
-                    System.out.println("\nEnter withdrawl ammount");
-                    long wAmountC = getLong();  
-                    long wAmount = wAmountC * 100;
-                try{
-                    System.out.println("Number of customers: " + cuService.count());
-                    baService.withdrawFromAccount(wId, wAmount);
-                    System.out.println(baService.findById(wId).getBalance());
-                    System.out.println("\nAfter account withdrawal:\n" + baService.findById(wId).getBalance()); // Not going to work
-                        }
-                        catch (ServiceException ex) {
-                            System.out.println("Recieved from service" + ex.getMessage());
-                        }
-        
-    }
+    // private void withdrawalM(){
+    // System.out.println("\nWithdraw Funds from Account");
+    // System.out.println("\nEnter account ID");
+    // long wId = getLong();
+    // System.out.println("\nEnter withdrawl ammount");
+    // long wAmountC = getLong();
+    // long wAmount = wAmountC * 100;
+    // try{
+    // System.out.println("Number of customers: " + cuService.count());
+    // baService.withdrawFromAccount(wId, wAmount);
+    // System.out.println(baService.findById(wId).getBalance());
+    // System.out.println("\nAfter account withdrawal:\n" +
+    // baService.findById(wId).getBalance()); // Not going to work
+    // }
+    // catch (ServiceException ex) {
+    // System.out.println("Recieved from service" + ex.getMessage());
+    // }
+
+    // }
 
     private void reports() {
         boolean exit = false;
@@ -354,30 +361,29 @@ CustomerService cuService = new CustomerService();
                 String userInput = getString();
                 switch (userInput) {
                     case "1":
-                        System.out.println("\nDisplay Totals");
+                        displayTotals();
                         break;
 
                     case "2":
-                        System.out.println("\nDisplay Accounts by Date");
+                        displayAccountsByDate();
                         break;
 
                     case "3":
-                        System.out.println("\nDisplay Customers by Date");
+                        displayCustomersByDate();
                         break;
 
                     case "4":
-                        System.out.println("\nDisplay Transactions by Date");
+                        displayTransactionsByDate();
                         break;
 
                     case "5":
-                        System.out.println("\nDisplay Operations by Date");
+                        displayOperationsByDate(null, null);
                         break;
 
                     case "6":
-                        System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
-                      
+
                     default:
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
@@ -390,7 +396,7 @@ CustomerService cuService = new CustomerService();
     public String getString() throws MenuException {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        
+
         if (input == null || input.trim().equals("")) {
             throw new MenuException("Invalid input.");
         }
@@ -462,7 +468,6 @@ CustomerService cuService = new CustomerService();
 
     // Fionn
 
-
     // Dhara
     private void displayMainMenu() {
         System.out.println("\n\n1. Create Customer");
@@ -474,41 +479,30 @@ CustomerService cuService = new CustomerService();
     }
 
     private void createCustomer() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter customer ID: ");
-        long id = scanner.nextLong();
-        scanner.nextLine();
-
-        System.out.print("Enter customer firstname: ");
-        String firstname = scanner.nextLine();
-
-        System.out.print("Enter customer lastname: ");
-        String lastname = scanner.nextLine();
-        String fullName = firstname + " " + lastname;
-        System.out.println("Full name: " + fullName);
-        //scanner.close();
-
-        System.out.print("Enter customer address: ");
-        String address = scanner.nextLine();
-
-        System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
         try {
+            System.out.print("Enter customer ID: ");
+            long id = getLong();
+            System.out.print("Enter customer firstname: ");
+            String firstname = getString();
+            System.out.print("Enter customer lastname: ");
+            String lastname = getString();
+            String fullName = firstname + " " + lastname;
+            System.out.print("Enter customer address: ");
+            String address = getString();
+            System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
             LocalDate dob = LocalDate.parse(getString());
+            System.out.print("Enter customer phone number: ");
+            String phoneNumber = getString();
+            System.out.print("Enter customer email: ");
+            String email = getString();
+
+            System.out.print("Enter customer type (e.g., REGULAR, PREMIUM): ");
+            String typeStr = scanner.nextLine();
+            CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
         } catch (MenuException e) {
-            
+
             e.printStackTrace();
         }
-
-        System.out.print("Enter customer phone number: ");
-        String phoneNumber = scanner.nextLine();
-
-        System.out.print("Enter customer email: ");
-        String email = scanner.nextLine();
-
-        System.out.print("Enter customer type (e.g., REGULAR, PREMIUM): ");
-        String typeStr = scanner.nextLine();
-        CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
 
         // customerList.add(newCustomer);
 
@@ -516,75 +510,71 @@ CustomerService cuService = new CustomerService();
     }
 
     private void updateCustomer() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter customer ID to update: ");
-        long idToUpdate = scanner.nextLong();
-        scanner.nextLine();
-
-        Customer existingCustomer = findById(idToUpdate);
-
-        if (existingCustomer != null) {
+        try {
+            System.out.print("Enter customer ID to update: ");
+            long idToUpdate = getLong();
+            Customer existingCustomer = cuService.findById(idToUpdate);
             System.out.println("Current Customer Details:");
-            displayMainMenu();
-
-            System.out.print("Enter updated name (or press Enter to keep current): ");
-            String updatedName = scanner.nextLine();
+            System.out.println(existingCustomer);
+            System.out.println("--------------------------");
+            System.out.println("Enter updated name (or press Enter to keep current): ");
+            String updatedName = getString();
             if (!updatedName.isEmpty()) {
                 existingCustomer.setName(updatedName);
             }
-
             System.out.print("Enter updated address (or press Enter to keep current): ");
-            String updatedAddress = scanner.nextLine();
+            String updatedAddress = getString();
             if (!updatedAddress.isEmpty()) {
                 existingCustomer.setAddress(updatedAddress);
             }
-
             System.out.print("Enter updated date of birth (YYYY-MM-DD) (or press Enter to keep current): ");
-            String updatedDobStr = scanner.nextLine();
+            String updatedDobStr = getString();
             if (!updatedDobStr.isEmpty()) {
                 LocalDate updatedDob = LocalDate.parse(updatedDobStr);
                 existingCustomer.setDob(updatedDob);
             }
-
             System.out.print("Enter updated phone number (or press Enter to keep current): ");
-            String updatedPhoneNumber = scanner.nextLine();
+            String updatedPhoneNumber = getString();
             if (!updatedPhoneNumber.isEmpty()) {
                 existingCustomer.setPhoneNumber(updatedPhoneNumber);
             }
-
             System.out.print("Enter updated email (or press Enter to keep current): ");
-            String updatedEmail = scanner.nextLine();
-            if (!updatedEmail.isEmpty()) {
-                existingCustomer.setEmail(updatedEmail);
-            }
-
+            String updatedEmail = getString();
+            validateEmail(updatedEmail);
             System.out.print("Enter updated customer type: ");
-            String updatedTypeStr = scanner.nextLine();
-            if (!updatedTypeStr.isEmpty()) {
+            String updatedTypeStr = getString();
+            if (!updatedTypeStr.isEmpty() || !updatedTypeStr.equals("COMPANY".toUpperCase()) || !updatedTypeStr.equals("INDIVIDUAL".toUpperCase())) {
                 CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
                 existingCustomer.setType(updatedType);
             }
-
+            else {   
+                throw new MenuException("Invalid customer type.");
+            }
+            System.out.println("Updated Customer Details:");
+            System.out.println(existingCustomer);
+            cuService.save(existingCustomer);
             System.out.println("Customer updated successfully!");
-        } else {
-            System.out.println("Customer with ID " + idToUpdate + " not found.");
+            
+        } catch(ServiceException| MenuException e)
+    {
+        System.out.println("[UI error] " + e.getMessage());
+    }
+    }
+
+    private void deactivateCustomer() throws MenuException {
+        Long idToUpdate = getLong();
+        try {
+            cuService.findById(idToUpdate);
+            cuService.deactivateCustomer(idToUpdate);
+            System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
+        } catch (ServiceException e) {
+            System.out.println("[UI error] " + e.getMessage());
         }
-    }
-
-    private Customer findById(long idToUpdate2) {// if removed doesn't fetch frpm service
-        return null;
-    }
-
-    private void deactivateCustomer(Customer customer) {
-        customer.setActive(false);
-
     }
 
     private void displayCustomerDetails() {
         try {
             Customer customer = cuService.findById(idToUpdate);
-
             if (customer != null) {
                 System.out.println("Name: " + customer.getName());
                 System.out.println("Address: " + customer.getAddress());
@@ -599,64 +589,38 @@ CustomerService cuService = new CustomerService();
                 System.out.println("Customer not found.");
             }
         } catch (ServiceException e) {
-            System.out.println("Error retrieving customer details: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("[UI error]  " + e.getMessage());
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-
     // method for report-Dhara
     private void displayTotals() {
         try {
-            ArrayList<BankAccount> totalAccounts = baService.findAll();
-            System.out.println("Total number of accounts: " + totalAccounts.size());
-
-            for (BankAccount account : totalAccounts) {
-                System.out.println("Account ID: " + account.getId() + ", Balance: " + account.getBalance());
-            }
-
-            ArrayList<Customer> totalCustomers = cuService.findAll();
-            System.out.println("Total number of customers: " + totalCustomers.size());
-
-            for (Customer customer : totalCustomers) {
-                System.out.println("Customer ID: " + customer.getId() + ", Name: " + customer.getName());
-            }
-
-            ArrayList<Transaction> totalTransactions = trService.findAll();
-            System.out.println("Total number of transactions: " + totalTransactions.size());
-
-            Long totalBalance = baService.count();
-            System.out.println("Total balance across all accounts: " + totalBalance);
-
+            System.out.println("Total number of accounts: " + baService.count());
+            System.out.println("Total number of customers: " + cuService.count());
+            System.out.println("Total number of transactions: " + trService.count());
+            System.out.println("Total number of operations: " + opService.count());
+            long totalBalance = baService.findAll().stream().mapToLong(BankAccount::getBalance).sum();
+            System.out.println("Total balance across all accounts (EUR): " + totalBalance / 100);
         } catch (Exception e) {
-
             System.err.println("An error occurred: " + e.getMessage());
-            
-        }
-
-    
-        try {
-            getString();
-        } catch (MenuException e) {
-            e.printStackTrace();
         }
     }
 
-    private static void displayAccountsByDate() {
-        
+    private void displayAccountsByDate() {
         try {
-             ArrayList<BankAccount> accounts = baService.findAll();
-        
+            ArrayList<BankAccount> accounts = baService.findAll();
+
             Map<LocalDate, List<BankAccount>> bankAccount = accounts.stream()
                     .collect(Collectors.groupingBy(BankAccount::getCreatedDate));
-        
+
             for (Entry<LocalDate, List<BankAccount>> entry : bankAccount.entrySet()) {
                 LocalDate date = entry.getKey();
                 List<BankAccount> baAccountsOnDate = entry.getValue();
-        
+
                 System.out.println("Date: " + date);
                 for (BankAccount account : baAccountsOnDate) {
                     System.out.println("  BankAccount: " + account.getAccountName() + " | ID: " + account.getId());
@@ -664,12 +628,11 @@ CustomerService cuService = new CustomerService();
                 System.out.println();
             }
         } catch (ServiceException ex) {
-            
+
             System.err.println("An error occurred: " + ex.getMessage());
         }
 
-            
-        }
+    }
 
     public void displayCustomersByDate() {
         try {
@@ -691,34 +654,39 @@ CustomerService cuService = new CustomerService();
             }
         } catch (ServiceException ex) {
 
-           System.err.println("An error occurred: " + ex.getMessage());
+            System.err.println("An error occurred: " + ex.getMessage());
         }
     }
 
-    public void displayTransactionsByDate(LocalDate startDate, LocalDate endDate) {
-        System.out.println("Transactions from " + startDate + " to " + endDate);
-        System.out.println("-----------------------------------");
-
+    public void displayTransactionsByDate() {
         try {
-            List<Transaction> transactions = trService.findAll();
-
-            for (Transaction transaction : transactions) {
-                LocalDate transactionDate = transaction.getCreatedDate();
-
-                if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
-                    System.out.println(transaction);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            System.out.println("Enter Start Date:");
+            LocalDate startDate = LocalDate.parse(getString(), formatter);
+            System.out.println("Enter End Date:");
+            LocalDate endDate = LocalDate.parse(getString(), formatter);
+            System.out.println("Displaying transactions from " + startDate + " to " + endDate);
+            System.out.println("\n----------------------------------------------------------------------");
+            try {
+                List<Transaction> transactions = trService.findAll();
+                if (!transactions.isEmpty())
+                    for (Transaction transaction : transactions) {
+                        LocalDate transactionDate = transaction.getCreatedDate();
+                        if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
+                            System.out.println(transaction);
+                        }
+                    }
+                else {
+                    System.out.println("No transactions found.");
                 }
+                System.out.println("----------------------------------------------------------------------");
+            } catch (ServiceException e) {
+                System.out.println(e.getMessage());
             }
-
-            System.out.println("-----------------------------------");
-        } catch (Exception e) {
-            
-            e.printStackTrace();
+        } catch (MenuException | DateTimeParseException e) {
+            System.out.println(e.getMessage());
         }
     }
-    
-    
-    
 
     public void displayOperationsByDate(LocalDate startDate, LocalDate endDate) {
         System.out.println("Operations from " + startDate + " to " + endDate);
@@ -737,9 +705,9 @@ CustomerService cuService = new CustomerService();
 
             System.out.println("-----------------------------------");
         } catch (Exception e) {
-            
+
             e.printStackTrace();
         }
     }
-    
+
 }
