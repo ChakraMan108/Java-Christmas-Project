@@ -460,7 +460,7 @@ public class UI implements UiInterface {
         try {
             System.out.println("\nEnter account ID: ");
             long id = getLong();
-            System.out.println("\nEnter withdrawal ammount (Euro): ");
+            System.out.println("\nEnter withdrawal ammount (EUR): ");
             long amount = getLong() * 100;
             baService.withdrawFromAccount(id, amount);
             System.out.println("\nSuccessfully withdrawn " + baService.findById(id).getBalance() / 100
@@ -475,7 +475,7 @@ public class UI implements UiInterface {
         try {
             System.out.println("\nEnter account ID:");
             long id = getLong();
-            System.out.println("\nEnter deposit ammount (Euro)");
+            System.out.println("\nEnter deposit ammount (EUR)");
             long amount = getLong() * 100;
             baService.depositIntoAccount(id, amount);
             System.out.println("\nSuccessfully deposited " + baService.findById(id).getBalance() / 100
@@ -492,7 +492,7 @@ public class UI implements UiInterface {
             long payerId = getLong();
             System.out.println("\nEnter the payee's account ID: ");
             long payeeId = getLong();
-            System.out.println("\nEnter transfer ammount (Euro): ");
+            System.out.println("\nEnter transfer ammount (EUR): ");
             long amount = getLong() * 100;
             baService.withdrawFromAccount(payerId, amount);
             baService.depositIntoAccount(payeeId, amount);
@@ -626,6 +626,7 @@ public class UI implements UiInterface {
     // method for report-Dhara
     private void displayTotals() {
         try {
+            System.out.println("\nDisplay Totals\n========================");
             System.out.println("Total number of accounts: " + baService.count());
             System.out.println("Total number of customers: " + cuService.count());
             System.out.println("Total number of transactions: " + trService.count());

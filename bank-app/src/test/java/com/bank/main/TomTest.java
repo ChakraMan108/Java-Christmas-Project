@@ -1,11 +1,6 @@
 package com.bank.main;
 
-import java.time.LocalDate;
-
-import com.bank.entity.BankAccount;
-import com.bank.entity.Customer;
 import com.bank.exceptions.UIException;
-import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
