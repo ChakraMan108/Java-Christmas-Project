@@ -12,7 +12,7 @@ import com.bank.repository.CustomerRepository;
 
 public class CustomerService implements Service<Customer> {
 
-    private static final CustomerRepository repository = new CustomerRepository();
+    private final CustomerRepository repository = new CustomerRepository();
     private OperationService opService = new OperationService();
 
     public long count() throws ServiceException {
@@ -86,6 +86,18 @@ public class CustomerService implements Service<Customer> {
     }
 
     public void saveJson() throws IOException {
-        repository.saveJson();
+        try {
+            repository.saveJson();
+        } catch (IOException ex) {
+            throw new IOException("[Customer Service error] " + ex.getMessage(), ex);
+        }
+    }
+
+    public void loadJson() throws IOException {
+        try {
+            repository.loadJson();
+        } catch (IOException ex) {
+            throw new IOException("[Customer Service error] " + ex.getMessage(), ex);
+        }
     }
 }

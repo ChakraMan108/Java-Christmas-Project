@@ -35,24 +35,24 @@ public class CustomerTest {
 
     @Test
     public void testEquals() {
-        Customer customer1 = new Customer(1, "Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
-        Customer customer2 = new Customer(1, "Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
+        Customer customer1 = new Customer("Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
+        Customer customer2 = new Customer("Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
 
         assertTrue(customer1.equals(customer2));
     }
 
     @Test
     public void testHashCode() {
-        Customer customer1 = new Customer(1, "Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
-        Customer customer2 = new Customer(1, "Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
+        Customer customer1 = new Customer("Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
+        Customer customer2 = new Customer("Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
 
         assertEquals(customer1.hashCode(), customer2.hashCode());
     }
 
     @Test
     public void testToString() {
-        Customer customer = new Customer(1, "Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
-        String expected = "Customer [id=1, name=Test, address=Test Address, dob=2000-01-01, phoneNumber=1234567890, email=test@test.com, isActive=false, createdDate=null, deactivatedDate=null, type=INDIVIDUAL]";
+        Customer customer = new Customer("Test", "Test Address", LocalDate.of(2000, 1, 1), "1234567890", "test@test.com", Customer.CustomerType.INDIVIDUAL);
+        String expected = "Customer [id=0, name=Test, address=Test Address, dob=2000-01-01, phoneNumber=1234567890, email=test@test.com, isActive=false, createdDate=null, deactivatedDate=null, type=INDIVIDUAL]";
         
         assertEquals(expected, customer.toString());
     }

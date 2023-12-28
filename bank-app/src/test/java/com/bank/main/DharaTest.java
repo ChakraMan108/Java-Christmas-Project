@@ -15,9 +15,9 @@ public class DharaTest {
         ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
         CustomerService service = new CustomerService();
 
-        Customer cust1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com",
+        Customer cust1 = new Customer("Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com",
                 Customer.CustomerType.INDIVIDUAL);
-        Customer cust2 = new Customer(2, "Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444",
+        Customer cust2 = new Customer("Mary", "Dun Na Mara", LocalDate.parse("1980-08-01"), "087333444",
                 "mary@x.com", Customer.CustomerType.INDIVIDUAL);
         Customer cust3 = new Customer();
 

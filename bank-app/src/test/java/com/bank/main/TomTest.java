@@ -22,57 +22,57 @@ public class TomTest {
         TransactionService trService = new TransactionService();
         CustomerService cuService = new CustomerService();
         
-        // Customer creation       
-        Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
-        Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
-        
-        cuService.createCustomer(c1);
-        cuService.createCustomer(c2);
-        System.out.println("\nAfter customer creation:\n" + c1);
-        System.out.println("\nAfter customer creation:\n" + c2);
+        // Load JSON files
+        //cuService.loadJson();
 
+        // Customer creation       
+        // Customer c1 = new Customer("Tom", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+        // Customer c2 = new Customer("Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+        // Customer c3 = new Customer("Mary", "Mervue", LocalDate.parse("2001-04-15"), "123456789", "mary@mary.com", Customer.CustomerType.INDIVIDUAL);
+
+        // cuService.createCustomer(c1);
+        // cuService.createCustomer(c2);
+        // cuService.createCustomer(c3);
+    
         // Customer deactivation
-        cuService.deactivateCustomer(c1.getId());
-        System.out.println("\nAfter customer deactivation:\n" + c1);
+        // cuService.deactivateCustomer(c1.getId());
+        // System.out.println("\nAfter customer deactivation:\n" + c1);
 
         // Customer Update
-        c2.setPhoneNumber("0871111111");
-        c2.setActive(true);
-        cuService.save(c2);
-        System.out.println("\nAfter customer update:\n" + c2);
+        // c2.setPhoneNumber("0871111111");
+        // cuService.save(c2);
+        // System.out.println("\nAfter customer update:\n" + c2);
 
         // Account Creation
-        BankAccount acc2 = new BankAccount(); 
-        Customer foundCustomer = cuService.findById(c2.getId()); 
-        baService.createAccount(acc2, foundCustomer);
-        System.out.println("\nAfter account creation:\n" + acc2);
+        // BankAccount acc2 = new BankAccount(); 
+        // Customer foundCustomer = cuService.findById(c2.getId()); 
+        // baService.createAccount(acc2, foundCustomer);
+        // System.out.println("\nAfter account creation:\n" + acc2);
 
-        // Account Deactivation
-        baService.deactivateAccount(acc2.getId());
-        System.out.println("\nAfter account deactivation:\n" + acc2);
+        // // Account Deactivation
+        // baService.deactivateAccount(acc2.getId());
+        // System.out.println("\nAfter account deactivation:\n" + acc2);
         
-        // Account Update
-        acc2.setType(AccountType.SAVING_ACCOUNT);
-        baService.save(acc2);
-        System.out.println("\nAfter account update:\n" + acc2);
+        // // Account Update
+        // acc2.setType(AccountType.SAVING_ACCOUNT);
+        // baService.save(acc2);
+        // System.out.println("\nAfter account update:\n" + acc2);
 
         // Account Deposit
-        long depositIntoId = baService.save(acc2).getId();
-        baService.depositIntoAccount(baService.findById(depositIntoId).getId(), 100000);
-        baService.depositIntoAccount(baService.findById(depositIntoId).getId(), 1);
-        System.out.println("\nAfter account deposit:\n" + acc2);
+        // long depositIntoId = baService.save(acc2).getId();
+        // baService.depositIntoAccount(baService.findById(depositIntoId).getId(), 100000);
+        // baService.depositIntoAccount(baService.findById(depositIntoId).getId(), 1);
+        // System.out.println("\nAfter account deposit:\n" + acc2);
 
-        //Account Withdrawal
-         long withdrawIntoId = baService.save(acc2).getId();
-        baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50000);
-        baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50);
-        System.out.println("\nAfter account withdrawal:\n" + acc2);
-
-        System.out.println("Balance of account id + " + acc2.getId() + " is EUR " + acc2.getBalance()/100);
+        // //Account Withdrawal
+        //  long withdrawIntoId = baService.save(acc2).getId();
+        // baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50000);
+        // baService.withdrawFromAccount(baService.findById(withdrawIntoId).getId(), 50);
+        // System.out.println("\nAfter account withdrawal:\n" + acc2);
 
         // Customer deactivation after account creation
-        cuService.deactivateCustomer(c2.getId());
-        System.out.println("\nAfter customer deactivation:\n" + c2);
+        // cuService.deactivateCustomer(c2.getId());
+        // System.out.println("\nAfter customer deactivation:\n" + c2);
 
         //Find All Accounts
         System.out.println("\nAll accounts:\n" + baService.findAll());
@@ -98,18 +98,13 @@ public class TomTest {
         //Count all Operations
         System.out.println("Number of operations: " + opService.count());
 
-        cuService.saveJson();
-        baService.saveJson();
-        trService.saveJson();
-        opService.saveJson();
-
         UI ui = new UI();
-                
+        
         try {
             ui.authenticateApp();
             ui.displayMenu();
         } catch (UIException ex) {
-            System.out.println(ex.getMessage() + "\nExiting the Bank Application."); 
+            System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
         }
     }
 }

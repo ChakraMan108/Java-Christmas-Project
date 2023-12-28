@@ -28,9 +28,8 @@ public class Customer {
     }
 
     // Parametrised constructor taking mandatory fields
-    public Customer(long id, String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType type)
+    public Customer(String name, String address, LocalDate dob, String phoneNumber, String email, CustomerType type)
     {
-        this.id = id;
         this.name = name;
         this.address = address;
         this.dob = dob;

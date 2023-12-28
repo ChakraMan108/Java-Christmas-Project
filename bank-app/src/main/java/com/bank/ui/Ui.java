@@ -1,6 +1,7 @@
 package com.bank.ui;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -17,8 +18,8 @@ import org.apache.commons.validator.routines.EmailValidator;
 import com.bank.entity.BankAccount;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.entity.Customer;
-import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Operation;
+import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.ServiceException;
 import com.bank.exceptions.UIException;
@@ -35,11 +36,6 @@ public class UI implements UiInterface {
     TransactionService trService = new TransactionService();
     CustomerService cuService = new CustomerService();
 
-    // UI class constructor
-    public UI() {
-
-    }
-
     private long idToUpdate;
 
     public void authenticateApp() throws UIException {
@@ -55,7 +51,7 @@ public class UI implements UiInterface {
             if (!username.equals("admin") || !password.equals("admin"))
                 throw new UIException("Invalid credentials!");
         } catch (Exception ex) {
-            throw new UIException("[UI Error:] " + ex.getMessage());
+            throw new UIException("[UI error] " + ex.getMessage());
         }
     }
 
@@ -95,13 +91,18 @@ public class UI implements UiInterface {
                         break;
                     case "6":
                         exit = true;
+                        try {
+                            cuService.saveJson();
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
+                        }
                         System.out.println("Exiting the Bank Application.");
                         break;
                     default:
                         System.out.println("Invalid option selected. Please enter a valid option (1-6).");
                 }
             } catch (UIException ex) {
-                System.out.println("[UI Error:] " + ex.getMessage());
+                System.out.println("[UI error] " + ex.getMessage());
             }
         } while (!exit);
     }
@@ -143,7 +144,7 @@ public class UI implements UiInterface {
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (UIException ex) {
-                System.out.println("[UI Error:] " + ex.getMessage());
+                System.out.println("[UI error] " + ex.getMessage());
             }
         } while (!exit);
     }
@@ -158,8 +159,7 @@ public class UI implements UiInterface {
             System.out.println("1. Create Account");
             System.out.println("2. Update Account");
             System.out.println("3. Deactivate Account");
-            System.out.println("4. Display Account Details");
-            System.out.println("5. Return to Main Menu");
+            System.out.println("4. Return to Main Menu");
             System.out.println("========================");
             System.out.println("Selection option:");
 
@@ -177,9 +177,6 @@ public class UI implements UiInterface {
                         System.out.println("\nDeactivate Account");
                         break;
                     case "4":
-                        System.out.println("\nDisplay Account Details");
-                        break;
-                    case "5":
                         System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
@@ -187,7 +184,7 @@ public class UI implements UiInterface {
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (UIException ex) {
-                System.out.println("[UI Error:] " + ex.getMessage());
+                System.out.println("[UI error] " + ex.getMessage());
             }
         } while (!exit);
     }
@@ -227,7 +224,7 @@ public class UI implements UiInterface {
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (UIException e) {
-                System.out.println("[UI Error:] " + e.getMessage());
+                System.out.println("[UI error] " + e.getMessage());
             }
         } while (!exit);
     }
@@ -264,7 +261,7 @@ public class UI implements UiInterface {
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (UIException ex) {
-                System.out.println("[UI Error:] " + ex.getMessage());
+                System.out.println("[UI error] " + ex.getMessage());
             }
         } while (!exit);
     }
@@ -301,7 +298,7 @@ public class UI implements UiInterface {
                         displayTransactionsByDate();
                         break;
                     case "5":
-                        displayOperationsByDate(null, null);
+                        displayOperationsByDate();
                         break;
                     case "6":
                         exit = true;
@@ -310,7 +307,7 @@ public class UI implements UiInterface {
                         System.out.println("Invalid option selected. Please enter a valid option.");
                 }
             } catch (UIException ex) {
-                System.out.println("[UI Error:] " + ex.getMessage());
+                System.out.println("[UI error] " + ex.getMessage());
             }
         } while (!exit);
     }
@@ -373,7 +370,7 @@ public class UI implements UiInterface {
     }
 
     // Tom
-    public final static void clearConsole() {
+    private void clearConsole() {
         try {
             final String os = System.getProperty("os.name");
             if (os.contains("Windows")) {
@@ -469,7 +466,7 @@ public class UI implements UiInterface {
             System.out.println("\nSuccessfully withdrawn " + baService.findById(id).getBalance() / 100
                     + " Euro into account ID " + id + ".");
         } catch (ServiceException | UIException ex) {
-            throw new UIException("[UI Error:] " + ex.getMessage());
+            throw new UIException("[UI error] " + ex.getMessage());
         }
     }
 
@@ -484,7 +481,7 @@ public class UI implements UiInterface {
             System.out.println("\nSuccessfully deposited " + baService.findById(id).getBalance() / 100
                     + " Euro into account ID " + id + ".");
         } catch (ServiceException ex) {
-            throw new UIException("[UI Error:] " + ex.getMessage());
+            throw new UIException("[UI error] " + ex.getMessage());
         }
     }
 
@@ -506,24 +503,14 @@ public class UI implements UiInterface {
                     "\nSuccessfully credited " + baService.findById(payeeId).getBalance() / 100 + " Euro in account ID "
                             + payeeId + ".");
         } catch (ServiceException ex) {
-            throw new UIException("[UI Error:] " + ex.getMessage());
+            throw new UIException("[UI error] " + ex.getMessage());
         }
     }
 
     // Dhara
-    private void displayMainMenu() {
-        System.out.println("\n\n1. Create Customer");
-        System.out.println("2. Update Customer");
-        System.out.println("3. Deactivate Customer");
-        System.out.println("4. Display Customer Details");
-        System.out.println("5. Return to Main Menu");
-        System.out.print("Enter your choice: ");
-    }
-
     private void createCustomer() {
         try {
-            System.out.print("Enter customer ID: ");
-            long id = getLong();
+            System.out.println("\nCreate Customer\n========================");
             System.out.print("Enter customer firstname: ");
             String firstname = getString();
             System.out.print("Enter customer lastname: ");
@@ -537,18 +524,21 @@ public class UI implements UiInterface {
             String phoneNumber = getString();
             System.out.print("Enter customer email: ");
             String email = getString();
-            System.out.print("Enter customer type (e.g., REGULAR, PREMIUM): ");
+            System.out.print("Enter customer type (INDIVIDUAL / COMPANY): ");
             String typeStr = getString();
             CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
             try {
-                cuService.save(new Customer(id, fullName, address, dob, phoneNumber, email, type));
+                Customer savedCustomer = cuService
+                        .createCustomer(new Customer(fullName, address, dob, phoneNumber, email, type));
+                System.out.println("\nCustomer id " + savedCustomer.getId() + " created successfully!");
+                System.out.println(savedCustomer);
             } catch (ServiceException e) {
                 System.out.println("[UI error] " + e.getMessage());
             }
         } catch (UIException e) {
             e.printStackTrace();
         }
-        System.out.println("Customer created successfully!");
+
     }
 
     private void updateCustomer() {
@@ -596,7 +586,6 @@ public class UI implements UiInterface {
             System.out.println(existingCustomer);
             cuService.save(existingCustomer);
             System.out.println("Customer updated successfully!");
-
         } catch (ServiceException | UIException e) {
             System.out.println("[UI error] " + e.getMessage());
         }
@@ -615,25 +604,22 @@ public class UI implements UiInterface {
 
     private void displayCustomerDetails() {
         try {
-            Customer customer = cuService.findById(idToUpdate);
-            if (customer != null) {
-                System.out.println("Name: " + customer.getName());
-                System.out.println("Address: " + customer.getAddress());
-                System.out.println("Date of Birth: " + customer.getDob());
-                System.out.println("Phone Number: " + customer.getPhoneNumber());
-                System.out.println("Email: " + customer.getEmail());
-                System.out.println("Type: " + customer.getType());
-                System.out.println("Customer ID: " + customer.isActive());
-                System.out.println("Created Date: " + customer.getCreatedDate());
-                System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
-            } else {
-                System.out.println("Customer not found.");
-            }
-        } catch (ServiceException e) {
+            System.out.println("\nDisplay Customer Details\n========================");
+            System.out.print("Enter customer ID to display: ");
+            long id = getLong();           
+            Customer customer = cuService.findById(id);
+            System.out.println("ID: " + customer.getId());
+            System.out.println("Name: " + customer.getName());
+            System.out.println("Address: " + customer.getAddress());
+            System.out.println("Date of Birth: " + customer.getDob());
+            System.out.println("Phone Number: " + customer.getPhoneNumber());
+            System.out.println("Email: " + customer.getEmail());
+            System.out.println("Type: " + customer.getType());
+            System.out.println("Active " + customer.isActive());
+            System.out.println("Created Date: " + customer.getCreatedDate());
+            System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
+        } catch (ServiceException | UIException e) {
             System.out.println("[UI error] " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -675,31 +661,37 @@ public class UI implements UiInterface {
 
     }
 
-    public void displayCustomersByDate() {
+    private void displayCustomersByDate() {
         try {
-            ArrayList<Customer> customers = cuService.findAll();
-
-            Map<LocalDate, List<Customer>> customersByDate = customers.stream()
-                    .collect(Collectors.groupingBy(Customer::getCreatedDate));
-
-            for (Map.Entry<LocalDate, List<Customer>> entry : customersByDate.entrySet()) {
-                LocalDate date = entry.getKey();
-                List<Customer> customersOnDate = entry.getValue();
-
-                System.out.println("Date: " + date);
-                for (Customer customer : customersOnDate) {
-                    System.out.println("  Customer: " + customer.getName() + " | ID: " + customer.getId());
-
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            System.out.println("Enter Start Date:");
+            LocalDate startDate = LocalDate.parse(getString(), formatter);
+            System.out.println("Enter End Date:");
+            LocalDate endDate = LocalDate.parse(getString(), formatter);
+            System.out.println("Displaying customers from " + startDate + " to " + endDate);
+            System.out.println("\n----------------------------------------------------------------------");
+            try {
+                ArrayList<Customer> customers = cuService.findAll();
+                if (!customers.isEmpty())
+                    for (Customer customer : customers) {
+                        LocalDate customerDate = customer.getCreatedDate();
+                        if (!customerDate.isBefore(startDate) && !customerDate.isAfter(endDate)) {
+                            System.out.println(customer);
+                        }
+                    }
+                else {
+                    System.out.println("No customers found.");
                 }
-                System.out.println();
+                System.out.println("----------------------------------------------------------------------");
+            } catch (ServiceException e) {
+                System.out.println(e.getMessage());
             }
-        } catch (ServiceException ex) {
-
-            System.err.println("An error occurred: " + ex.getMessage());
+        } catch (UIException | DateTimeParseException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public void displayTransactionsByDate() {
+    private void displayTransactionsByDate() {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.println("Enter Start Date:");
@@ -709,7 +701,7 @@ public class UI implements UiInterface {
             System.out.println("Displaying transactions from " + startDate + " to " + endDate);
             System.out.println("\n----------------------------------------------------------------------");
             try {
-                List<Transaction> transactions = trService.findAll();
+                ArrayList<Transaction> transactions = trService.findAll();
                 if (!transactions.isEmpty())
                     for (Transaction transaction : transactions) {
                         LocalDate transactionDate = transaction.getCreatedDate();
@@ -729,22 +721,33 @@ public class UI implements UiInterface {
         }
     }
 
-    public void displayOperationsByDate(LocalDate startDate, LocalDate endDate) {
-        System.out.println("Operations from " + startDate + " to " + endDate);
-        System.out.println("-----------------------------------");
-
+    private void displayOperationsByDate() {
         try {
-            List<Operation> operations = opService.findAll();
-            for (Operation operation : operations) {
-                LocalDate operationDate = operation.getDate();
-                if (!operationDate.isBefore(startDate) && !operationDate.isAfter(endDate)) {
-                    System.out.println(operation);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            System.out.println("Enter Start Date:");
+            LocalDate startDate = LocalDate.parse(getString(), formatter);
+            System.out.println("Enter End Date:");
+            LocalDate endDate = LocalDate.parse(getString(), formatter);
+            System.out.println("Displaying transactions from " + startDate + " to " + endDate);
+            System.out.println("\n----------------------------------------------------------------------");
+            try {
+                ArrayList<Operation> operations = opService.findAll();
+                if (!operations.isEmpty())
+                    for (Operation operation : operations) {
+                        LocalDate operationDate = operation.getDate();
+                        if (!operationDate.isBefore(startDate) && !operationDate.isAfter(endDate)) {
+                            System.out.println(operation);
+                        }
+                    }
+                else {
+                    System.out.println("No operations found.");
                 }
+                System.out.println("----------------------------------------------------------------------");
+            } catch (ServiceException e) {
+                System.out.println(e.getMessage());
             }
-            System.out.println("-----------------------------------");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (UIException | DateTimeParseException e) {
+            System.out.println(e.getMessage());
         }
     }
-
 }
