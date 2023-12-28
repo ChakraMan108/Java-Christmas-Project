@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
-import com.bank.exceptions.MenuException;
+import com.bank.exceptions.UIException;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
-import com.bank.ui.UiImpl;
+import com.bank.ui.UI;
 
 public class TomTest {
             
@@ -103,13 +103,13 @@ public class TomTest {
         trService.saveJson();
         opService.saveJson();
 
-        UiImpl ui = new UiImpl();
+        UI ui = new UI();
                 
         try {
             ui.authenticateApp();
             ui.displayMenu();
-        } catch (MenuException ex) {
-            System.out.println("Menu returned an error: " + ex.getMessage());   
+        } catch (UIException ex) {
+            System.out.println(ex.getMessage() + "\nExiting the Bank Application."); 
         }
     }
 }

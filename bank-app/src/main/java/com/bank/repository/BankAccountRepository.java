@@ -3,6 +3,7 @@ package com.bank.repository;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
@@ -18,19 +19,28 @@ public class BankAccountRepository implements Repository<BankAccount> {
     }
 
     public ArrayList<BankAccount> findAll() throws RepositoryException {
-        if (!bankAccounts.isEmpty()) 
-            return bankAccounts;
-        throw new RepositoryException("No bank account items found in the repository!");  
+        return bankAccounts;
     }
 
     public BankAccount findById(long id) throws RepositoryException {
+        /*
+         * using stream & lambda - return bankAccounts.stream().filter(a->a.getId() ==
+         * id).collect(Collectors.toList()).get(0);
+         */
+        for (BankAccount bankAccount : bankAccounts) {
+            if (bankAccount.getId() == id)
+                return bankAccount;
+        }
+        throw new RepositoryException("Bank account id " + id + " not found in the repository.");
+    }
+
+    public BankAccount findByCustomerName(String name) throws RepositoryException {
         for (BankAccount ba : bankAccounts) {
-            if (ba.getId() == id) {
+            if (ba.getCustomer().getName().equals(name)) {
                 return ba;
             }
         }
-        throw new RepositoryException("No bank account item with id " + id + " found in the repository!");
-    /* using stream & lambda - return bankAccounts.stream().filter(a->a.getId() == id).collect(Collectors.toList()).get(0); */
+        throw new RepositoryException("Bank account linked to customer name " + name + " not found in the repository!");
     }
 
     public BankAccount save(BankAccount bankAccount) throws RepositoryException {
@@ -38,15 +48,14 @@ public class BankAccountRepository implements Repository<BankAccount> {
             bankAccount.setId(generateAccountId());
             bankAccounts.add(bankAccount);
             return bankAccount;
-        }
-        else
-        {
+        } else {
             bankAccounts.set(bankAccounts.indexOf(bankAccount), bankAccount);
             return bankAccount;
         }
     }
 
     public long generateAccountId() {
+        // UUID.randomUUID().toString().replace("-", "");
         return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
     }
 
@@ -55,5 +64,4 @@ public class BankAccountRepository implements Repository<BankAccount> {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.writeValue(new File("../data/bankaccounts.json"), bankAccounts);
     }
-
 }
