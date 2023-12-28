@@ -1,17 +1,17 @@
 package com.bank.main;
 
-import com.bank.exceptions.MenuException;
-import com.bank.ui.UiImpl;
+import com.bank.exceptions.UIException;
+import com.bank.ui.UI;
 
 public class RobTest {
     public static void main(String[] args) {
         
-        UiImpl ui = new UiImpl();
+        UI ui = new UI();
         
         try {
             ui.authenticateApp();
             ui.displayMenu();
-        } catch (MenuException ex) {
+        } catch (UIException ex) {
             System.out.println("Menu returned an error: " + ex.getMessage());   
         }
     }

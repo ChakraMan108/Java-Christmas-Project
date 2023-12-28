@@ -8,7 +8,6 @@ import com.bank.entity.Transaction;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
-import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
 
@@ -23,8 +22,8 @@ public class FionnTest {
         CustomerService cuService = new CustomerService();
         
         // Customer creation       
-        Customer c1 = new Customer(1, "Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
-        Customer c2 = new Customer(1, "Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
+        Customer c1 = new Customer("Joe", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+        Customer c2 = new Customer("Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
         cuService.createCustomer(c1);
         cuService.createCustomer(c2);
         System.out.println("\nAfter customer creation:\n" + c1);

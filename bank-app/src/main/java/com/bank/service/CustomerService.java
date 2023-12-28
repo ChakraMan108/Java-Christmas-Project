@@ -12,7 +12,7 @@ import com.bank.repository.CustomerRepository;
 
 public class CustomerService implements Service<Customer> {
 
-    private static final CustomerRepository repository = new CustomerRepository();
+    private final CustomerRepository repository = new CustomerRepository();
     private OperationService opService = new OperationService();
 
     public long count() throws ServiceException {
@@ -20,7 +20,7 @@ public class CustomerService implements Service<Customer> {
             return repository.count();
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -29,7 +29,7 @@ public class CustomerService implements Service<Customer> {
             return repository.findAll();
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -38,7 +38,7 @@ public class CustomerService implements Service<Customer> {
             return repository.findById(id);
         } 
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());         
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);       
         }
     }
 
@@ -47,7 +47,7 @@ public class CustomerService implements Service<Customer> {
             return repository.save(customer);
         }
         catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.", ex.getMessage());
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
@@ -55,41 +55,49 @@ public class CustomerService implements Service<Customer> {
         try {
             Customer customer = repository.findById(id);
             if (!customer.isActive())
-                throw new ServiceException("Cannot deactivate already deactivated customer id " + customer.getId(), Long.toString(customer.getId()));
+                throw new ServiceException("[Customer Service error] Cannot deactivate deactivated customer id " + customer.getId(), Long.toString(customer.getId()));
             customer.setActive(false);
             customer.setDeactivatedDate(LocalDate.now());
             save(customer);
-            
-            Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"), 0, customer.getId());
-            opService.save(o);   
+            try {
+                Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"), 0, customer.getId());
+                opService.save(o);
+            } catch (ServiceException ex) {
+                throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);          
+            }
+
         } catch (RepositoryException ex) {
-            throw new ServiceException("Exception received from the Customer Repository by the Customer Service.");
+                throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
     public Customer createCustomer(Customer customer) throws ServiceException {
+        Customer cust = new Customer();
+        customer.setActive(true);
+        customer.setCreatedDate(LocalDate.now());
+        cust = save(customer);
         try {
-            Customer cust = new Customer();
-            customer.setActive(true);
-            customer.setCreatedDate(LocalDate.now());
-            cust = save(customer);
-            try {
-                Operation o = new Operation(OperationType.CUSTOMER_CREATION,System.getProperty("user.name"), 0 , cust.getId());
-                opService.save(o);
-            } catch (ServiceException ex) { 
-                throw new ServiceException("Exception received from the Operation Service by the Customer Service.");
-            }
-            return cust;
-        } catch (ServiceException ex) {
-            throw new ServiceException("Exception received from the Customer Service by the Customer Service.");
+            Operation o = new Operation(OperationType.CUSTOMER_CREATION,System.getProperty("user.name"), 0 , cust.getId());
+            opService.save(o);
+        } catch (ServiceException ex) { 
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
+        return cust;
     }
 
     public void saveJson() throws IOException {
-        repository.saveJson();
+        try {
+            repository.saveJson();
+        } catch (IOException ex) {
+            throw new IOException("[Customer Service error] " + ex.getMessage(), ex);
+        }
+    }
+
+    public void loadJson() throws IOException {
+        try {
+            repository.loadJson();
+        } catch (IOException ex) {
+            throw new IOException("[Customer Service error] " + ex.getMessage(), ex);
+        }
     }
 }
-
-
-
-
