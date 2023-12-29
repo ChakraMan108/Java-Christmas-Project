@@ -1,5 +1,9 @@
 package com.bank.main;
 
+import java.time.LocalDate;
+
+import com.bank.entity.BankAccount;
+import com.bank.entity.Customer;
 import com.bank.exceptions.UIException;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
@@ -40,7 +44,7 @@ public class TomTest {
 
         // Account Creation
         // BankAccount acc2 = new BankAccount(); 
-        // Customer foundCustomer = cuService.findById(c2.getId()); 
+        // Customer foundCustomer = cuService.findById(c1.getId()); 
         // baService.createAccount(acc2, foundCustomer);
         // System.out.println("\nAfter account creation:\n" + acc2);
 
