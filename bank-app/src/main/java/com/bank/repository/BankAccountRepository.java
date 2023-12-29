@@ -6,11 +6,23 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.bank.entity.BankAccount;
+import com.bank.entity.Customer;
 import com.bank.exceptions.RepositoryException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class BankAccountRepository implements Repository<BankAccount> {
+public final class BankAccountRepository implements Repository<BankAccount> {
+
+    private static BankAccountRepository INSTANCE;
+    private String info = "Bank Account Repository";
+
+    public static BankAccountRepository getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new BankAccountRepository();
+        }
+        return INSTANCE;
+    }
 
     private ArrayList<BankAccount> bankAccounts = new ArrayList<>();
 
@@ -43,6 +55,15 @@ public class BankAccountRepository implements Repository<BankAccount> {
         throw new RepositoryException("Bank account linked to customer name " + name + " not found in the repository!");
     }
 
+    public BankAccount findByCustomerId(long id) throws RepositoryException {
+        for (BankAccount ba : bankAccounts) {
+            if (ba.getCustomer().getId() == id) {
+                return ba;
+            }
+        }
+        throw new RepositoryException("Bank account linked to customer id " + id + " not found in the repository!");
+    }
+
     public BankAccount save(BankAccount bankAccount) throws RepositoryException {
         if (!bankAccounts.contains(bankAccount)) {
             bankAccount.setId(generateAccountId());
@@ -64,4 +85,29 @@ public class BankAccountRepository implements Repository<BankAccount> {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.writeValue(new File("../data/bankaccounts.json"), bankAccounts);
     }
+
+    public void loadJson() throws IOException {
+        try {
+            File f = new File("../data/bankaccounts.json");
+            if (f.exists() && !f.isDirectory()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
+                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File("../data/bankaccounts.json"),
+                        new TypeReference<ArrayList<BankAccount>>() {
+                        });
+                bankAccounts = bankAccountList;
+            } else {
+                System.out.println("File not found. Creating new file.");
+                saveJson();
+            }
+        } catch (IOException ex) {
+            throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
+        }
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+
 }

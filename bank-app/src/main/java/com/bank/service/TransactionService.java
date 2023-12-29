@@ -9,7 +9,7 @@ import com.bank.repository.TransactionRepository;
 
 public class TransactionService implements Service<Transaction> {
 
-    private static final TransactionRepository repository = new TransactionRepository();
+    private TransactionRepository repository = TransactionRepository.getInstance();
 
     public long count() throws ServiceException {
         try {
@@ -48,6 +48,18 @@ public class TransactionService implements Service<Transaction> {
     }
     
     public void saveJson() throws IOException {
-        repository.saveJson();
+        try {
+            repository.saveJson();
+        } catch (IOException ex) {
+            throw new IOException("[Transaction Service error] " + ex.getMessage(), ex);
+        }
+    }
+
+    public void loadJson() throws IOException {
+        try {
+            repository.loadJson();
+        } catch (IOException ex) {
+            throw new IOException("[Transaction Service error] " + ex.getMessage(), ex);
+        }
     }
 }

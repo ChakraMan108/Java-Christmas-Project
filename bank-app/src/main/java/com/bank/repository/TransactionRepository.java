@@ -4,12 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import com.bank.entity.BankAccount;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class TransactionRepository implements Repository<Transaction> {
+public final class TransactionRepository implements Repository<Transaction> {
+
+    private static TransactionRepository INSTANCE;
+    private String info = "Transaction Repository";
+
+    public static TransactionRepository getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TransactionRepository();
+        }
+        return INSTANCE;
+    }
     
     private ArrayList<Transaction> transactions = new ArrayList<>();
 
@@ -44,5 +57,28 @@ public class TransactionRepository implements Repository<Transaction> {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.writeValue(new File("../data/transactions.json"), transactions);
+    }
+
+    public void loadJson() throws IOException {
+        try {
+            File f = new File("../data/transactions.json");
+            if (f.exists() && !f.isDirectory()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
+                ArrayList<Transaction> transctionList = objectMapper.readValue(new File("../data/transactions.json"),
+                        new TypeReference<ArrayList<Transaction>>() {
+                        });
+                transactions = transctionList;
+            } else {
+                System.out.println("File not found. Creating new file.");
+                saveJson();
+            }
+        } catch (IOException ex) {
+            throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
+        }
+    }
+
+    public String getInfo() {
+        return info;
     }
 }
