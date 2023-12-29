@@ -1,15 +1,11 @@
 package com.bank.main;
 
-import java.time.LocalDate;
-
-import com.bank.entity.BankAccount;
-import com.bank.entity.Customer;
 import com.bank.exceptions.UIException;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
-import com.bank.ui.UI;
+import com.bank.ui.Ui;
 
 public class TomTest {
             
@@ -97,7 +93,7 @@ public class TomTest {
         //Count all Operations
         System.out.println("Number of operations: " + opService.count());
 
-        UI ui = new UI();
+        Ui ui = new Ui();
         
         try {
             ui.authenticateApp();

@@ -6,11 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -27,7 +23,7 @@ import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
 
-public class UI implements UiInterface {
+public class Ui implements UiInterface {
 
     // Service initialisation
     BankAccountService baService = new BankAccountService();
@@ -589,11 +585,13 @@ public class UI implements UiInterface {
     }
 
     private void deactivateCustomer() throws UIException {
-        Long idToUpdate = getLong();
         try {
+            System.out.println("\nDeactivate Customer\n========================");
+            Long idToUpdate = getLong();
             cuService.findById(idToUpdate);
             cuService.deactivateCustomer(idToUpdate);
             System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
+            System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
         } catch (ServiceException e) {
             System.out.println("[UI error] " + e.getMessage());
         }
@@ -847,8 +845,16 @@ public class UI implements UiInterface {
     }
 
     private void deactivateAccount() throws UIException {
-
-        
+        try {
+            System.out.println("\nDeactivate Customer\n========================");
+            Long idToUpdate = getLong();
+            cuService.findById(idToUpdate);
+            cuService.deactivateCustomer(idToUpdate);
+            System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
+            System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
+        } catch (ServiceException e) {
+            System.out.println("[UI error] " + e.getMessage());
+        }
     }
 
 
