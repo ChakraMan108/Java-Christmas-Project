@@ -1,20 +1,25 @@
 package com.bank.ui;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.entity.Customer;
-import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Operation;
+import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.ServiceException;
 import com.bank.exceptions.UIException;
@@ -30,6 +35,8 @@ public class Ui implements UiInterface {
     OperationService opService = new OperationService();
     TransactionService trService = new TransactionService();
     CustomerService cuService = new CustomerService();
+
+    private long idToUpdate;
 
     public void authenticateApp() throws UIException {
         try {
@@ -141,7 +148,7 @@ public class Ui implements UiInterface {
             }
         } while (!exit);
     }
-
+//Fionn - AccMgmt
     private void accountManagement() {
         boolean exit = false;
         do {
@@ -162,13 +169,16 @@ public class Ui implements UiInterface {
                     case "1":
                         createAccount();
                         break;
+
                     case "2":
-                        updateAccount();
+                        System.out.println("\nUpdate Account");
                         break;
                     case "3":
                         deactivateAccount();
                         break;
+                        
                     case "4":
+                        System.out.println("\nReturn to Main Menu");
                         exit = true;
                         break;
                     default:
@@ -497,7 +507,59 @@ public class Ui implements UiInterface {
             throw new UIException("[UI error] " + ex.getMessage());
         }
     }
+    //Fionn -- Acc. Mgmt.
 
+
+
+    private void createAccount() {
+        try {
+            System.out.println("\nCreate Account\n========================");
+            System.out.print("Enter Account firstname: ");
+            String firstname = getString();
+            System.out.print("Enter Account lastname: ");
+            String lastname = getString();
+            String fullName = firstname + " " + lastname;
+            System.out.print("Enter Account starting balance in Euro: ");
+            long balance = getLong() * 100;
+            //System.out.print("Enter Account address: ");
+            //String address = getString();
+            //System.out.print("Enter Account date of birth (YYYY-MM-DD): ");
+            //LocalDate dob = LocalDate.parse(getString());
+            //System.out.print("Enter Account phone number: ");
+            //String phoneNumber = getString();
+            //System.out.print("Enter Account email: ");
+            //String email = getString();
+            
+            System.out.print("Enter Account type (CURRENT / SAVING / STUDENT): ");
+            String typeStr = getString();
+            AccountType type = AccountType.valueOf(typeStr.toUpperCase());
+            try {
+                BankAccount savedBankAccount = baService
+                        .createAccount(new BankAccount(fullName, balance, type), new Customer());
+                System.out.println("\nAccount id " + savedBankAccount.getId() + " created successfully!");
+                System.out.println(savedBankAccount);
+            } catch (ServiceException e) {
+                System.out.println("[UI error] " + e.getMessage());
+            }
+        } catch (UIException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void deactivateAccount() throws UIException {
+        Long idToUpdate = getLong();
+        try {
+            baService.findById(idToUpdate);
+            baService.deactivateAccount(idToUpdate);
+            System.out.println("Account id " + idToUpdate + " deactivated successfully.");
+        } catch (ServiceException e) {
+            System.out.println("[UI error] " + e.getMessage());
+        }
+    }
+    //Fionn - End
+
+    // Dhara
     private void createCustomer() {
         try {
             System.out.println("\nCreate Customer\n========================");
@@ -533,65 +595,60 @@ public class Ui implements UiInterface {
 
     private void updateCustomer() {
         try {
-            System.out.println("\nUpdate Customer\n========================");
             System.out.print("Enter customer ID to update: ");
             long idToUpdate = getLong();
             Customer existingCustomer = cuService.findById(idToUpdate);
             System.out.println("Current Customer Details:");
             System.out.println(existingCustomer);
             System.out.println("--------------------------");
-            System.out.println("Enter updated name (enter # for no change): ");
+            System.out.println("Enter updated name (or press Enter to keep current): ");
             String updatedName = getString();
-            if (!updatedName.equals("#"))
+            if (!updatedName.isEmpty()) {
                 existingCustomer.setName(updatedName);
-            System.out.print("Enter updated address (enter # for no change): ");
+            }
+            System.out.print("Enter updated address (or press Enter to keep current): ");
             String updatedAddress = getString();
-            if (!updatedAddress.equals("#"))
+            if (!updatedAddress.isEmpty()) {
                 existingCustomer.setAddress(updatedAddress);
-            System.out.print("Enter updated date of birth (YYYY-MM-DD) (enter # for no change): ");
+            }
+            System.out.print("Enter updated date of birth (YYYY-MM-DD) (or press Enter to keep current): ");
             String updatedDobStr = getString();
-            if (!updatedDobStr.equals("#")) {
+            if (!updatedDobStr.isEmpty()) {
                 LocalDate updatedDob = LocalDate.parse(updatedDobStr);
                 existingCustomer.setDob(updatedDob);
             }
-            System.out.print("Enter updated phone number (enter # for no change): ");
+            System.out.print("Enter updated phone number (or press Enter to keep current): ");
             String updatedPhoneNumber = getString();
-            if (!updatedPhoneNumber.equals("#"))
+            if (!updatedPhoneNumber.isEmpty()) {
                 existingCustomer.setPhoneNumber(updatedPhoneNumber);
-            System.out.print("Enter updated email (enter # for no change): ");
-            String updatedEmail = getString();
-            if (!updatedEmail.equals("#")) {
-                validateEmail(updatedEmail);
-                existingCustomer.setEmail(updatedEmail);
             }
-            System.out.print("Enter updated customer type [INDIVIDUAL | COMPANY] (enter # for no change): ");
+            System.out.print("Enter updated email (or press Enter to keep current): ");
+            String updatedEmail = getString();
+            validateEmail(updatedEmail);
+            System.out.print("Enter updated customer type: ");
             String updatedTypeStr = getString();
-            if (!updatedTypeStr.equals("#")) {
-                if (!updatedTypeStr.equals("COMPANY".toUpperCase())
-                        || !updatedTypeStr.equals("INDIVIDUAL".toUpperCase())) {
-                    CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
-                    existingCustomer.setType(updatedType);
-                } else {
-                    throw new UIException("Invalid customer type.");
-                }
+            if (!updatedTypeStr.isEmpty() || !updatedTypeStr.equals("COMPANY".toUpperCase())
+                    || !updatedTypeStr.equals("INDIVIDUAL".toUpperCase())) {
+                CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
+                existingCustomer.setType(updatedType);
+            } else {
+                throw new UIException("Invalid customer type.");
             }
             System.out.println("Updated Customer Details:");
             System.out.println(existingCustomer);
             cuService.save(existingCustomer);
             System.out.println("Customer updated successfully!");
-        } catch (ServiceException | UIException | DateTimeParseException e) {
+        } catch (ServiceException | UIException e) {
             System.out.println("[UI error] " + e.getMessage());
         }
     }
 
     private void deactivateCustomer() throws UIException {
+        Long idToUpdate = getLong();
         try {
-            System.out.println("\nDeactivate Customer\n========================");
-            Long idToUpdate = getLong();
             cuService.findById(idToUpdate);
             cuService.deactivateCustomer(idToUpdate);
             System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
-            System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
         } catch (ServiceException e) {
             System.out.println("[UI error] " + e.getMessage());
         }
@@ -601,7 +658,7 @@ public class Ui implements UiInterface {
         try {
             System.out.println("\nDisplay Customer Details\n========================");
             System.out.print("Enter customer ID to display: ");
-            long id = getLong();
+            long id = getLong();           
             Customer customer = cuService.findById(id);
             System.out.println("ID: " + customer.getId());
             System.out.println("Name: " + customer.getName());
@@ -618,6 +675,7 @@ public class Ui implements UiInterface {
         }
     }
 
+    // method for report-Dhara
     private void displayTotals() {
         try {
             System.out.println("\nDisplay Totals\n========================");
@@ -634,38 +692,30 @@ public class Ui implements UiInterface {
 
     private void displayAccountsByDate() {
         try {
-            System.out.println("\nDisplay Accounts By Date\n========================");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            System.out.println("Enter Start Date:");
-            LocalDate startDate = LocalDate.parse(getString(), formatter);
-            System.out.println("Enter End Date:");
-            LocalDate endDate = LocalDate.parse(getString(), formatter);
-            System.out.println("Displaying customers from " + startDate + " to " + endDate);
-            System.out.println("\n----------------------------------------------------------------------");
-            try {
-                ArrayList<BankAccount> bankAccounts = baService.findAll();
-                if (!bankAccounts.isEmpty())
-                    for (BankAccount bankAccount : bankAccounts) {
-                        LocalDate bankAccounDate = bankAccount.getCreatedDate();
-                        if (!bankAccounDate.isBefore(startDate) && !bankAccounDate.isAfter(endDate)) {
-                            System.out.println(bankAccount);
-                        }
-                    }
-                else {
-                    System.out.println("No bank accounts found.");
+            ArrayList<BankAccount> accounts = baService.findAll();
+
+            Map<LocalDate, List<BankAccount>> bankAccount = accounts.stream()
+                    .collect(Collectors.groupingBy(BankAccount::getCreatedDate));
+
+            for (Entry<LocalDate, List<BankAccount>> entry : bankAccount.entrySet()) {
+                LocalDate date = entry.getKey();
+                List<BankAccount> baAccountsOnDate = entry.getValue();
+
+                System.out.println("Date: " + date);
+                for (BankAccount account : baAccountsOnDate) {
+                    System.out.println("  BankAccount: " + account.getAccountName() + " | ID: " + account.getId());
                 }
-                System.out.println("----------------------------------------------------------------------");
-            } catch (ServiceException e) {
-                System.out.println(e.getMessage());
+                System.out.println();
             }
-        } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+        } catch (ServiceException ex) {
+
+            System.err.println("An error occurred: " + ex.getMessage());
         }
+
     }
 
     private void displayCustomersByDate() {
         try {
-            System.out.println("\nDisplay Customers By Date\n========================");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.println("Enter Start Date:");
             LocalDate startDate = LocalDate.parse(getString(), formatter);
@@ -696,7 +746,6 @@ public class Ui implements UiInterface {
 
     private void displayTransactionsByDate() {
         try {
-            System.out.println("\nDisplay Transactions By Date\n========================");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.println("Enter Start Date:");
             LocalDate startDate = LocalDate.parse(getString(), formatter);
@@ -727,7 +776,6 @@ public class Ui implements UiInterface {
 
     private void displayOperationsByDate() {
         try {
-            System.out.println("\nDisplay Transactions By Date\n========================");            
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.println("Enter Start Date:");
             LocalDate startDate = LocalDate.parse(getString(), formatter);
@@ -755,107 +803,4 @@ public class Ui implements UiInterface {
             System.out.println(e.getMessage());
         }
     }
-
-// account management
-
-    private void createAccount() {
-        try {
-            System.out.println("\nCreate Customer\n========================");
-            System.out.print("Enter customer firstname: ");
-            String firstname = getString();
-            System.out.print("Enter customer lastname: ");
-            String lastname = getString();
-            String fullName = firstname + " " + lastname;
-            System.out.print("Enter customer address: ");
-            String address = getString();
-            System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
-            LocalDate dob = LocalDate.parse(getString());
-            System.out.print("Enter customer phone number: ");
-            String phoneNumber = getString();
-            System.out.print("Enter customer email: ");
-            String email = getString();
-            System.out.print("Enter customer type (INDIVIDUAL / COMPANY): ");
-            String typeStr = getString();
-            CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
-            try {
-                Customer savedCustomer = cuService
-                        .createCustomer(new Customer(fullName, address, dob, phoneNumber, email, type));
-                System.out.println("\nCustomer id " + savedCustomer.getId() + " created successfully!");
-                System.out.println(savedCustomer);
-            } catch (ServiceException e) {
-                System.out.println("[UI error] " + e.getMessage());
-            }
-        } catch (UIException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void updateAccount() {
-        try {
-            System.out.println("\nUpdate Customer\n========================");
-            System.out.print("Enter customer ID to update: ");
-            long idToUpdate = getLong();
-            Customer existingCustomer = cuService.findById(idToUpdate);
-            System.out.println("Current Customer Details:");
-            System.out.println(existingCustomer);
-            System.out.println("--------------------------");
-            System.out.println("Enter updated name (enter # for no change): ");
-            String updatedName = getString();
-            if (!updatedName.equals("#"))
-                existingCustomer.setName(updatedName);
-            System.out.print("Enter updated address (enter # for no change): ");
-            String updatedAddress = getString();
-            if (!updatedAddress.equals("#"))
-                existingCustomer.setAddress(updatedAddress);
-            System.out.print("Enter updated date of birth (YYYY-MM-DD) (enter # for no change): ");
-            String updatedDobStr = getString();
-            if (!updatedDobStr.equals("#")) {
-                LocalDate updatedDob = LocalDate.parse(updatedDobStr);
-                existingCustomer.setDob(updatedDob);
-            }
-            System.out.print("Enter updated phone number (enter # for no change): ");
-            String updatedPhoneNumber = getString();
-            if (!updatedPhoneNumber.equals("#"))
-                existingCustomer.setPhoneNumber(updatedPhoneNumber);
-            System.out.print("Enter updated email (enter # for no change): ");
-            String updatedEmail = getString();
-            if (!updatedEmail.equals("#")) {
-                validateEmail(updatedEmail);
-                existingCustomer.setEmail(updatedEmail);
-            }
-            System.out.print("Enter updated customer type [INDIVIDUAL | COMPANY] (enter # for no change): ");
-            String updatedTypeStr = getString();
-            if (!updatedTypeStr.equals("#")) {
-                if (!updatedTypeStr.equals("COMPANY".toUpperCase())
-                        || !updatedTypeStr.equals("INDIVIDUAL".toUpperCase())) {
-                    CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
-                    existingCustomer.setType(updatedType);
-                } else {
-                    throw new UIException("Invalid customer type.");
-                }
-            }
-            System.out.println("Updated Customer Details:");
-            System.out.println(existingCustomer);
-            cuService.save(existingCustomer);
-            System.out.println("Customer updated successfully!");
-        } catch (ServiceException | UIException | DateTimeParseException e) {
-            System.out.println("[UI error] " + e.getMessage());
-        }
-    }
-
-    private void deactivateAccount() throws UIException {
-        try {
-            System.out.println("\nDeactivate Customer\n========================");
-            Long idToUpdate = getLong();
-            cuService.findById(idToUpdate);
-            cuService.deactivateCustomer(idToUpdate);
-            System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
-            System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
-        } catch (ServiceException e) {
-            System.out.println("[UI error] " + e.getMessage());
-        }
-    }
-
-
 }
