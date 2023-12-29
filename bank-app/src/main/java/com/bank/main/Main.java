@@ -1,12 +1,12 @@
 package com.bank.main;
 
 import com.bank.exceptions.UIException;
-import com.bank.ui.UI;
+import com.bank.ui.Ui;
 
 public class Main {
     public static void main(String[] args) {
         
-        UI ui = new UI();
+        Ui ui = new Ui();
         
         try {
             ui.authenticateApp();
