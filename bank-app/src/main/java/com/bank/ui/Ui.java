@@ -1,11 +1,14 @@
 package com.bank.ui;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -25,11 +28,37 @@ import com.bank.service.TransactionService;
 
 public class Ui implements UiInterface {
 
+    private String appUsername;
+    private String appPassword;
+
     // Service initialisation
     BankAccountService baService = new BankAccountService();
     OperationService opService = new OperationService();
     TransactionService trService = new TransactionService();
     CustomerService cuService = new CustomerService();
+
+    public void loadProperties() {
+        try {
+            InputStream appConfigPath = Ui.class.getClassLoader().getResourceAsStream("app.properties");
+            Properties appProps = new Properties();
+            appProps.load(appConfigPath);
+            appUsername = appProps.getProperty("app.username");
+            appPassword = appProps.getProperty("app.password");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadData() {
+        try {
+            cuService.loadJson();
+            baService.loadJson();
+            opService.loadJson();
+            trService.loadJson();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void authenticateApp() throws UIException {
         try {
@@ -41,7 +70,7 @@ public class Ui implements UiInterface {
             String username = getString();
             System.out.println("Enter password: ");
             String password = getString();
-            if (!username.equals("admin") || !password.equals("admin"))
+            if (!username.equals(appUsername) || !password.equals(appPassword))
                 throw new UIException("Invalid credentials!");
         } catch (Exception ex) {
             throw new UIException("[UI error] " + ex.getMessage());
@@ -86,6 +115,9 @@ public class Ui implements UiInterface {
                         exit = true;
                         try {
                             cuService.saveJson();
+                            baService.saveJson();
+                            opService.saveJson();
+                            trService.saveJson();
                         } catch (IOException e) {
                             System.out.println(e.getMessage());
                         }
@@ -227,9 +259,9 @@ public class Ui implements UiInterface {
             System.out.println("\n========================");
             System.out.println("= ACCOUNT MANIPULATION   =");
             System.out.println("========================");
-            System.out.println("1. Withdraw Funds from Account");
-            System.out.println("2. Deposit Funds to Account");
-            System.out.println("3. Transfer Funds from/to Account");
+            System.out.println("1. Withdraw Funds From Account");
+            System.out.println("2. Deposit Funds To Account");
+            System.out.println("3. Transfer Funds Between Accounts");
             System.out.println("4. Return to Main Menu");
             System.out.println("========================");
             System.out.println("Selection option:");
@@ -262,7 +294,7 @@ public class Ui implements UiInterface {
         do {
             clearConsole();
             System.out.println("\n========================");
-            System.out.println("=       REPORTING       =");
+            System.out.println("=       REPORTING      =");
             System.out.println("========================");
             System.out.println("1. Display Totals");
             System.out.println("2. Display Accounts by Date");
@@ -317,10 +349,28 @@ public class Ui implements UiInterface {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
-
             throw new UIException("Invalid input.");
         }
-        return Long.parseLong(input);
+        try {
+            return Long.parseLong(input);
+        } catch (NumberFormatException e) {
+            throw new UIException("Invalid input. Requires an integer up to 18 digits long.");
+        }
+    }
+
+    public long getCurrencyAmount() throws UIException {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input == null || input.trim().equals("")) {
+            throw new UIException("Invalid input.");
+        }
+        BigDecimal bd = new BigDecimal(input);
+        try {
+            bd.setScale(2);
+            return bd.movePointRight(2).longValueExact();
+        } catch (NumberFormatException | ArithmeticException e) {
+            throw new UIException("Invalid input. Requires a number with up to 2 decimal places.");
+        }
     }
 
     public void Details(ArrayList<Object> coll) {
@@ -445,19 +495,18 @@ public class Ui implements UiInterface {
         }
     }
 
-    // Fionn
     private void withdrawFromAccount() throws UIException {
         System.out.println("\nWithdraw From Account\n========================");
         try {
             System.out.println("\nEnter account ID: ");
             long id = getLong();
             System.out.println("\nEnter withdrawal ammount (EUR): ");
-            long amount = getLong() * 100;
+            long amount = getCurrencyAmount();
             baService.withdrawFromAccount(id, amount);
-            System.out.println("\nSuccessfully withdrawn " + baService.findById(id).getBalance() / 100
-                    + " Euro into account ID " + id + ".");
+            System.out.println("\nSuccessfully withdrawn " + amount/100 + "." + amount % 100 
+                    + " EUR into account ID " + id + ".\nThe new balance is " + baService.findById(id).getBalance()/100 + "." + baService.findById(id).getBalance() % 100 + " EUR.");
         } catch (ServiceException | UIException ex) {
-            throw new UIException("[UI error] " + ex.getMessage());
+            throw new UIException("[Withdrawal failed] " + ex.getMessage());
         }
     }
 
@@ -467,34 +516,33 @@ public class Ui implements UiInterface {
             System.out.println("\nEnter account ID:");
             long id = getLong();
             System.out.println("\nEnter deposit ammount (EUR)");
-            long amount = getLong() * 100;
+            long amount = getCurrencyAmount();
             baService.depositIntoAccount(id, amount);
-            System.out.println("\nSuccessfully deposited " + baService.findById(id).getBalance() / 100
-                    + " Euro into account ID " + id + ".");
-        } catch (ServiceException ex) {
-            throw new UIException("[UI error] " + ex.getMessage());
+            System.out.println("\nSuccessfully deposited " + amount/100 + "." + amount % 100 
+                    + " EUR into account ID " + id + ".\nThe new balance is " + baService.findById(id).getBalance()/100 + "." + baService.findById(id).getBalance() % 100 + " EUR.");
+        } catch (ServiceException | UIException ex) {
+            throw new UIException("[Deposit failed] " + ex.getMessage());
         }
     }
 
     private void transferToAccount() throws UIException {
-        System.out.println("\nTransfer Funds Between Account\n========================");
+        System.out.println("\nTransfer Funds Between Accounts\n========================");
         try {
             System.out.println("\nEnter the payer's account ID: ");
             long payerId = getLong();
             System.out.println("\nEnter the payee's account ID: ");
             long payeeId = getLong();
             System.out.println("\nEnter transfer ammount (EUR): ");
-            long amount = getLong() * 100;
+            long amount = getCurrencyAmount();
             baService.withdrawFromAccount(payerId, amount);
             baService.depositIntoAccount(payeeId, amount);
-            System.out.println(
-                    "\nSuccessfully  debited " + baService.findById(payerId).getBalance() / 100 + " Euro in account ID "
-                            + payerId + ".");
+            System.out.println("\nSuccessfully transferred " + amount/100 + "." + amount % 100 
+                    + " EUR from account ID " + payerId + " to account ID " + payeeId + ".\nThe new balance of account ID " + payerId + " is " + baService.findById(payerId).getBalance()/100 + "." + baService.findById(payerId).getBalance() % 100 + " EUR.\nThe new balance of account ID " + payeeId + " is " + baService.findById(payeeId).getBalance()/100 + "." + baService.findById(payeeId).getBalance() % 100 + " EUR.");
             System.out.println(
                     "\nSuccessfully credited " + baService.findById(payeeId).getBalance() / 100 + " Euro in account ID "
                             + payeeId + ".");
         } catch (ServiceException ex) {
-            throw new UIException("[UI error] " + ex.getMessage());
+            throw new UIException("[Transfer failed] " + ex.getMessage());
         }
     }
 
@@ -523,7 +571,7 @@ public class Ui implements UiInterface {
                 System.out.println("\nCustomer id " + savedCustomer.getId() + " created successfully!");
                 System.out.println(savedCustomer);
             } catch (ServiceException e) {
-                System.out.println("[UI error] " + e.getMessage());
+                System.out.println("[Customer creation failed] " + e.getMessage());
             }
         } catch (UIException e) {
             e.printStackTrace();
@@ -580,7 +628,7 @@ public class Ui implements UiInterface {
             cuService.save(existingCustomer);
             System.out.println("Customer updated successfully!");
         } catch (ServiceException | UIException | DateTimeParseException e) {
-            System.out.println("[UI error] " + e.getMessage());
+            System.out.println("[Customer update failed] " + e.getMessage());
         }
     }
 
@@ -593,7 +641,7 @@ public class Ui implements UiInterface {
             System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
             System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
         } catch (ServiceException e) {
-            System.out.println("[UI error] " + e.getMessage());
+            System.out.println("[Customer deactivation failed] " + e.getMessage());
         }
     }
 
@@ -614,7 +662,7 @@ public class Ui implements UiInterface {
             System.out.println("Created Date: " + customer.getCreatedDate());
             System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
         } catch (ServiceException | UIException e) {
-            System.out.println("[UI error] " + e.getMessage());
+            System.out.println("[Customer display failed] " + e.getMessage());
         }
     }
 
@@ -628,7 +676,7 @@ public class Ui implements UiInterface {
             long totalBalance = baService.findAll().stream().mapToLong(BankAccount::getBalance).sum();
             System.out.println("Total balance across all accounts (EUR): " + totalBalance / 100);
         } catch (Exception e) {
-            System.err.println("An error occurred: " + e.getMessage());
+            System.err.println("[Display totals failed] " + e.getMessage());
         }
     }
 
@@ -656,7 +704,7 @@ public class Ui implements UiInterface {
                 }
                 System.out.println("----------------------------------------------------------------------");
             } catch (ServiceException e) {
-                System.out.println(e.getMessage());
+                System.out.println("[Display accounts by date failed] " + e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
             System.out.println(e.getMessage());
@@ -690,7 +738,7 @@ public class Ui implements UiInterface {
                 System.out.println(e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Display customers by date failed] " + e.getMessage());
         }
     }
 
@@ -721,13 +769,13 @@ public class Ui implements UiInterface {
                 System.out.println(e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Display transactions by date failed] " + e.getMessage());
         }
     }
 
     private void displayOperationsByDate() {
         try {
-            System.out.println("\nDisplay Transactions By Date\n========================");            
+            System.out.println("\nDisplay Transactions By Date\n========================");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.println("Enter Start Date:");
             LocalDate startDate = LocalDate.parse(getString(), formatter);
@@ -752,11 +800,11 @@ public class Ui implements UiInterface {
                 System.out.println(e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Display operations by date failed] " + e.getMessage());
         }
     }
 
-// account management
+    // account management
 
     private void createAccount() {
         try {
@@ -856,6 +904,5 @@ public class Ui implements UiInterface {
             System.out.println("[UI error] " + e.getMessage());
         }
     }
-
 
 }

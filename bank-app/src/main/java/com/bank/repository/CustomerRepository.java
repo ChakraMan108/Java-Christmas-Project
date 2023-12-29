@@ -10,17 +10,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class CustomerRepository implements Repository<Customer> {
+public final class CustomerRepository implements Repository<Customer> {
+
+    private static CustomerRepository INSTANCE;
+    private String info = "Customer Repository";
+
+    public static CustomerRepository getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CustomerRepository();
+        }
+        return INSTANCE;
+    }
 
     private ArrayList<Customer> customers = new ArrayList<>();
-
-    public CustomerRepository() {
-        try {
-            loadJson();
-        } catch (IOException e) {
-            System.out.println("Error loading customer JSON file: " + e.getMessage());
-        }
-    }
 
     public long count() throws RepositoryException {
         return customers.size();
@@ -88,4 +90,9 @@ public class CustomerRepository implements Repository<Customer> {
             throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
         }
     }
+
+    public String getInfo() {
+        return info;
+    }
+
 }

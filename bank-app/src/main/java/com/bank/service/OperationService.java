@@ -10,7 +10,7 @@ import com.bank.repository.OperationRepository;
 
 public class OperationService implements Service<Operation> {
 
-    public static final OperationRepository repository = new OperationRepository();
+    private OperationRepository repository = OperationRepository.getInstance();
 
     public Operation save(Operation operation) throws ServiceException {
         try {
@@ -45,6 +45,18 @@ public class OperationService implements Service<Operation> {
     }
     
     public void saveJson() throws IOException {
-        repository.saveJson();
+        try {
+            repository.saveJson();
+        } catch (IOException ex) {
+            throw new IOException("[Operation Service error] " + ex.getMessage(), ex);
+        }
+    }
+
+    public void loadJson() throws IOException {
+        try {
+            repository.loadJson();
+        } catch (IOException ex) {
+            throw new IOException("[Operation Service error] " + ex.getMessage(), ex);
+        }
     }
 }

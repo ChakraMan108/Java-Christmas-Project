@@ -150,7 +150,7 @@ public class BankAccount {
 
    @Override
    public String toString() {
-      return "BankAccount [id=" + id + ", accountName=" + accountName + ", type=" + type + ", balance=" + balance
+      return "BankAccount [id=" + id + " accountName=" + accountName + ", type=" + type + ", balance=" + balance
             + ", isActive=" + isActive + ", createdDate=" + createdDate + ", deactivatedDate=" + deactivatedDate
             + ", customer=" + customer + "]";
    }
