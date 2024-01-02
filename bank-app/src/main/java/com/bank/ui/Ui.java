@@ -508,9 +508,6 @@ public class Ui implements UiInterface {
         }
     }
     //Fionn -- Acc. Mgmt.
-
-
-
     private void createAccount() {
         try {
             System.out.println("\nCreate Account\n========================");
@@ -535,7 +532,10 @@ public class Ui implements UiInterface {
             AccountType type = AccountType.valueOf(typeStr.toUpperCase());
             try {
                 BankAccount savedBankAccount = baService
-                        .createAccount(new BankAccount(fullName, balance, type), new Customer());
+                        .createAccount(new BankAccount(fullName, type, balance), new Customer());
+                        //(fullName, balance, type)
+                        //.createAccount(new BankAccount(), new Customer());
+                        
                 System.out.println("\nAccount id " + savedBankAccount.getId() + " created successfully!");
                 System.out.println(savedBankAccount);
             } catch (ServiceException e) {
@@ -548,6 +548,8 @@ public class Ui implements UiInterface {
     }
 
     private void deactivateAccount() throws UIException {
+        System.out.println("\nDeactivate an Account by ID\n========================");
+        System.out.println("\nEnter the ID of the Account you wish to decactivate ");
         Long idToUpdate = getLong();
         try {
             baService.findById(idToUpdate);
