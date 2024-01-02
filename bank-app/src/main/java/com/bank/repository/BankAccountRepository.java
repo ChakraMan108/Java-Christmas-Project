@@ -109,5 +109,4 @@ public final class BankAccountRepository implements Repository<BankAccount> {
         return info;
     }
 
-
 }
