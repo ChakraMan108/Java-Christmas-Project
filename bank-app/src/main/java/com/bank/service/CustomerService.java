@@ -3,6 +3,8 @@ package com.bank.service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Operation;
 import com.bank.entity.Operation.OperationType;
@@ -13,7 +15,7 @@ import com.bank.repository.CustomerRepository;
 public class CustomerService implements Service<Customer> {
 
     private final CustomerRepository repository = new CustomerRepository();
-    private OperationService opService = new OperationService();
+    private OperationServiceTest opService = new OperationServiceTest();
 
     public long count() throws ServiceException {
         try {
@@ -42,9 +44,9 @@ public class CustomerService implements Service<Customer> {
         }
     }
 
-    public Customer save(Customer customer) throws ServiceException {
+    public Customer save(BankAccount existingAccount) throws ServiceException {
         try { 
-            return repository.save(customer);
+            return repository.save(existingAccount);
         }
         catch (RepositoryException ex) {
             throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);

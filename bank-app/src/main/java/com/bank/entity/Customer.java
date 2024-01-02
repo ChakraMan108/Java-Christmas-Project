@@ -114,8 +114,8 @@ public class Customer {
         return type;
     }
 
-    public void setType(CustomerType type) {
-        this.type = type;
+    public void setType(String updatedAccountType) {
+        this.type = updatedAccountType;
     }
 
     @Override

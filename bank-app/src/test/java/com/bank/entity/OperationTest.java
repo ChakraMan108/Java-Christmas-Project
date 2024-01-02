@@ -9,43 +9,46 @@ public class OperationTest {
 
     @Test
     public void testGettersAndSetters() {
-        Operation operation = new Operation();
-        operation.setId(1);
-        operation.setOperationtype(Operation.OperationType.CUSTOMER_CREATION);
-        operation.setUsername("Test User");
-        operation.setAccountId(1);
-        operation.setCustomerId(1);
-        operation.setDate(LocalDate.of(2022, 1, 1));
+        Operation operation = new Operation(Operation.OperationType.CUSTOMER_CREATION, "john_doe", 123, 456);
 
-        assertEquals(1, operation.getId());
-        assertEquals(Operation.OperationType.CUSTOMER_CREATION, operation.getOperationtype());
-        assertEquals("Test User", operation.getUsername());
-        assertEquals(1, operation.getAccountId());
-        assertEquals(1, operation.getCustomerId());
-        assertEquals(LocalDate.of(2022, 1, 1), operation.getDate());
-    }
+        operation.setId(789);
+        assertEquals(789, operation.getId());
 
-    @Test
-    public void testEquals() {
-        Operation operation1 = new Operation(Operation.OperationType.CUSTOMER_CREATION, "Test User", 1, 1);
-        Operation operation2 = new Operation(Operation.OperationType.CUSTOMER_CREATION, "Test User", 1, 1);
+        operation.setOperationtype(Operation.OperationType.CUSTOMER_DEACTIVATION);
+        assertEquals(Operation.OperationType.CUSTOMER_DEACTIVATION, operation.getOperationtype());
 
-        assertTrue(operation1.equals(operation2));
-    }
+        operation.setUsername("new_username");
+        assertEquals("new_username", operation.getUsername());
 
-    @Test
-    public void testHashCode() {
-        Operation operation1 = new Operation(Operation.OperationType.CUSTOMER_CREATION, "Test User", 1, 1);
-        Operation operation2 = new Operation(Operation.OperationType.CUSTOMER_CREATION, "Test User", 1, 1);
+        operation.setAccountId(987);
+        assertEquals(987, operation.getAccountId());
 
-        assertEquals(operation1.hashCode(), operation2.hashCode());
+        operation.setCustomerId(654);
+        assertEquals(654, operation.getCustomerId());
+
+        LocalDate currentDate = LocalDate.now();
+        operation.setDate(currentDate);
+        assertEquals(currentDate, operation.getDate());
     }
 
     @Test
     public void testToString() {
-        Operation operation = new Operation(Operation.OperationType.CUSTOMER_CREATION, "Test User", 1, 1);
-        String expected = "Operation [id=0, operationtype=CUSTOMER_CREATION, username=Test User, accountId=1, customerId=1, date=null]";
+        Operation operation = new Operation(Operation.OperationType.ACCOUNT_CREATION, "jane_doe", 789, 987);
+        String expectedToString = "Operation [id=0, operationtype=ACCOUNT_CREATION, username=jane_doe, accountId=789, customerId=987, date=null]";
+        assertEquals(expectedToString, operation.toString());
+    }
 
-        assertEquals(expected, operation.toString());
+    @Test
+    public void testEqualsAndHashCode() {
+        Operation operation1 = new Operation(Operation.OperationType.CUSTOMER_CREATION, "john_doe", 123, 456);
+        Operation operation2 = new Operation(Operation.OperationType.CUSTOMER_CREATION, "john_doe", 123, 456);
+        Operation operation3 = new Operation(Operation.OperationType.CUSTOMER_DEACTIVATION, "jane_doe", 789, 987);
+
+        assertTrue(operation1.equals(operation2));
+        assertFalse(operation1.equals(operation3));
+        assertTrue(operation1.hashCode() == operation2.hashCode());
+        assertFalse(operation1.hashCode() == operation3.hashCode());
     }
 }
+
+

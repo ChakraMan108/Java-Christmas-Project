@@ -3,7 +3,7 @@ package com.bank.main;
 import com.bank.exceptions.UIException;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
-import com.bank.service.OperationService;
+import com.bank.service.OperationServiceTest;
 import com.bank.service.TransactionService;
 import com.bank.ui.Ui;
 
@@ -13,7 +13,7 @@ public class TomTest {
 
         // Service initialisation
         BankAccountService baService = new BankAccountService();
-        OperationService opService = new OperationService();
+        OperationServiceTest opService = new OperationServiceTest();
         TransactionService trService = new TransactionService();
         CustomerService cuService = new CustomerService();
         

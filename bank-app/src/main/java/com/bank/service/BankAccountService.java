@@ -16,7 +16,7 @@ public class BankAccountService implements Service<BankAccount> {
 
     private static final BankAccountRepository repository = new BankAccountRepository();
     private TransactionService ts = new TransactionService();
-    private OperationService os = new OperationService();
+    private OperationServiceTest os = new OperationServiceTest();
 
     public long count() throws ServiceException {
         try {
