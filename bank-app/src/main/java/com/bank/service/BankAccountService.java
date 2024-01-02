@@ -70,7 +70,7 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             BankAccount account = repository.findById(id);
             if (amount < 1) {
-                throw new ServiceException("[Bank Account Service error] Invalid deposit EUR " + amount / 100
+                throw new ServiceException("Invalid deposit EUR " + amount / 100
                         + " to account id " + account.getId(), Long.toString(account.getId()));
             }
             account.setBalance(account.getBalance() + amount);
@@ -87,7 +87,7 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             BankAccount account = repository.findById(id);
             if (account.getBalance() - amount < 0) {
-                throw new ServiceException("[Bank Account Service error] Insufficient balance to withdraw EUR "
+                throw new ServiceException("Insufficient balance to withdraw EUR "
                         + amount / 100 + " from account id " + account.getId(), Long.toString(account.getId()));
             }
             account.setBalance(account.getBalance() - amount);
@@ -95,7 +95,7 @@ public class BankAccountService implements Service<BankAccount> {
             Transaction t = new Transaction(amount, System.getProperty("user.name"),
                     Transaction.TransactionType.WITHDRAWAL, account.getId());
             ts.save(t);
-        } catch (RepositoryException ex) {
+        } catch (RepositoryException | ServiceException ex) {
             throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
@@ -105,8 +105,14 @@ public class BankAccountService implements Service<BankAccount> {
             BankAccount account = repository.findById(id);
             if (!account.isActive())
                 throw new ServiceException(
-                        "[Bank Account Service error] Cannot deactivate deactivated account id " + account.getId(),
+                        "Cannot deactivate deactivated account id " + account.getId(),
                         Long.toString(account.getId()));
+            if (account.getBalance() > 0) {
+                throw new ServiceException(
+                        "Cannot deactivate account id " + account.getId() + " with non-zero a balance of EUR "
+                                + account.getBalance() / 100 + "." + account.getBalance() % 100 + ".",
+                        Long.toString(account.getId()));
+            }
             account.setActive(false);
             account.setDeactivatedDate(LocalDate.now());
             save(account);
@@ -122,7 +128,7 @@ public class BankAccountService implements Service<BankAccount> {
         try {
             if (!customer.isActive())
                 throw new ServiceException(
-                        "[Bank Account Service error] Cannot create account for deactivated customer.");
+                        "Cannot create account for deactivated customer.");
             BankAccount account = new BankAccount();
             bankAccount.setActive(true);
             bankAccount.setCreatedDate(LocalDate.now());
@@ -137,19 +143,19 @@ public class BankAccountService implements Service<BankAccount> {
         }
     }
 
-    public void saveJson() throws IOException {
+    public void saveJson() throws ServiceException {
         try {
             repository.saveJson();
         } catch (IOException ex) {
-            throw new IOException("[Bank Account Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 
-    public void loadJson() throws IOException {
+    public void loadJson() throws ServiceException {
         try {
             repository.loadJson();
         } catch (IOException ex) {
-            throw new IOException("[Bank Account Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Bank Account Service error] " + ex.getMessage(), ex);
         }
     }
 }

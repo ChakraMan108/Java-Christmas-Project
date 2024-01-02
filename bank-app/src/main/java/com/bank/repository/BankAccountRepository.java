@@ -3,10 +3,10 @@ package com.bank.repository;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
+
+import javax.sql.rowset.serial.SerialException;
 
 import com.bank.entity.BankAccount;
-import com.bank.entity.Customer;
 import com.bank.exceptions.RepositoryException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +52,7 @@ public final class BankAccountRepository implements Repository<BankAccount> {
                 return ba;
             }
         }
-        throw new RepositoryException("Bank account linked to customer name " + name + " not found in the repository!");
+        throw new RepositoryException("Bank account linked to customer name " + name + " not found in the repository.");
     }
 
     public BankAccount findByCustomerId(long id) throws RepositoryException {
@@ -61,17 +61,25 @@ public final class BankAccountRepository implements Repository<BankAccount> {
                 return ba;
             }
         }
-        throw new RepositoryException("Bank account linked to customer id " + id + " not found in the repository!");
+        System.err.println("Bank account linked to customer id " + id + " not found in the repository.");
+        return null;
+        //throw new RepositoryException("Bank account linked to customer id " + id + " not found in the repository.");
     }
 
     public BankAccount save(BankAccount bankAccount) throws RepositoryException {
-        if (!bankAccounts.contains(bankAccount)) {
-            bankAccount.setId(generateAccountId());
-            bankAccounts.add(bankAccount);
-            return bankAccount;
-        } else {
-            bankAccounts.set(bankAccounts.indexOf(bankAccount), bankAccount);
-            return bankAccount;
+        try {
+            if (!bankAccounts.contains(bankAccount)) {
+                bankAccount.setId(generateAccountId());
+                bankAccounts.add(bankAccount);
+                saveJson();
+                return bankAccount;
+            } else {
+                bankAccounts.set(bankAccounts.indexOf(bankAccount), bankAccount);
+                saveJson();
+                return bankAccount;
+            }
+        } catch (IOException ex) {
+            throw new RepositoryException("[Bank Account Service error]" + ex.getMessage(), ex);
         }
     }
 

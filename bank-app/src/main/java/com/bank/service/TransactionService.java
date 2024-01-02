@@ -47,19 +47,19 @@ public class TransactionService implements Service<Transaction> {
         }
     }
     
-    public void saveJson() throws IOException {
+    public void saveJson() throws ServiceException {
         try {
             repository.saveJson();
         } catch (IOException ex) {
-            throw new IOException("[Transaction Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
     }
 
-    public void loadJson() throws IOException {
+    public void loadJson() throws ServiceException {
         try {
             repository.loadJson();
         } catch (IOException ex) {
-            throw new IOException("[Transaction Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
     }
 }
