@@ -12,6 +12,14 @@ public class OperationService implements Service<Operation> {
 
     private OperationRepository repository = OperationRepository.getInstance();
 
+    public OperationService(){
+        try {
+            loadJson();
+        } catch (ServiceException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     public Operation save(Operation operation) throws ServiceException {
         try {
             return repository.save(operation);
@@ -44,19 +52,19 @@ public class OperationService implements Service<Operation> {
         }
     }
     
-    public void saveJson() throws IOException {
+    public void saveJson() throws ServiceException {
         try {
             repository.saveJson();
         } catch (IOException ex) {
-            throw new IOException("[Operation Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
         }
     }
 
-    public void loadJson() throws IOException {
+    public void loadJson() throws ServiceException {
         try {
             repository.loadJson();
         } catch (IOException ex) {
-            throw new IOException("[Operation Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
         }
     }
 }

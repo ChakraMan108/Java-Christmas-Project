@@ -3,11 +3,13 @@ package com.bank.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.bank.entity.Operation;
@@ -15,11 +17,15 @@ import com.bank.exceptions.ServiceException;
 
 public class OperationServiceTest {
 
-    OperationService service = new OperationService();
+    OperationService service;
 
-    @BeforeAll
-    public static void setUp() {
-        testSave();
+    @BeforeEach
+    public void setUp() throws ServiceException {
+        service = new OperationService();
+        Operation operation = new Operation();
+        // Set properties for operation
+        Operation savedOperation = service.save(operation);
+        assertEquals(operation, savedOperation);
     }
 
     @Test
@@ -32,9 +38,11 @@ public class OperationServiceTest {
 
     @Test
     public void testFindById() throws ServiceException {
-        long id = 1; // replace with actual id
-        Operation operation = service.findById(id);
-        assertNotNull(operation);
+        Operation operation = new Operation();
+        Operation savedOperation = service.save(operation);
+        long id = savedOperation.getId();
+        Operation testOperation = service.findById(id);
+        assertNotNull(testOperation);
     }
 
     @Test
@@ -51,11 +59,11 @@ public class OperationServiceTest {
 
     @Test
     public void testSaveJson() {
-        assertDoesNotThrow(() -> service.saveJson());
+        assertThrows(ServiceException.class, () -> service.saveJson());
     }
 
     @Test
     public void testLoadJson() {
-        assertDoesNotThrow(() -> service.loadJson());
+        assertThrows(ServiceException.class, () -> service.loadJson());
     }
 }

@@ -21,8 +21,7 @@ public class CustomerService implements Service<Customer> {
     public long count() throws ServiceException {
         try {
             return repository.count();
-        }
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
@@ -30,8 +29,7 @@ public class CustomerService implements Service<Customer> {
     public ArrayList<Customer> findAll() throws ServiceException {
         try {
             return repository.findAll();
-        } 
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
@@ -39,73 +37,79 @@ public class CustomerService implements Service<Customer> {
     public Customer findById(long id) throws ServiceException {
         try {
             return repository.findById(id);
-        } 
-        catch (RepositoryException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);       
+        } catch (RepositoryException ex) {
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
     public Customer save(Customer customer) throws ServiceException {
-        try { 
+        try {
             return repository.save(customer);
-        }
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
     public void deactivateCustomer(long id) throws ServiceException {
         try {
-            BankAccount bankAccount = baService.findByCustomerId(id);
             Customer customer = repository.findById(id);
             if (!customer.isActive())
-                throw new ServiceException("[Customer Service error] Cannot deactivate deactivated customer id " + customer.getId());
-            if (bankAccount.getCustomer().getId() == customer.getId()) {
-                    if (bankAccount.isActive()) {
-                        throw new ServiceException("[Customer Service error] Cannot deactivate customer id " + customer.getId() + " with active bank account id " + bankAccount.getId());
-                    }
-                    else {
-                        customer.setActive(false);
-                        customer.setDeactivatedDate(LocalDate.now());
-                        bankAccount.setCustomer(customer);
-                        baService.save(bankAccount);
-                        save(customer);
-                    }
+                throw new ServiceException("Cannot deactivate deactivated customer id " + customer.getId());
+            BankAccount bankAccount = baService.findByCustomerId(id);
+            if (bankAccount != null) {
+                if (bankAccount.getCustomer().getId() == customer.getId() && bankAccount.isActive()) {
+                    throw new ServiceException("Cannot deactivate customer id " + customer.getId()
+                            + " with an active bank account id " + bankAccount.getId() + ".");
+                }
+                customer.setActive(false);
+                customer.setDeactivatedDate(LocalDate.now());
+                save(customer);
+                bankAccount.setCustomer(customer);
+                baService.save(bankAccount);
+                Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
+                        bankAccount.getId(), customer.getId());
+                opService.save(o);
+            } else {
+                customer.setActive(false);
+                customer.setDeactivatedDate(LocalDate.now());
+                save(customer);
+                Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
+                        0, customer.getId());
+                opService.save(o);
             }
-            Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"), bankAccount.getId() , customer.getId());
-            opService.save(o);
         } catch (RepositoryException | ServiceException ex) {
-                throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
-        }
-    }
-
-    public Customer createCustomer(Customer customer) throws ServiceException {
-     try {
-        Customer cust = new Customer();
-        customer.setActive(true);
-        customer.setCreatedDate(LocalDate.now());
-        cust = save(customer);
-        Operation o = new Operation(OperationType.CUSTOMER_CREATION,System.getProperty("user.name"), 0 , cust.getId());
-        opService.save(o);
-        return cust;    
-        } catch (ServiceException ex) { 
             throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
-    public void saveJson() throws IOException {
+    public Customer createCustomer(Customer customer) throws ServiceException {
         try {
-            repository.saveJson();
-        } catch (IOException ex) {
-            throw new IOException("[Customer Service error] " + ex.getMessage(), ex);
+            Customer cust = new Customer();
+            customer.setActive(true);
+            customer.setCreatedDate(LocalDate.now());
+            cust = save(customer);
+            Operation o = new Operation(OperationType.CUSTOMER_CREATION, System.getProperty("user.name"), 0,
+                    cust.getId());
+            opService.save(o);
+            return cust;
+        } catch (ServiceException ex) {
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 
-    public void loadJson() throws IOException {
+    public void saveJson() throws ServiceException {
+        try {
+            repository.saveJson();
+        } catch (IOException ex) {
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+        }
+    }
+
+    public void loadJson() throws ServiceException {
         try {
             repository.loadJson();
         } catch (IOException ex) {
-            throw new IOException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
     }
 }
