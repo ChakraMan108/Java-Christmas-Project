@@ -1,5 +1,9 @@
 package com.bank.main;
 
+import java.time.LocalDate;
+
+import com.bank.entity.BankAccount;
+import com.bank.entity.Customer;
 import com.bank.exceptions.UIException;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
@@ -21,7 +25,7 @@ public class TomTest {
         //cuService.loadJson();
 
         // Customer creation       
-        // Customer c1 = new Customer("Tom", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
+        // Customer c1 = new Customer("Tom C", "Beech Park", LocalDate.parse("2000-04-15"), "085111222", "tom@x.com", Customer.CustomerType.INDIVIDUAL);
         // Customer c2 = new Customer("Avaya", "Mervue", LocalDate.parse("2000-04-15"), "086896457", "avaya@avaya.com", Customer.CustomerType.COMPANY);
         // Customer c3 = new Customer("Mary", "Mervue", LocalDate.parse("2001-04-15"), "123456789", "mary@mary.com", Customer.CustomerType.INDIVIDUAL);
 
@@ -44,7 +48,7 @@ public class TomTest {
         // baService.createAccount(acc2, foundCustomer);
         // System.out.println("\nAfter account creation:\n" + acc2);
 
-        // // Account Deactivation
+        // Account Deactivation
         // baService.deactivateAccount(acc2.getId());
         // System.out.println("\nAfter account deactivation:\n" + acc2);
         
@@ -70,36 +74,38 @@ public class TomTest {
         // System.out.println("\nAfter customer deactivation:\n" + c2);
 
         //Find All Accounts
-        System.out.println("\nAll accounts:\n" + baService.findAll());
+        // System.out.println("\nAll accounts:\n" + baService.findAll());
 
         // Find All Operations
-        System.out.println("\nAll operations:\n" + opService.findAll());
+        // System.out.println("\nAll operations:\n" + opService.findAll());
         
         // Find All Transactions
-        System.out.println("\nAll transactions:\n" + trService.findAll());
+        // System.out.println("\nAll transactions:\n" + trService.findAll());
 
         //Find All Customers
-        System.out.println("\nAll customers:\n" + cuService.findAll());
+        // System.out.println("\nAll customers:\n" + cuService.findAll());
 
         //Count all Customers
-        System.out.println("Number of customers: " + cuService.count());
+        // System.out.println("Number of customers: " + cuService.count());
 
         //Count all Accounts
-        System.out.println("Number of accounts: " + baService.count());
+        // System.out.println("Number of accounts: " + baService.count());
 
         //Count all Transactions
-        System.out.println("Number of transactions: " + trService.count());
+        // System.out.println("Number of transactions: " + trService.count());
 
         //Count all Operations
-        System.out.println("Number of operations: " + opService.count());
+        // System.out.println("Number of operations: " + opService.count());
 
         Ui ui = new Ui();
         
         try {
+            ui.loadProperties();
             ui.authenticateApp();
+            ui.loadData();
             ui.displayMenu();
         } catch (UIException ex) {
-            System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
+            System.out.println(ex.getMessage() + "\nExiting the Bank Application."); 
         }
     }
 }

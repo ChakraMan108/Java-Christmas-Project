@@ -1,15 +1,24 @@
 package com.bank.ui;
 
 import java.io.IOException;
+<<<<<<< HEAD
 import java.lang.reflect.Array;
+=======
+import java.io.InputStream;
+import java.math.BigDecimal;
+>>>>>>> main
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+<<<<<<< HEAD
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+=======
+import java.util.Properties;
+>>>>>>> main
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -30,13 +39,41 @@ import com.bank.service.TransactionService;
 
 public class Ui implements UiInterface {
 
+    private String appUsername;
+    private String appPassword;
+
     // Service initialisation
     BankAccountService baService = new BankAccountService();
     OperationService opService = new OperationService();
     TransactionService trService = new TransactionService();
     CustomerService cuService = new CustomerService();
 
+<<<<<<< HEAD
     private long idToUpdate;
+=======
+    public void loadProperties() {
+        try {
+            InputStream appConfigPath = Ui.class.getClassLoader().getResourceAsStream("app.properties");
+            Properties appProps = new Properties();
+            appProps.load(appConfigPath);
+            appUsername = appProps.getProperty("app.username");
+            appPassword = appProps.getProperty("app.password");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadData() {
+        try {
+            cuService.loadJson();
+            baService.loadJson();
+            opService.loadJson();
+            trService.loadJson();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+>>>>>>> main
 
     public void authenticateApp() throws UIException {
         try {
@@ -48,7 +85,7 @@ public class Ui implements UiInterface {
             String username = getString();
             System.out.println("Enter password: ");
             String password = getString();
-            if (!username.equals("admin") || !password.equals("admin"))
+            if (!username.equals(appUsername) || !password.equals(appPassword))
                 throw new UIException("Invalid credentials!");
         } catch (Exception ex) {
             throw new UIException("[UI error] " + ex.getMessage());
@@ -93,6 +130,9 @@ public class Ui implements UiInterface {
                         exit = true;
                         try {
                             cuService.saveJson();
+                            baService.saveJson();
+                            opService.saveJson();
+                            trService.saveJson();
                         } catch (IOException e) {
                             System.out.println(e.getMessage());
                         }
@@ -237,9 +277,9 @@ public class Ui implements UiInterface {
             System.out.println("\n========================");
             System.out.println("= ACCOUNT MANIPULATION   =");
             System.out.println("========================");
-            System.out.println("1. Withdraw Funds from Account");
-            System.out.println("2. Deposit Funds to Account");
-            System.out.println("3. Transfer Funds from/to Account");
+            System.out.println("1. Withdraw Funds From Account");
+            System.out.println("2. Deposit Funds To Account");
+            System.out.println("3. Transfer Funds Between Accounts");
             System.out.println("4. Return to Main Menu");
             System.out.println("========================");
             System.out.println("Selection option:");
@@ -272,7 +312,7 @@ public class Ui implements UiInterface {
         do {
             clearConsole();
             System.out.println("\n========================");
-            System.out.println("=       REPORTING       =");
+            System.out.println("=       REPORTING      =");
             System.out.println("========================");
             System.out.println("1. Display Totals");
             System.out.println("2. Display Accounts by Date");
@@ -327,10 +367,28 @@ public class Ui implements UiInterface {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
-
             throw new UIException("Invalid input.");
         }
-        return Long.parseLong(input);
+        try {
+            return Long.parseLong(input);
+        } catch (NumberFormatException e) {
+            throw new UIException("Invalid input. Requires an integer up to 18 digits long.");
+        }
+    }
+
+    public long getCurrencyAmount() throws UIException {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input == null || input.trim().equals("")) {
+            throw new UIException("Invalid input.");
+        }
+        BigDecimal bd = new BigDecimal(input);
+        try {
+            bd.setScale(2);
+            return bd.movePointRight(2).longValueExact();
+        } catch (NumberFormatException | ArithmeticException e) {
+            throw new UIException("Invalid input. Requires a number with up to 2 decimal places.");
+        }
     }
 
     public void Details(ArrayList<Object> coll) {
@@ -455,19 +513,18 @@ public class Ui implements UiInterface {
         }
     }
 
-    // Fionn
     private void withdrawFromAccount() throws UIException {
         System.out.println("\nWithdraw From Account\n========================");
         try {
             System.out.println("\nEnter account ID: ");
             long id = getLong();
             System.out.println("\nEnter withdrawal ammount (EUR): ");
-            long amount = getLong() * 100;
+            long amount = getCurrencyAmount();
             baService.withdrawFromAccount(id, amount);
-            System.out.println("\nSuccessfully withdrawn " + baService.findById(id).getBalance() / 100
-                    + " Euro into account ID " + id + ".");
+            System.out.println("\nSuccessfully withdrawn " + amount/100 + "." + amount % 100 
+                    + " EUR into account ID " + id + ".\nThe new balance is " + baService.findById(id).getBalance()/100 + "." + baService.findById(id).getBalance() % 100 + " EUR.");
         } catch (ServiceException | UIException ex) {
-            throw new UIException("[UI error] " + ex.getMessage());
+            throw new UIException("[Withdrawal failed] " + ex.getMessage());
         }
     }
 
@@ -477,34 +534,33 @@ public class Ui implements UiInterface {
             System.out.println("\nEnter account ID:");
             long id = getLong();
             System.out.println("\nEnter deposit ammount (EUR)");
-            long amount = getLong() * 100;
+            long amount = getCurrencyAmount();
             baService.depositIntoAccount(id, amount);
-            System.out.println("\nSuccessfully deposited " + baService.findById(id).getBalance() / 100
-                    + " Euro into account ID " + id + ".");
-        } catch (ServiceException ex) {
-            throw new UIException("[UI error] " + ex.getMessage());
+            System.out.println("\nSuccessfully deposited " + amount/100 + "." + amount % 100 
+                    + " EUR into account ID " + id + ".\nThe new balance is " + baService.findById(id).getBalance()/100 + "." + baService.findById(id).getBalance() % 100 + " EUR.");
+        } catch (ServiceException | UIException ex) {
+            throw new UIException("[Deposit failed] " + ex.getMessage());
         }
     }
 
     private void transferToAccount() throws UIException {
-        System.out.println("\nTransfer Funds Between Account\n========================");
+        System.out.println("\nTransfer Funds Between Accounts\n========================");
         try {
             System.out.println("\nEnter the payer's account ID: ");
             long payerId = getLong();
             System.out.println("\nEnter the payee's account ID: ");
             long payeeId = getLong();
             System.out.println("\nEnter transfer ammount (EUR): ");
-            long amount = getLong() * 100;
+            long amount = getCurrencyAmount();
             baService.withdrawFromAccount(payerId, amount);
             baService.depositIntoAccount(payeeId, amount);
-            System.out.println(
-                    "\nSuccessfully  debited " + baService.findById(payerId).getBalance() / 100 + " Euro in account ID "
-                            + payerId + ".");
+            System.out.println("\nSuccessfully transferred " + amount/100 + "." + amount % 100 
+                    + " EUR from account ID " + payerId + " to account ID " + payeeId + ".\nThe new balance of account ID " + payerId + " is " + baService.findById(payerId).getBalance()/100 + "." + baService.findById(payerId).getBalance() % 100 + " EUR.\nThe new balance of account ID " + payeeId + " is " + baService.findById(payeeId).getBalance()/100 + "." + baService.findById(payeeId).getBalance() % 100 + " EUR.");
             System.out.println(
                     "\nSuccessfully credited " + baService.findById(payeeId).getBalance() / 100 + " Euro in account ID "
                             + payeeId + ".");
         } catch (ServiceException ex) {
-            throw new UIException("[UI error] " + ex.getMessage());
+            throw new UIException("[Transfer failed] " + ex.getMessage());
         }
     }
     //Fionn -- Acc. Mgmt.
@@ -587,7 +643,7 @@ public class Ui implements UiInterface {
                 System.out.println("\nCustomer id " + savedCustomer.getId() + " created successfully!");
                 System.out.println(savedCustomer);
             } catch (ServiceException e) {
-                System.out.println("[UI error] " + e.getMessage());
+                System.out.println("[Customer creation failed] " + e.getMessage());
             }
         } catch (UIException e) {
             e.printStackTrace();
@@ -640,8 +696,13 @@ public class Ui implements UiInterface {
             System.out.println(existingCustomer);
             cuService.save(existingCustomer);
             System.out.println("Customer updated successfully!");
+<<<<<<< HEAD
         } catch (ServiceException | UIException e) {
             System.out.println("[UI error] " + e.getMessage());
+=======
+        } catch (ServiceException | UIException | DateTimeParseException e) {
+            System.out.println("[Customer update failed] " + e.getMessage());
+>>>>>>> main
         }
     }
 
@@ -652,7 +713,7 @@ public class Ui implements UiInterface {
             cuService.deactivateCustomer(idToUpdate);
             System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
         } catch (ServiceException e) {
-            System.out.println("[UI error] " + e.getMessage());
+            System.out.println("[Customer deactivation failed] " + e.getMessage());
         }
     }
 
@@ -673,7 +734,7 @@ public class Ui implements UiInterface {
             System.out.println("Created Date: " + customer.getCreatedDate());
             System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
         } catch (ServiceException | UIException e) {
-            System.out.println("[UI error] " + e.getMessage());
+            System.out.println("[Customer display failed] " + e.getMessage());
         }
     }
 
@@ -688,7 +749,7 @@ public class Ui implements UiInterface {
             long totalBalance = baService.findAll().stream().mapToLong(BankAccount::getBalance).sum();
             System.out.println("Total balance across all accounts (EUR): " + totalBalance / 100);
         } catch (Exception e) {
-            System.err.println("An error occurred: " + e.getMessage());
+            System.err.println("[Display totals failed] " + e.getMessage());
         }
     }
 
@@ -707,7 +768,13 @@ public class Ui implements UiInterface {
                 for (BankAccount account : baAccountsOnDate) {
                     System.out.println("  BankAccount: " + account.getAccountName() + " | ID: " + account.getId());
                 }
+<<<<<<< HEAD
                 System.out.println();
+=======
+                System.out.println("----------------------------------------------------------------------");
+            } catch (ServiceException e) {
+                System.out.println("[Display accounts by date failed] " + e.getMessage());
+>>>>>>> main
             }
         } catch (ServiceException ex) {
 
@@ -742,7 +809,7 @@ public class Ui implements UiInterface {
                 System.out.println(e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Display customers by date failed] " + e.getMessage());
         }
     }
 
@@ -772,12 +839,16 @@ public class Ui implements UiInterface {
                 System.out.println(e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Display transactions by date failed] " + e.getMessage());
         }
     }
 
     private void displayOperationsByDate() {
         try {
+<<<<<<< HEAD
+=======
+            System.out.println("\nDisplay Transactions By Date\n========================");
+>>>>>>> main
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.println("Enter Start Date:");
             LocalDate startDate = LocalDate.parse(getString(), formatter);
@@ -802,7 +873,113 @@ public class Ui implements UiInterface {
                 System.out.println(e.getMessage());
             }
         } catch (UIException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Display operations by date failed] " + e.getMessage());
         }
     }
+<<<<<<< HEAD
 }
+=======
+
+    // account management
+
+    private void createAccount() {
+        try {
+            System.out.println("\nCreate Customer\n========================");
+            System.out.print("Enter customer firstname: ");
+            String firstname = getString();
+            System.out.print("Enter customer lastname: ");
+            String lastname = getString();
+            String fullName = firstname + " " + lastname;
+            System.out.print("Enter customer address: ");
+            String address = getString();
+            System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
+            LocalDate dob = LocalDate.parse(getString());
+            System.out.print("Enter customer phone number: ");
+            String phoneNumber = getString();
+            System.out.print("Enter customer email: ");
+            String email = getString();
+            System.out.print("Enter customer type (INDIVIDUAL / COMPANY): ");
+            String typeStr = getString();
+            CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
+            try {
+                Customer savedCustomer = cuService
+                        .createCustomer(new Customer(fullName, address, dob, phoneNumber, email, type));
+                System.out.println("\nCustomer id " + savedCustomer.getId() + " created successfully!");
+                System.out.println(savedCustomer);
+            } catch (ServiceException e) {
+                System.out.println("[UI error] " + e.getMessage());
+            }
+        } catch (UIException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void updateAccount() {
+        try {
+            System.out.println("\nUpdate Customer\n========================");
+            System.out.print("Enter customer ID to update: ");
+            long idToUpdate = getLong();
+            Customer existingCustomer = cuService.findById(idToUpdate);
+            System.out.println("Current Customer Details:");
+            System.out.println(existingCustomer);
+            System.out.println("--------------------------");
+            System.out.println("Enter updated name (enter # for no change): ");
+            String updatedName = getString();
+            if (!updatedName.equals("#"))
+                existingCustomer.setName(updatedName);
+            System.out.print("Enter updated address (enter # for no change): ");
+            String updatedAddress = getString();
+            if (!updatedAddress.equals("#"))
+                existingCustomer.setAddress(updatedAddress);
+            System.out.print("Enter updated date of birth (YYYY-MM-DD) (enter # for no change): ");
+            String updatedDobStr = getString();
+            if (!updatedDobStr.equals("#")) {
+                LocalDate updatedDob = LocalDate.parse(updatedDobStr);
+                existingCustomer.setDob(updatedDob);
+            }
+            System.out.print("Enter updated phone number (enter # for no change): ");
+            String updatedPhoneNumber = getString();
+            if (!updatedPhoneNumber.equals("#"))
+                existingCustomer.setPhoneNumber(updatedPhoneNumber);
+            System.out.print("Enter updated email (enter # for no change): ");
+            String updatedEmail = getString();
+            if (!updatedEmail.equals("#")) {
+                validateEmail(updatedEmail);
+                existingCustomer.setEmail(updatedEmail);
+            }
+            System.out.print("Enter updated customer type [INDIVIDUAL | COMPANY] (enter # for no change): ");
+            String updatedTypeStr = getString();
+            if (!updatedTypeStr.equals("#")) {
+                if (!updatedTypeStr.equals("COMPANY".toUpperCase())
+                        || !updatedTypeStr.equals("INDIVIDUAL".toUpperCase())) {
+                    CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
+                    existingCustomer.setType(updatedType);
+                } else {
+                    throw new UIException("Invalid customer type.");
+                }
+            }
+            System.out.println("Updated Customer Details:");
+            System.out.println(existingCustomer);
+            cuService.save(existingCustomer);
+            System.out.println("Customer updated successfully!");
+        } catch (ServiceException | UIException | DateTimeParseException e) {
+            System.out.println("[UI error] " + e.getMessage());
+        }
+    }
+
+    private void deactivateAccount() throws UIException {
+        try {
+            System.out.println("\nDeactivate Customer\n========================");
+            Long idToUpdate = getLong();
+            cuService.findById(idToUpdate);
+            cuService.deactivateCustomer(idToUpdate);
+            System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
+            System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
+        } catch (ServiceException e) {
+            System.out.println("[UI error] " + e.getMessage());
+        }
+    }
+
+}
+>>>>>>> main
