@@ -75,7 +75,7 @@ public final class OperationRepository implements Repository<Operation> {
                         });
                 operations = operationList;
             } else {
-                System.err.println("File not found. Creating new operations.json file.");
+                System.err.println("Creating new operations.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

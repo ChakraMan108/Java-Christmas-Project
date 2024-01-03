@@ -16,55 +16,33 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.bank.entity.Operation;
+import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
-import com.bank.repository.OperationRepository;
+import com.bank.repository.TransactionRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class OperationServiceTest {
+public class TransactionServiceTest {
 
     @InjectMocks
-    private OperationService operationService;
+    private TransactionService transactionService;
 
     @Mock
-    private OperationRepository repository;
+    private TransactionRepository repository;
 
-    private Operation operation;
+    private Transaction transaction;
 
     @BeforeEach
     public void setup() {
-        operation = new Operation();
-        operation.setId(1L);
-    }
-
-    @Test
-    public void testSave() throws ServiceException {
-        try {
-            Mockito.when(repository.save(operation)).thenReturn(operation);
-            assertNotNull(operationService.save(operation));
-            assertEquals(1L, operationService.save(operation).getId());
-        } catch (RepositoryException e) {
-            fail("RepositoryException should not be thrown");
-        }
-    }
-
-    @Test
-    public void testFindById() throws ServiceException {
-        try {
-            Mockito.when(repository.findById(1L)).thenReturn(operation);
-            assertNotNull(operationService.findById(1L));
-            assertEquals(1L, operationService.findById(1L).getId());
-        } catch (RepositoryException e) {
-            fail("RepositoryException should not be thrown");
-        }
+        transaction = new Transaction();
+        transaction.setId(1L);
     }
 
     @Test
     public void testCount() throws ServiceException {
         try {
             Mockito.when(repository.count()).thenReturn(1L);
-            assertEquals(1L, operationService.count());
+            assertEquals(1L, transactionService.count());
         } catch (RepositoryException e) {
             fail("RepositoryException should not be thrown");
         }
@@ -74,8 +52,30 @@ public class OperationServiceTest {
     public void testFindAll() throws ServiceException {
         try {
             Mockito.when(repository.findAll()).thenReturn(new ArrayList<>());
-            assertNotNull(operationService.findAll());
-            assertEquals(0, operationService.findAll().size());
+            assertNotNull(transactionService.findAll());
+            assertEquals(0, transactionService.findAll().size());
+        } catch (RepositoryException e) {
+            fail("RepositoryException should not be thrown");
+        }
+    }
+
+    @Test
+    public void testFindById() throws ServiceException {
+        try {
+            Mockito.when(repository.findById(1L)).thenReturn(transaction);
+            assertNotNull(transactionService.findById(1L));
+            assertEquals(transaction, transactionService.findById(1L));
+        } catch (RepositoryException e) {
+            fail("RepositoryException should not be thrown");
+        }
+    }
+
+    @Test
+    public void testSave() throws ServiceException {
+        try {
+            Mockito.when(repository.save(transaction)).thenReturn(transaction);
+            assertNotNull(transactionService.save(transaction));
+            assertEquals(transaction, transactionService.save(transaction));
         } catch (RepositoryException e) {
             fail("RepositoryException should not be thrown");
         }
@@ -85,7 +85,7 @@ public class OperationServiceTest {
     public void testSaveJson() throws ServiceException {
         try {
             Mockito.doNothing().when(repository).saveJson();
-            assertDoesNotThrow(() -> operationService.saveJson());
+            assertDoesNotThrow(() -> transactionService.saveJson());
         } catch (IOException e) {
             fail("IOException should not be thrown");
         }
@@ -95,7 +95,7 @@ public class OperationServiceTest {
     public void testLoadJson() throws ServiceException {
         try {
             Mockito.doNothing().when(repository).loadJson();
-            assertDoesNotThrow(() -> operationService.loadJson());
+            assertDoesNotThrow(() -> transactionService.loadJson());
         } catch (IOException e) {
             fail("IOException should not be thrown");
         }

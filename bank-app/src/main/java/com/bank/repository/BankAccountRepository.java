@@ -105,7 +105,7 @@ public final class BankAccountRepository implements Repository<BankAccount> {
                         });
                 bankAccounts = bankAccountList;
             } else {
-                System.err.println("File not found. Creating new bankaccounts.json file.");
+                System.err.println("Creating new bankaccounts.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

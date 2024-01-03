@@ -1,6 +1,9 @@
 package com.bank.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -111,10 +114,59 @@ class BankAccountTest {
     }
 
     @Test
+    public void testDefaultConstructor() {
+        BankAccount account = new BankAccount();
+        assertNull(account.getAccountName());
+        assertNull(account.getType());
+        assertEquals(0, account.getBalance());
+    }
+
+    @Test
+    public void testParameterizedConstructor() {
+        BankAccount account = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        assertEquals("Test Account", account.getAccountName());
+        assertEquals(BankAccount.AccountType.CURRENT_ACCOUNT, account.getType());
+        assertEquals(1000, account.getBalance());
+    }
+
+    @Test
+    public void testEquals_sameObject() {
+        BankAccount account = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        assertTrue(account.equals(account));
+    }
+
+    @Test
+    public void testEquals_differentObjectSameValues() {
+        BankAccount account1 = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        BankAccount account2 = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        assertTrue(account1.equals(account2));
+    }
+
+    @Test
+    public void testEquals_differentObjectDifferentValues() {
+        BankAccount account1 = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        BankAccount account2 = new BankAccount("Different Account", BankAccount.AccountType.SAVING_ACCOUNT, 2000);
+        assertFalse(account1.equals(account2));
+    }
+
+    @Test
+    public void testHashCode_sameValues() {
+        BankAccount account1 = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        BankAccount account2 = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        assertEquals(account1.hashCode(), account2.hashCode());
+    }
+
+    @Test
+    public void testHashCode_differentValues() {
+        BankAccount account1 = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
+        BankAccount account2 = new BankAccount("Different Account", BankAccount.AccountType.SAVING_ACCOUNT, 2000);
+        assertNotEquals(account1.hashCode(), account2.hashCode());
+    }
+
+    @Test
     public void testToString() {
         BankAccount account = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
         String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 0\nAccount Name: Test Account\nAccount Type: CURRENT_ACCOUNT\nBalance: 1000\nActive: false\nCreated Date: null\nDeactivated Date: null\nCustomer:\nnull\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-
         assertEquals(expected, account.toString());
     }
 }

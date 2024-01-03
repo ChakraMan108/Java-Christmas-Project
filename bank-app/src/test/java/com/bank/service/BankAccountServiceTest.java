@@ -1,104 +1,162 @@
 package com.bank.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
+import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
+import com.bank.repository.BankAccountRepository;
 
+@ExtendWith(MockitoExtension.class)
 public class BankAccountServiceTest {
 
-    BankAccountService service = new BankAccountService();
-    long customerIdToTest;
-    long bankAccountIdToTest;
+    @InjectMocks
+    private BankAccountService bankAccountService;
+
+    @Mock
+    private BankAccountRepository repository;
+
+    @Mock
+    private TransactionService ts;
+
+    @Mock
+    private OperationService os;
+
+    private BankAccount bankAccount;
+    private Customer customer;
 
     @BeforeEach
-    public void setUp() throws ServiceException {
-        testSave();
-    }
+    public void setup() {
+        customer = new Customer();
+        customer.setId(1L);
+        customer.setActive(true);
 
-    @Test
-    public void testSave() throws ServiceException {
-        BankAccount account = new BankAccount();
-        account.setBalance(1000);
-        account.setActive(true);
-        account.setCreatedDate(LocalDate.now());
-        Customer customer = new Customer("Test User", "Test Address", LocalDate.now(), "123456789", "some@email.com",
-                Customer.CustomerType.INDIVIDUAL);
-        account.setCustomer(customer);
-        BankAccount savedAccount = service.save(account);
-        bankAccountIdToTest = savedAccount.getId();
-        customerIdToTest = savedAccount.getCustomer().getId();
-        assertEquals(account, savedAccount);
+        bankAccount = new BankAccount();
+        bankAccount.setId(1L);
+        bankAccount.setCustomer(customer);
     }
 
     @Test
     public void testCount() throws ServiceException {
-        long count = service.count();
-        assertTrue(count >= 0);
+        try {
+            Mockito.when(repository.count()).thenReturn(1L);
+            assertEquals(1L, bankAccountService.count());
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void testFindAll() throws ServiceException {
-        ArrayList<BankAccount> accounts = service.findAll();
-        assertNotNull(accounts);
+        try {
+            Mockito.when(repository.findAll()).thenReturn(new ArrayList<>());
+            assertNotNull(bankAccountService.findAll());
+            assertEquals(0, bankAccountService.findAll().size());
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void testFindById() throws ServiceException {
-        BankAccount account = service.findById(bankAccountIdToTest);
-        assertNotNull(account);
+        try {
+            Mockito.when(repository.findById(1L)).thenReturn(bankAccount);
+            assertNotNull(bankAccountService.findById(1L));
+            assertEquals(bankAccount, bankAccountService.findById(1L));
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void testFindByCustomerName() throws ServiceException {
-        BankAccount account = service.findByCustomerName("Test User");
-        assertNotNull(account);
+        try {
+            Mockito.when(repository.findByCustomerName("John")).thenReturn(bankAccount);
+            assertNotNull(bankAccountService.findByCustomerName("John"));
+            assertEquals(bankAccount, bankAccountService.findByCustomerName("John"));
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void testFindByCustomerId() throws ServiceException {
-        BankAccount account = service.findByCustomerId(customerIdToTest);
-        assertNotNull(account);
+        try {
+            Mockito.when(repository.findByCustomerId(1L)).thenReturn(bankAccount);
+            assertNotNull(bankAccountService.findByCustomerId(1L));
+            assertEquals(bankAccount, bankAccountService.findByCustomerId(1L));
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSave() throws ServiceException {
+        try {
+            Mockito.when(repository.save(bankAccount)).thenReturn(bankAccount);
+            assertNotNull(bankAccountService.save(bankAccount));
+            assertEquals(bankAccount, bankAccountService.save(bankAccount));
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void testDepositIntoAccount() throws ServiceException {
-        service.depositIntoAccount(bankAccountIdToTest, 1000);
-        BankAccount account = service.findById(bankAccountIdToTest);
-        assertEquals(2000, account.getBalance());
+        try {
+            Mockito.when(repository.findById(1L)).thenReturn(bankAccount);
+            assertDoesNotThrow(() -> bankAccountService.depositIntoAccount(1L, 1000L));
+            assertEquals(bankAccountService.findById(1L).getBalance(), 1000L);
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
     public void testWithdrawFromAccount() throws ServiceException {
-        service.withdrawFromAccount(bankAccountIdToTest, 500);
-        BankAccount account = service.findById(bankAccountIdToTest);
-        assertEquals(500, account.getBalance());
+        try {
+            Mockito.when(repository.findById(1L)).thenReturn(bankAccount);
+            bankAccount.setBalance(500L);
+            assertDoesNotThrow(() -> bankAccountService.withdrawFromAccount(1L, 500L));
+            assertEquals(bankAccountService.findById(1L).getBalance(), 0);
+        } catch (RepositoryException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
-    public void testDeactivateAccount() throws ServiceException {
-        service.deactivateAccount(bankAccountIdToTest);
-        BankAccount account = service.findById(bankAccountIdToTest);
-        assertFalse(account.isActive());
+    public void testDeactivateAccountThrows() throws ServiceException, RepositoryException {
+        Mockito.when(repository.findById(1L)).thenReturn(bankAccount);
+        assertThrows(ServiceException.class, () -> bankAccountService.deactivateAccount(1L));
     }
 
     @Test
-    public void testCreateAccount() throws ServiceException {
-        Customer customer = new Customer();
-        customer.setActive(true);
-        BankAccount account = new BankAccount();
-        BankAccount createdAccount = service.createAccount(account, customer);
-        assertEquals(account, createdAccount);
+    public void testDeactivateAccountDoesNotThrow() throws ServiceException, RepositoryException {
+        Mockito.when(repository.findById(1L)).thenReturn(bankAccount);
+        bankAccount.setActive(true);
+        bankAccount.setBalance(0L);
+        assertDoesNotThrow(() -> bankAccountService.deactivateAccount(1L));
+        assertEquals(bankAccountService.findById(1L).isActive(), false);
+    }
+
+    @Test
+    public void testCreateAccount() throws ServiceException, RepositoryException {
+        Mockito.when(repository.save(bankAccount)).thenReturn(bankAccount);
+        assertNotNull(bankAccountService.createAccount(bankAccount, customer));
+        assertEquals(bankAccount, bankAccountService.createAccount(bankAccount, customer));
     }
 }

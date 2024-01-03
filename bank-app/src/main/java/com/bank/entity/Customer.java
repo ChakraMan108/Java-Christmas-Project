@@ -20,7 +20,6 @@ public class Customer {
     private LocalDate deactivatedDate;
     private CustomerType type = null;
 
-    // Constructors
     // Empty constructor for instantiating empty/null objects for testing etc.
     public Customer() {
 
