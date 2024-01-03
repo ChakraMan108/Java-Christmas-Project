@@ -190,9 +190,9 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", dob=" + dob + ", phoneNumber="
-                + phoneNumber + ", email=" + email + ", isActive=" + isActive + ", createdDate=" + createdDate
-                + ", deactivatedDate=" + deactivatedDate + ", type=" + type + "]";
+        return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nName: " + name + "\nAddress: " + address + "\nDob: " + dob + "\nPhone Number: "
+                + phoneNumber + "\nEmail: " + email + "\nActive: " + isActive + "\nCreated Date: " + createdDate
+                + "\nDactivated Date: " + deactivatedDate + "\nCustomer Type: " + type + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     }
     
 }

@@ -54,7 +54,7 @@ public final class CustomerRepository implements Repository<Customer> {
             saveJson();
             return customer;
         } catch (IOException ex) {
-            throw new RepositoryException("[Customer Service error]" + ex.getMessage(), ex);
+            throw new RepositoryException("[Customer Repository save error]" + ex.getMessage(), ex);
         }
     }
 
@@ -83,7 +83,7 @@ public final class CustomerRepository implements Repository<Customer> {
                         });
                 customers = customerList;
             } else {
-                System.out.println("File not found. Creating new file.");
+                System.err.println("\nFile not found. Creating new file.");
                 saveJson();
             }
         } catch (IOException ex) {

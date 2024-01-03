@@ -22,7 +22,7 @@ public class CustomerService implements Service<Customer> {
         try {
             return repository.count();
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service count error] " + ex.getMessage(), ex);
         }
     }
 
@@ -30,7 +30,7 @@ public class CustomerService implements Service<Customer> {
         try {
             return repository.findAll();
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service findAll error] " + ex.getMessage(), ex);
         }
     }
 
@@ -38,7 +38,7 @@ public class CustomerService implements Service<Customer> {
         try {
             return repository.findById(id);
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service findById error] " + ex.getMessage(), ex);
         }
     }
 
@@ -46,7 +46,32 @@ public class CustomerService implements Service<Customer> {
         try {
             return repository.save(customer);
         } catch (RepositoryException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service save error] " + ex.getMessage(), ex);
+        }
+    }
+
+    public Customer update(Customer customer) throws ServiceException {
+        try {
+            Customer updatedCustomer = new Customer();
+            if (!customer.isActive())
+                throw new ServiceException("Cannot update deactivated customer id " + customer.getId() + ".");
+            BankAccount bankAccount = baService.findByCustomerId(customer.getId());
+            if (bankAccount != null) {
+                updatedCustomer = save(customer);
+                bankAccount.setCustomer(updatedCustomer);
+                baService.save(bankAccount);
+                Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
+                        bankAccount.getId(), customer.getId());
+                opService.save(o);
+            } else {
+                updatedCustomer = save(customer);
+                Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
+                        0, customer.getId());
+                opService.save(o);
+            }
+            return updatedCustomer;   
+        } catch (ServiceException ex) {
+            throw new ServiceException("[Customer Service update error] " + ex.getMessage(), ex);
         }
     }
 
@@ -78,7 +103,7 @@ public class CustomerService implements Service<Customer> {
                 opService.save(o);
             }
         } catch (RepositoryException | ServiceException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service deactivateCustomer error] " + ex.getMessage(), ex);
         }
     }
 
@@ -93,7 +118,7 @@ public class CustomerService implements Service<Customer> {
             opService.save(o);
             return cust;
         } catch (ServiceException ex) {
-            throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
+            throw new ServiceException("[Customer Service createCustomer error] " + ex.getMessage(), ex);
         }
     }
 

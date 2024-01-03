@@ -79,7 +79,7 @@ public final class BankAccountRepository implements Repository<BankAccount> {
                 return bankAccount;
             }
         } catch (IOException ex) {
-            throw new RepositoryException("[Bank Account Service error]" + ex.getMessage(), ex);
+            throw new RepositoryException("[Bank Account Reposity save error]" + ex.getMessage(), ex);
         }
     }
 
@@ -105,7 +105,7 @@ public final class BankAccountRepository implements Repository<BankAccount> {
                         });
                 bankAccounts = bankAccountList;
             } else {
-                System.out.println("File not found. Creating new file.");
+                System.err.println("\nFile not found. Creating new file.");
                 saveJson();
             }
         } catch (IOException ex) {
