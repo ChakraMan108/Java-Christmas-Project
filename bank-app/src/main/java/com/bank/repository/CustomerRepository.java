@@ -83,7 +83,7 @@ public final class CustomerRepository implements Repository<Customer> {
                         });
                 customers = customerList;
             } else {
-                System.err.println("File not found. Creating new customers.json file.");
+                System.err.println("Creating new customers.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

@@ -75,7 +75,7 @@ public final class TransactionRepository implements Repository<Transaction> {
                         });
                 transactions = transctionList;
             } else {
-                System.err.println("File not found. Creating new transactions.json file.");
+                System.err.println("Creating new transactions.json file.");
                 saveJson();
             }
         } catch (IOException ex) {
