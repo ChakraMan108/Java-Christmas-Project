@@ -7,8 +7,10 @@ public class Operation {
     public enum OperationType {
         CUSTOMER_CREATION,
         CUSTOMER_DEACTIVATION,
+        CUSTOMER_UPDATE,
         ACCOUNT_CREATION,
-        ACCOUNT_DEACTIVATION
+        ACCOUNT_DEACTIVATION,
+        ACCOUNT_UPDATE
     }
 
     private long id;
@@ -78,8 +80,9 @@ public class Operation {
 
     @Override
     public String toString() {
-        return "Operation [id=" + id + ", operationtype=" + operationtype + ", username=" + username + ", accountId="
-                + accountId + ", customerId=" + customerId + ", date=" + date + "]";
+        return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nOperation Type: " + operationtype
+                + "\nUsername: " + username + "\nAccount ID: " + accountId + "\nCustomer ID: " + customerId
+                + "\nDate: " + date + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     }
 
     @Override

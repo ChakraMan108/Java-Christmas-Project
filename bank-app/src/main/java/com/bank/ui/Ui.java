@@ -426,10 +426,9 @@ public class Ui implements UiInterface {
     private void displayAccountsById() {
         try {
             System.out.println("\nDisplay Account By ID\n==============================");
-            System.out.println("Enter account ID: ");
+            System.out.print("Enter account ID: ");
             long id = getLong();
             System.out.println("\nAccount details:\n" + baService.findById(id));
-            System.out.println("----------------------------------------------------------------------");
         } catch (UIException | ServiceException e) {
             System.out.println("[Display account error]" + e.getMessage());
         }
@@ -438,10 +437,9 @@ public class Ui implements UiInterface {
     private void displayAccountsByCustomer() {
         try {
             System.out.println("\nDisplay Accounts By Customer\n==============================");
-            System.out.println("Enter customer name: ");
+            System.out.print("Enter customer name: ");
             String name = getString();
             System.out.println("\nAccount details:\n" + baService.findByCustomerName(name));
-            System.out.println("----------------------------------------------------------------------");
         } catch (UIException | ServiceException e) {
             System.out.println("[Display account error]" + e.getMessage());
         }
@@ -451,9 +449,9 @@ public class Ui implements UiInterface {
         try {
             long count = 0;
             System.out.println("\nDisplay Accounts By Balance\n==============================");
-            System.out.println("Enter balance minimum (EUR): ");
+            System.out.print("Enter balance minimum (EUR): ");
             long minimum = getCurrencyAmount();
-            System.out.println("Enter balance maximum (EUR): ");
+            System.out.print("Enter balance maximum (EUR): ");
             long maximum = getCurrencyAmount();
             System.out.println("\nDisplaying accounts between " + minimum / 100 + "." + minimum % 100
                     + " EUR and " + maximum / 100 + "." + maximum % 100
@@ -463,7 +461,6 @@ public class Ui implements UiInterface {
                 if (ba.getBalance() >= minimum && ba.getBalance() <= maximum) {
                     count++;
                     System.out.println("\nAccount details:\n" + ba);
-                    System.out.println("----------------------------------------------------------------------");
                 }
             }
             if (count == 0) {
@@ -480,7 +477,7 @@ public class Ui implements UiInterface {
         try {
             long count = 0;
             System.out.println("\nDisplay Accounts By Type\n==============================");
-            System.out.println("Enter Account Type [CURRENT_ACCOUNT | SAVING_ACCCOUNT | STUDENT_ACCOUNT]: ");
+            System.out.print("Enter Account Type [CURRENT_ACCOUNT | SAVING_ACCCOUNT | STUDENT_ACCOUNT]: ");
             String typeStr = getString();
             AccountType type = AccountType.valueOf(typeStr.toUpperCase());
             ArrayList<BankAccount> bankAccounts = baService.findAll();
@@ -488,14 +485,11 @@ public class Ui implements UiInterface {
                 if (ba.getType() == type) {
                     count++;
                     System.out.println("\nAccount details:\n" + ba);
-                    System.out.println("----------------------------------------------------------------------");
-                } else {
-                    System.out.println("No accounts found.");
                 }
-                System.out.println("Number of accounts found: " + count);
             }
+            System.out.println("Number of accounts found: " + count);
         } catch (UIException | ServiceException | IllegalArgumentException e) {
-            System.out.println("[Display account error]" + e.getMessage());
+            System.out.println("[Display account error] " + e.getMessage());
         }
     }
 
@@ -594,7 +588,6 @@ public class Ui implements UiInterface {
             Customer existingCustomer = cuService.findById(idToUpdate);
             System.out.println("Current Customer Details:");
             System.out.println(existingCustomer);
-            System.out.println("==============================");
             System.out.print("Enter updated name (enter # for no change): ");
             String updatedName = getString();
             if (!updatedName.equals("#")) {
@@ -640,7 +633,7 @@ public class Ui implements UiInterface {
                 }
             }
             if (updated) {
-                cuService.save(existingCustomer);
+                cuService.update(existingCustomer);
                 System.out.println("Customer updated successfully!");
                 System.out.println("\nUpdated Customer Details:");
                 System.out.println(existingCustomer);
@@ -703,22 +696,23 @@ public class Ui implements UiInterface {
 
     private void displayAccountsByDate() {
         try {
+            long count = 0;
             System.out.println("\nDisplay Accounts By Date\n==============================");
             Pair<LocalDate> dates = getDateRange();
             System.out.println("\nDisplaying accounts from " + dates.getFirst() + " to " + dates.getSecond());
-            System.out.println("----------------------------------------------------------------------");
             ArrayList<BankAccount> bankAccounts = baService.findAll();
             if (!bankAccounts.isEmpty()) {
                 for (BankAccount bankAccount : bankAccounts) {
                     LocalDate bankAccounDate = bankAccount.getCreatedDate();
                     if (!bankAccounDate.isBefore(dates.getFirst()) && !bankAccounDate.isAfter(dates.getSecond())) {
+                        count++;
+                        System.out.println("\nAccount #" + count);
                         System.out.println(bankAccount);
                     }
                 }
             } else {
                 System.out.println("No bank accounts found.");
             }
-            System.out.println("----------------------------------------------------------------------");
         } catch (ServiceException | UIException e) {
             System.out.println("[Display accounts by date failed] " + e.getMessage());
         }
@@ -726,22 +720,23 @@ public class Ui implements UiInterface {
 
     private void displayCustomersByDate() {
         try {
+            long count = 0;
             System.out.println("\nDisplay Customers By Date\n==============================");
             Pair<LocalDate> dates = getDateRange();
             System.out.println("\nDisplaying customers from " + dates.getFirst() + " to " + dates.getSecond());
-            System.out.println("----------------------------------------------------------------------");
             ArrayList<Customer> customers = cuService.findAll();
             if (!customers.isEmpty()) {
                 for (Customer customer : customers) {
                     LocalDate customerDate = customer.getCreatedDate();
                     if (!customerDate.isBefore(dates.getFirst()) && !customerDate.isAfter(dates.getSecond())) {
+                        count++;
+                        System.out.println("\nCustomer #" + count);
                         System.out.println(customer);
                     }
                 }
             } else {
                 System.out.println("No customers found.");
             }
-            System.out.println("----------------------------------------------------------------------");
         } catch (ServiceException | UIException e) {
             System.out.println("[Display customers by date failed] " + e.getMessage());
         }
@@ -749,22 +744,23 @@ public class Ui implements UiInterface {
 
     private void displayTransactionsByDate() {
         try {
+            long count = 0;
             System.out.println("\nDisplay Transactions By Date\n==============================");
             Pair<LocalDate> dates = getDateRange();
             System.out.println("\nDisplaying customers from " + dates.getFirst() + " to " + dates.getSecond());
-            System.out.println("----------------------------------------------------------------------");
             ArrayList<Transaction> transactions = trService.findAll();
             if (!transactions.isEmpty()) {
                 for (Transaction transaction : transactions) {
                     LocalDate transactionDate = transaction.getCreatedDate();
                     if (!transactionDate.isBefore(dates.getFirst()) && !transactionDate.isAfter(dates.getSecond())) {
+                        count++;
+                        System.out.println("\nTransaction #" + count);
                         System.out.println(transaction);
                     }
                 }
             } else {
                 System.out.println("No transactions found.");
             }
-            System.out.println("----------------------------------------------------------------------");
         } catch (ServiceException | UIException e) {
             System.out.println("[Display transactions by date failed] " + e.getMessage());
         }
@@ -772,23 +768,23 @@ public class Ui implements UiInterface {
 
     private void displayOperationsByDate() {
         try {
+            long count = 0;
             System.out.println("\nDisplay Transactions By Date\n==============================");
             Pair<LocalDate> dates = getDateRange();
             System.out.println("\nDisplaying customers from " + dates.getFirst() + " to " + dates.getSecond());
-            System.out.println("\n----------------------------------------------------------------------");
-
             ArrayList<Operation> operations = opService.findAll();
             if (!operations.isEmpty()) {
                 for (Operation operation : operations) {
                     LocalDate operationDate = operation.getDate();
                     if (!operationDate.isBefore(dates.getFirst()) && !operationDate.isAfter(dates.getSecond())) {
+                        count++;
+                        System.out.println("\nOperation #" + count);
                         System.out.println(operation);
                     }
                 }
             } else {
                 System.out.println("No operations found.");
             }
-            System.out.println("----------------------------------------------------------------------");
         } catch (ServiceException | UIException e) {
             System.out.println("[Display operations by date failed] " + e.getMessage());
         }
@@ -846,7 +842,6 @@ public class Ui implements UiInterface {
             BankAccount existingAccount = baService.findById(idToUpdate);
             System.out.println("Current Account Details:");
             System.out.println(existingAccount);
-            System.out.println("==============================");
             System.out.println("Enter updated name (enter # for no change): ");
             String updatedName = getString();
             if (!updatedName.equals("#"))
@@ -875,8 +870,6 @@ public class Ui implements UiInterface {
                 AccountType updatedType = AccountType.valueOf(updatedTypeStr.toUpperCase());
                 updated = true;
                 existingAccount.setType(updatedType);
-            } else {
-                throw new UIException("Invalid account type.");
             }
             if (updated) {
                 baService.save(existingAccount);

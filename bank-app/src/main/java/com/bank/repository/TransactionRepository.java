@@ -43,10 +43,15 @@ public final class TransactionRepository implements Repository<Transaction> {
     }
     
     public Transaction save(Transaction transaction) throws RepositoryException {
+    try {
         transaction.setId(generateId());
         transaction.setCreatedDate(LocalDate.now());
         transactions.add(transaction);
+        saveJson();
         return transaction;
+    } catch (IOException ex) {
+        throw new RepositoryException("[Transaction Repository save error]" + ex.getMessage(), ex);
+    }
     }
 
     public long generateId() {
@@ -70,7 +75,7 @@ public final class TransactionRepository implements Repository<Transaction> {
                         });
                 transactions = transctionList;
             } else {
-                System.out.println("File not found. Creating new file.");
+                System.err.println("\nFile not found. Creating new file.");
                 saveJson();
             }
         } catch (IOException ex) {

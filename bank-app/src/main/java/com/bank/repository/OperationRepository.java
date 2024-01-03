@@ -32,7 +32,7 @@ public final class OperationRepository implements Repository<Operation> {
 
     public Operation findById(long id) throws RepositoryException {
         for (Operation operation : operations) {
-            if (operation.getId() == id) 
+            if (operation.getId() == id)
                 return operation;
         }
         throw new RepositoryException("No operation with id " + id + " found in the repository.");
@@ -43,10 +43,15 @@ public final class OperationRepository implements Repository<Operation> {
     }
 
     public Operation save(Operation operation) throws RepositoryException {
-        operation.setId(generateId());
-        operation.setDate(LocalDate.now());
-        operations.add(operation);
-        return operation;
+        try {
+            operation.setId(generateId());
+            operation.setDate(LocalDate.now());
+            operations.add(operation);
+            saveJson();
+            return operation;
+        } catch (IOException ex) {
+            throw new RepositoryException("[Operation Repository save error]" + ex.getMessage(), ex);
+        }
     }
 
     public long generateId() {
@@ -70,7 +75,7 @@ public final class OperationRepository implements Repository<Operation> {
                         });
                 operations = operationList;
             } else {
-                System.out.println("File not found. Creating new file.");
+                System.err.println("\nFile not found. Creating new file.");
                 saveJson();
             }
         } catch (IOException ex) {
