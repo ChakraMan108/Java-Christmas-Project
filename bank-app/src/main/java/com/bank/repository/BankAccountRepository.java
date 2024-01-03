@@ -91,21 +91,21 @@ public final class BankAccountRepository implements Repository<BankAccount> {
     public void saveJson() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File("../data/bankaccounts.json"), bankAccounts);
+        objectMapper.writeValue(new File("c:/temp/bankaccounts.json"), bankAccounts);
     }
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("../data/bankaccounts.json");
+            File f = new File("c:/temp/bankaccounts.json");
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File("../data/bankaccounts.json"),
+                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File("c:/temp/bankaccounts.json"),
                         new TypeReference<ArrayList<BankAccount>>() {
                         });
                 bankAccounts = bankAccountList;
             } else {
-                System.err.println("\nFile not found. Creating new file.");
+                System.err.println("File not found. Creating new bankaccounts.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class Customer {
 
     public enum CustomerType {
-        INTERNAL,
         INDIVIDUAL,
         COMPANY
     }

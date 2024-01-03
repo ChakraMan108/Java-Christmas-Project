@@ -70,25 +70,31 @@ public class Ui implements UiInterface {
             String username = getString();
             System.out.print("Enter password: ");
             String password = getString();
-            if (!username.equals(appUsername) || !password.equals(appPassword))
+            if (!username.equals(appUsername) || !password.equals(appPassword)) {
                 throw new UIException("Invalid credentials!");
+            } else {
+                System.out.println("\nAuthentication successful!");
+                System.out.println("Welcome " + System.getProperty("user.name") + " logged in as username: " + username + ".");
+            }
         } catch (Exception ex) {
             throw new UIException("[UI error] " + ex.getMessage());
         }
     }
 
-    public void displayMenu() {
+    public void displayMainMenu() {
         boolean exit = false;
         do {
             clearConsole();
             System.out.println("\n==============================");
+            System.out.println("=     BANKING APPLICATION    =");
+            System.out.println("==============================");
             System.out.println("=          MAIN MENU         =");
             System.out.println("==============================");
             System.out.println("1. Customer Management");
             System.out.println("2. Account Management");
             System.out.println("3. Account Display");
             System.out.println("4. Account Manipulation");
-            System.out.println("5. Reports");
+            System.out.println("5. Reporting");
             System.out.println("6. Exit");
             System.out.println("==============================");
             System.out.print("Selection option: ");
@@ -109,7 +115,7 @@ public class Ui implements UiInterface {
                         accountManipulation();
                         break;
                     case "5":
-                        reports();
+                        reporting();
                         break;
                     case "6":
                         exit = true;
@@ -259,9 +265,9 @@ public class Ui implements UiInterface {
             System.out.println("\n==============================");
             System.out.println("=   ACCOUNT MANIPULATION     =");
             System.out.println("==============================");
-            System.out.println("1. Withdraw Funds From Account");
-            System.out.println("2. Deposit Funds To Account");
-            System.out.println("3. Transfer Funds Between Accounts");
+            System.out.println("1. Withdraw Funds");
+            System.out.println("2. Deposit Funds");
+            System.out.println("3. Transfer Funds");
             System.out.println("4. Return to Main Menu");
             System.out.println("==============================");
             System.out.print("Selection option: ");
@@ -289,18 +295,18 @@ public class Ui implements UiInterface {
         } while (!exit);
     }
 
-    private void reports() {
+    private void reporting() {
         boolean exit = false;
         do {
             clearConsole();
             System.out.println("\n==============================");
             System.out.println("=          REPORTING         =");
             System.out.println("==============================");
-            System.out.println("1. Display Totals");
-            System.out.println("2. Display Accounts by Date");
-            System.out.println("3. Display Customers by Date");
-            System.out.println("4. Display Transactions by Date");
-            System.out.println("5. Display Operations by Date");
+            System.out.println("1. Totals");
+            System.out.println("2. Accounts by Date");
+            System.out.println("3. Customers by Date");
+            System.out.println("4. Transactions by Date");
+            System.out.println("5. Operations by Date");
             System.out.println("6. Return to Main Menu");
             System.out.println("========================");
             System.out.print("Selection option: ");
@@ -340,7 +346,7 @@ public class Ui implements UiInterface {
         String input = scanner.nextLine();
 
         if (input == null || input.trim().equals("")) {
-            throw new UIException("[Input Error] Invalid input.");
+            throw new UIException("[getString Input Error] Invalid input.");
         }
         return input;
     }
@@ -349,12 +355,12 @@ public class Ui implements UiInterface {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
-            throw new UIException("Invalid input.");
+            throw new UIException("[getLong Input Error] Invalid input.");
         }
         try {
             return Long.parseLong(input);
         } catch (NumberFormatException e) {
-            throw new UIException("[Input Error] Invalid input. Requires an integer up to 18 digits long.");
+            throw new UIException("[getLong Input Error] Invalid input. Requires an integer up to 18 digits long.");
         }
     }
 
@@ -369,7 +375,8 @@ public class Ui implements UiInterface {
             bd.setScale(2);
             return bd.movePointRight(2).longValueExact();
         } catch (NumberFormatException | ArithmeticException e) {
-            throw new UIException("[Input Error] Invalid input. Requires a number with up to 2 decimal places.");
+            throw new UIException(
+                    "[getCurrencyAmount Error] Invalid input. Requires a number with up to 2 decimal places.");
         }
     }
 
@@ -477,8 +484,22 @@ public class Ui implements UiInterface {
         try {
             long count = 0;
             System.out.println("\nDisplay Accounts By Type\n==============================");
-            System.out.print("Enter Account Type [CURRENT_ACCOUNT | SAVING_ACCCOUNT | STUDENT_ACCOUNT]: ");
+            System.out.print(
+                    "Enter Account type [1 = CURRENT_ACCOUNT | 2 = SAVING_ACCCOUNT | 3 = STUDENT_ACCOUNT]: ");
             String typeStr = getString();
+            switch (typeStr) {
+                case "1":
+                    typeStr = "CURRENT_ACCOUNT";
+                    break;
+                case "2":
+                    typeStr = "SAVING_ACCOUNT";
+                    break;
+                case "3":
+                    typeStr = "STUDENT_ACCOUNT";
+                    break;
+                default:
+                    throw new UIException("Invalid account type.");
+            }
             AccountType type = AccountType.valueOf(typeStr.toUpperCase());
             ArrayList<BankAccount> bankAccounts = baService.findAll();
             for (BankAccount ba : bankAccounts) {
@@ -567,7 +588,7 @@ public class Ui implements UiInterface {
             System.out.print("Enter customer email: ");
             String email = getString();
             validateEmail(email);
-            System.out.print("Enter customer type (INDIVIDUAL / COMPANY): ");
+            System.out.print("Enter customer type [INDIVIDUAL | COMPANY]: ");
             String typeStr = getString();
             CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
             Customer savedCustomer = cuService
@@ -635,10 +656,11 @@ public class Ui implements UiInterface {
             if (updated) {
                 cuService.update(existingCustomer);
                 System.out.println("Customer updated successfully!");
-                System.out.println("\nUpdated Customer Details:");
+                System.out.println("Updated Customer Details:");
                 System.out.println(existingCustomer);
+            } else {
+                System.out.println("No changes made.");
             }
-
         } catch (ServiceException | UIException | DateTimeParseException | IllegalArgumentException e) {
             System.out.println("[Customer update failed] " + e.getMessage());
         }
@@ -872,9 +894,9 @@ public class Ui implements UiInterface {
                 existingAccount.setType(updatedType);
             }
             if (updated) {
-                baService.save(existingAccount);
-                System.out.println("BankAccount updated successfully!");
-                System.out.println("\nUpdated BankAccount Details:");
+                baService.update(existingAccount);
+                System.out.println("\nBank account updated successfully!");
+                System.out.println("Updated bank account Details:");
                 System.out.println(existingAccount);
             } else {
                 System.out.println("No changes made.");

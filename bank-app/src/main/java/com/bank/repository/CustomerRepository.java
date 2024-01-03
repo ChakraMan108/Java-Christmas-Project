@@ -66,7 +66,7 @@ public final class CustomerRepository implements Repository<Customer> {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.writeValue(new File("../data/customers.json"), customers);
+            objectMapper.writeValue(new File("c:/temp/customers.json"), customers);
         } catch (IOException ex) {
             throw new IOException("Error saving customer JSON file: " + ex.getMessage(), ex);
         }
@@ -74,16 +74,16 @@ public final class CustomerRepository implements Repository<Customer> {
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("../data/customers.json");
+            File f = new File("c:/temp/customers.json");
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Customer> customerList = objectMapper.readValue(new File("../data/customers.json"),
+                ArrayList<Customer> customerList = objectMapper.readValue(new File("c:/temp/customers.json"),
                         new TypeReference<ArrayList<Customer>>() {
                         });
                 customers = customerList;
             } else {
-                System.err.println("\nFile not found. Creating new file.");
+                System.err.println("File not found. Creating new customers.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

@@ -53,23 +53,27 @@ public class CustomerService implements Service<Customer> {
     public Customer update(Customer customer) throws ServiceException {
         try {
             Customer updatedCustomer = new Customer();
-            if (!customer.isActive())
+            if (!customer.isActive() || customer.getDeactivatedDate() != null) {
                 throw new ServiceException("Cannot update deactivated customer id " + customer.getId() + ".");
-            BankAccount bankAccount = baService.findByCustomerId(customer.getId());
-            if (bankAccount != null) {
-                updatedCustomer = save(customer);
-                bankAccount.setCustomer(updatedCustomer);
-                baService.save(bankAccount);
-                Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
-                        bankAccount.getId(), customer.getId());
-                opService.save(o);
             } else {
-                updatedCustomer = save(customer);
-                Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
-                        0, customer.getId());
-                opService.save(o);
+                if (customer.equals(null))
+                    throw new ServiceException("Cannot update null customer.");
+                BankAccount bankAccount = baService.findByCustomerId(customer.getId());
+                if (bankAccount != null) {
+                    updatedCustomer = save(customer);
+                    bankAccount.setCustomer(updatedCustomer);
+                    baService.save(bankAccount);
+                    Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
+                            bankAccount.getId(), customer.getId());
+                    opService.save(o);
+                } else {
+                    updatedCustomer = save(customer);
+                    Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
+                            0, customer.getId());
+                    opService.save(o);
+                }
+                return updatedCustomer;
             }
-            return updatedCustomer;   
         } catch (ServiceException ex) {
             throw new ServiceException("[Customer Service update error] " + ex.getMessage(), ex);
         }
@@ -80,27 +84,29 @@ public class CustomerService implements Service<Customer> {
             Customer customer = repository.findById(id);
             if (!customer.isActive())
                 throw new ServiceException("Cannot deactivate deactivated customer id " + customer.getId());
-            BankAccount bankAccount = baService.findByCustomerId(id);
-            if (bankAccount != null) {
-                if (bankAccount.getCustomer().getId() == customer.getId() && bankAccount.isActive()) {
-                    throw new ServiceException("Cannot deactivate customer id " + customer.getId()
-                            + " with an active bank account id " + bankAccount.getId() + ".");
+            else {
+                BankAccount bankAccount = baService.findByCustomerId(id);
+                if (bankAccount != null) {
+                    if (bankAccount.getCustomer().getId() == customer.getId() && bankAccount.isActive()) {
+                        throw new ServiceException("Cannot deactivate customer id " + customer.getId()
+                                + " with an active bank account id " + bankAccount.getId() + ".");
+                    }
+                    customer.setActive(false);
+                    customer.setDeactivatedDate(LocalDate.now());
+                    save(customer);
+                    bankAccount.setCustomer(customer);
+                    baService.save(bankAccount);
+                    Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
+                            bankAccount.getId(), customer.getId());
+                    opService.save(o);
+                } else {
+                    customer.setActive(false);
+                    customer.setDeactivatedDate(LocalDate.now());
+                    save(customer);
+                    Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
+                            0, customer.getId());
+                    opService.save(o);
                 }
-                customer.setActive(false);
-                customer.setDeactivatedDate(LocalDate.now());
-                save(customer);
-                bankAccount.setCustomer(customer);
-                baService.save(bankAccount);
-                Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
-                        bankAccount.getId(), customer.getId());
-                opService.save(o);
-            } else {
-                customer.setActive(false);
-                customer.setDeactivatedDate(LocalDate.now());
-                save(customer);
-                Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
-                        0, customer.getId());
-                opService.save(o);
             }
         } catch (RepositoryException | ServiceException ex) {
             throw new ServiceException("[Customer Service deactivateCustomer error] " + ex.getMessage(), ex);
