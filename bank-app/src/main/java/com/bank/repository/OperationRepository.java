@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.bank.entity.BankAccount;
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
 import com.fasterxml.jackson.core.type.TypeReference;

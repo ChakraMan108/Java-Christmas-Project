@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.sql.rowset.serial.SerialException;
-
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
 import com.fasterxml.jackson.core.type.TypeReference;
