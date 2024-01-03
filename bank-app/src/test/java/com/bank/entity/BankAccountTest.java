@@ -113,7 +113,7 @@ class BankAccountTest {
     @Test
     public void testToString() {
         BankAccount account = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
-        String expected = "BankAccount [id=0, accountName=Test Account, type=CURRENT_ACCOUNT, balance=1000, isActive=false, createdDate=null, deactivatedDate=null, customer=null]";
+        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 0\nAccount Name: Test Account\nAccount Type: CURRENT_ACCOUNT\nBalance: 1000\nActive: false\nCreated Date: null\nDeactivated Date: null\nCustomer:\nnull\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
         assertEquals(expected, account.toString());
     }

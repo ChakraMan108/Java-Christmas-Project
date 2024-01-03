@@ -10,7 +10,7 @@ public class Main {
             ui.loadProperties();
             ui.authenticateApp();
             ui.loadData();
-            ui.displayMenu();
+            ui.displayMainMenu();
         } catch (UIException ex) {
             System.out.println(ex.getMessage() + "\nExiting the Bank Application."); 
         }

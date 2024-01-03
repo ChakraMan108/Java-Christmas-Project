@@ -61,21 +61,21 @@ public final class OperationRepository implements Repository<Operation> {
     public void saveJson() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File("../data/operations.json"), operations);
+        objectMapper.writeValue(new File("c:/temp/operations.json"), operations);
     }
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("../data/operations.json");
+            File f = new File("c:/temp/operations.json");
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Operation> operationList = objectMapper.readValue(new File("../data/operations.json"),
+                ArrayList<Operation> operationList = objectMapper.readValue(new File("c:/temp/operations.json"),
                         new TypeReference<ArrayList<Operation>>() {
                         });
                 operations = operationList;
             } else {
-                System.err.println("\nFile not found. Creating new file.");
+                System.err.println("File not found. Creating new operations.json file.");
                 saveJson();
             }
         } catch (IOException ex) {
