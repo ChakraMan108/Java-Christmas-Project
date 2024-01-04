@@ -43,7 +43,7 @@ public class OperationServiceTest {
         try {
             Mockito.when(repository.save(operation)).thenReturn(operation);
             assertNotNull(operationService.save(operation));
-            assertEquals(1L, operationService.save(operation).getId());
+            assertEquals(operation, operationService.save(operation));
         } catch (RepositoryException e) {
             fail("RepositoryException should not be thrown");
         }

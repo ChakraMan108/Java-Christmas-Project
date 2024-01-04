@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Scanner;
-
 import org.apache.commons.validator.routines.EmailValidator;
 
 import com.bank.entity.BankAccount;
@@ -30,33 +29,46 @@ public class Ui implements UiInterface {
 
     private String appUsername;
     private String appPassword;
+    public static String dataPath;
 
+    private static Scanner scanner = null;
+    private boolean authenticated = false;
+    
+    // Public Constructor
+    public Ui() {
+        scanner = new Scanner(System.in);
+    }
+    
     // Service initialisation
     BankAccountService baService = new BankAccountService();
     OperationService opService = new OperationService();
     TransactionService trService = new TransactionService();
     CustomerService cuService = new CustomerService();
 
-    public void loadProperties() {
+    public void loadProperties() throws UIException {
         try {
             InputStream appConfigPath = Ui.class.getClassLoader().getResourceAsStream("app.properties");
             Properties appProps = new Properties();
             appProps.load(appConfigPath);
             appUsername = appProps.getProperty("app.username");
             appPassword = appProps.getProperty("app.password");
+            if (System.getProperty("os.name").toLowerCase().contains("win"))
+                dataPath = appProps.getProperty("app.win.path");    
+            else
+                dataPath = appProps.getProperty("app.nix.path");
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new UIException("[UI loadProperties error]" + e.getMessage());
         }
     }
 
-    public void loadData() {
+    public void loadData() throws UIException {
         try {
             cuService.loadJson();
             baService.loadJson();
             opService.loadJson();
             trService.loadJson();
         } catch (ServiceException e) {
-            System.out.println(e.getMessage());
+            throw new UIException("[UI loadData error]" + e.getMessage());
         }
     }
 
@@ -71,10 +83,13 @@ public class Ui implements UiInterface {
             System.out.print("Enter password: ");
             String password = getString();
             if (!username.equals(appUsername) || !password.equals(appPassword)) {
-                throw new UIException("Invalid credentials!");
+                throw new UIException("Invalid credentials.");
             } else {
-                System.out.println("\nAuthentication successful!");
-                System.out.println("Welcome " + System.getProperty("user.name") + " logged in as username: " + username + ".");
+                System.out.println("\nAuthentication successful.");
+                System.out.println("Welcome [" + System.getProperty("user.name") + "].");
+                System.out.println("You are logged in as [username: " + username + "].");
+                pressEnterToContinue();
+                setAuthenticated(true);
             }
         } catch (Exception ex) {
             throw new UIException("[UI error] " + ex.getMessage());
@@ -127,10 +142,11 @@ public class Ui implements UiInterface {
                         } catch (ServiceException e) {
                             System.out.println(e.getMessage());
                         }
-                        System.out.println("Exiting the Bank Application.");
+                        System.out.println("Goodbye! Exiting the Bank Application.");
                         break;
                     default:
                         System.out.println("Invalid option selected. Please enter a valid option.");
+                        pressEnterToContinue();
                 }
             } catch (UIException ex) {
                 System.out.println("[UI error] " + ex.getMessage());
@@ -141,7 +157,6 @@ public class Ui implements UiInterface {
     private void customerManagement() throws UIException {
         boolean exit = false;
         do {
-            clearConsole();
             System.out.println("\n==============================");
             System.out.println("=     CUSTOMER MANAGEMENT    =");
             System.out.println("==============================");
@@ -183,7 +198,6 @@ public class Ui implements UiInterface {
     private void accountManagement() {
         boolean exit = false;
         do {
-            clearConsole();
             System.out.println("\n==============================");
             System.out.println("=     ACCOUNT MANAGEMENT     =");
             System.out.println("==============================");
@@ -221,7 +235,6 @@ public class Ui implements UiInterface {
     private void accountDisplay() {
         boolean exit = false;
         do {
-            clearConsole();
             System.out.println("\n==============================");
             System.out.println("=      ACCOUNT DISPLAY       =");
             System.out.println("==============================");
@@ -230,7 +243,8 @@ public class Ui implements UiInterface {
             System.out.println("3. Display Accounts by Balance");
             System.out.println("4. Display Accounts by Type");
             System.out.println("5. Return to Main Menu");
-            System.out.print("Selection option: ");
+            System.out.println("==============================");
+            System.out.print("Selection option: ");            
             try {
                 String userInput = getString();
                 switch (userInput) {
@@ -261,7 +275,6 @@ public class Ui implements UiInterface {
     private void accountManipulation() {
         boolean exit = false;
         do {
-            clearConsole();
             System.out.println("\n==============================");
             System.out.println("=   ACCOUNT MANIPULATION     =");
             System.out.println("==============================");
@@ -298,7 +311,6 @@ public class Ui implements UiInterface {
     private void reporting() {
         boolean exit = false;
         do {
-            clearConsole();
             System.out.println("\n==============================");
             System.out.println("=          REPORTING         =");
             System.out.println("==============================");
@@ -342,9 +354,8 @@ public class Ui implements UiInterface {
     }
 
     public String getString() throws UIException {
-        Scanner scanner = new Scanner(System.in);
+        
         String input = scanner.nextLine();
-
         if (input == null || input.trim().equals("")) {
             throw new UIException("[getString Input Error] Invalid input.");
         }
@@ -352,7 +363,7 @@ public class Ui implements UiInterface {
     }
 
     public long getLong() throws UIException {
-        Scanner scanner = new Scanner(System.in);
+        
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
             throw new UIException("[getLong Input Error] Invalid input.");
@@ -364,8 +375,8 @@ public class Ui implements UiInterface {
         }
     }
 
-    public long getCurrencyAmount() throws UIException {
-        Scanner scanner = new Scanner(System.in);
+    private long getCurrencyAmount() throws UIException {
+        
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
             throw new UIException("Invalid input.");
@@ -380,35 +391,11 @@ public class Ui implements UiInterface {
         }
     }
 
-    public void Details(ArrayList<Object> coll) {
-        for (Object o : coll) {
-            System.out.println(o);
-        }
-    }
-
-    public void validateEmail(String email) throws UIException {
+    private void validateEmail(String email) throws UIException {
         if (!EmailValidator.getInstance().isValid(email))
-            throw new UIException("[Validation Error] Invalid Email Address.");
+            throw new UIException("[Email Validation Error] Invalid Email Address.");
         if (email == null || email.trim().equals(""))
-            throw new NullPointerException("[Input Error] Invalid Input.");
-    }
-
-    public void displayBankAccounts(ArrayList<BankAccount> bankAccounts) {
-        for (BankAccount bankAccount : bankAccounts) {
-            System.out.println(bankAccount);
-        }
-    }
-
-    public void displayCustomers(ArrayList<Customer> customers) {
-        for (Customer customer : customers) {
-            System.out.println(customer);
-        }
-    }
-
-    public void displayTransactions(ArrayList<Transaction> transactions) {
-        for (Transaction transaction : transactions) {
-            System.out.println(transaction);
-        }
+            throw new NullPointerException("[Email Validation Error] Invalid Input.");
     }
 
     public <T> void displayCollection(Collection<T> collection) {
@@ -417,16 +404,14 @@ public class Ui implements UiInterface {
         }
     }
 
-    private void clearConsole() {
+    private static void clearConsole() {
         try {
-            final String os = System.getProperty("os.name");
-            if (os.contains("Windows")) {
-                Runtime.getRuntime().exec("cls");
-            } else {
+            if (System.getProperty("os.name").toLowerCase().contains("win"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
                 Runtime.getRuntime().exec("clear");
-            }
-        } catch (Exception e) {
-            // System.out.println(e.getMessage());
+        } catch (IOException | InterruptedException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -920,6 +905,29 @@ public class Ui implements UiInterface {
         } catch (ServiceException e) {
             System.out.println("[Bank account deactivation failed] " + e.getMessage());
         }
+    }
+
+    public void pressEnterToContinue() {
+        System.out.println("Press ENTER to continue...");
+        String readString = "";
+        do {
+            readString = scanner.nextLine();
+            if (readString.isEmpty()) {
+                readString = null;
+            }
+        } while (readString != null);
+    }
+
+    private void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
+    
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+  
+    public static String getDataPath() {
+        return dataPath;
     }
 
     private Pair<LocalDate> getDateRange() throws UIException {
