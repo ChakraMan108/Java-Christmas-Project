@@ -594,7 +594,7 @@ public class Ui implements UiInterface {
             String fullName = firstname + " " + lastname;
             System.out.print("Enter customer address: ");
             String address = getString();
-            System.out.print("Enter customer date of birth (YYYY-MM-DD): ");
+            System.out.print("Enter customer date of birth [yyyy-mm-dd]: ");
             LocalDate dob = LocalDate.parse(getString());
             System.out.print("Enter customer phone number: ");
             String phoneNumber = getString();
@@ -636,7 +636,7 @@ public class Ui implements UiInterface {
                 updated = true;
                 existingCustomer.setAddress(updatedAddress);
             }
-            System.out.print("Enter updated date of birth (YYYY-MM-DD) (enter # for no change): ");
+            System.out.print("Enter updated date of birth [yyyy-mm-dd] (enter # for no change): ");
             String updatedDobStr = getString();
             if (!updatedDobStr.equals("#")) {
                 updated = true;
@@ -990,15 +990,15 @@ public class Ui implements UiInterface {
         try {
             LocalDate startDate;
             LocalDate endDate;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            System.out.print("Enter Start Date (enter # for 1 year ago): ");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
+            System.out.print("Enter Start Date [yyyy-dd-mm] (enter # for 1 year ago): ");
             String startDateStr = getString();
             if (!startDateStr.equals("#")) {
                 startDate = LocalDate.parse(startDateStr, formatter);
             } else {
                 startDate = LocalDate.now().minusYears(1);
             }
-            System.out.print("Enter End Date (enter # for today): ");
+            System.out.print("Enter End Date [yyyy-mm-dd] (enter # for today): ");
             String endDateStr = getString();
             if (!endDateStr.equals("#")) {
                 endDate = LocalDate.parse(endDateStr, formatter);
