@@ -12,14 +12,6 @@ public class OperationService implements Service<Operation> {
 
     private OperationRepository repository = OperationRepository.getInstance();
 
-    public OperationService(){
-        try {
-            loadJson();
-        } catch (ServiceException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
-
     public Operation save(Operation operation) throws ServiceException {
         try {
             return repository.save(operation);

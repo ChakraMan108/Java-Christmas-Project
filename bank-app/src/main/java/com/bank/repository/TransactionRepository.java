@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.bank.entity.BankAccount;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
+import com.bank.ui.Ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,7 +25,7 @@ public final class TransactionRepository implements Repository<Transaction> {
     }
     
     private ArrayList<Transaction> transactions = new ArrayList<>();
-
+    
     public long count() throws RepositoryException {
         return transactions.size();
     }
@@ -59,23 +59,24 @@ public final class TransactionRepository implements Repository<Transaction> {
     }
 
     public void saveJson() throws IOException {
+        String jsonDataPath = Ui.getDataPath() + "/transactions.json";
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File("c:/temp/transactions.json"), transactions);
+        objectMapper.writeValue(new File(jsonDataPath), transactions);
     }
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("c:/temp/transactions.json");
+            String jsonDataPath = Ui.getDataPath() + "/transactions.json";
+            File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Transaction> transctionList = objectMapper.readValue(new File("c:/temp/transactions.json"),
+                ArrayList<Transaction> transctionList = objectMapper.readValue(new File(jsonDataPath),
                         new TypeReference<ArrayList<Transaction>>() {
                         });
                 transactions = transctionList;
             } else {
-                System.err.println("Creating new transactions.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

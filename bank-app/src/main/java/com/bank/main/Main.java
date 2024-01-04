@@ -8,11 +8,19 @@ public class Main {
         Ui ui = new Ui();
         try {
             ui.loadProperties();
-            ui.authenticateApp();
+            do {
+                try {
+                    ui.authenticateApp();
+                } catch (UIException ex) {
+                    System.out.println(ex.getMessage());
+                    ui.pressEnterToContinue();
+                }
+            } while (!ui.isAuthenticated());
             ui.loadData();
             ui.displayMainMenu();
         } catch (UIException ex) {
-            System.out.println(ex.getMessage() + "\nExiting the Bank Application."); 
+            System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
         }
+
     }
 }

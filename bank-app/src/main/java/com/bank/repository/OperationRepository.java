@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
+import com.bank.ui.Ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -58,23 +59,24 @@ public final class OperationRepository implements Repository<Operation> {
     }
 
     public void saveJson() throws IOException {
+        String jsonDataPath = Ui.getDataPath() + "/operations.json";
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File("c:/temp/operations.json"), operations);
+        objectMapper.writeValue(new File(jsonDataPath), operations);
     }
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("c:/temp/operations.json");
+            String jsonDataPath = Ui.getDataPath() + "/operations.json";
+            File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Operation> operationList = objectMapper.readValue(new File("c:/temp/operations.json"),
+                ArrayList<Operation> operationList = objectMapper.readValue(new File(jsonDataPath),
                         new TypeReference<ArrayList<Operation>>() {
                         });
                 operations = operationList;
             } else {
-                System.err.println("Creating new operations.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.bank.entity.Customer;
 import com.bank.exceptions.RepositoryException;
+import com.bank.ui.Ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,7 +24,9 @@ public final class CustomerRepository implements Repository<Customer> {
     }
 
     private ArrayList<Customer> customers = new ArrayList<>();
+    private String jsonDataPath = Ui.getDataPath() + "/customers.json";
 
+    
     public long count() throws RepositoryException {
         return customers.size();
     }
@@ -64,9 +67,10 @@ public final class CustomerRepository implements Repository<Customer> {
 
     public void saveJson() throws IOException {
         try {
+            jsonDataPath = Ui.getDataPath() + "/customers.json";
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.writeValue(new File("c:/temp/customers.json"), customers);
+            objectMapper.writeValue(new File(jsonDataPath), customers);
         } catch (IOException ex) {
             throw new IOException("Error saving customer JSON file: " + ex.getMessage(), ex);
         }
@@ -74,16 +78,16 @@ public final class CustomerRepository implements Repository<Customer> {
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("c:/temp/customers.json");
+            jsonDataPath = Ui.getDataPath() + "/customers.json";
+            File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Customer> customerList = objectMapper.readValue(new File("c:/temp/customers.json"),
+                ArrayList<Customer> customerList = objectMapper.readValue(new File(jsonDataPath),
                         new TypeReference<ArrayList<Customer>>() {
                         });
                 customers = customerList;
             } else {
-                System.err.println("Creating new customers.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

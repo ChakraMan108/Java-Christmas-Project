@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
+import com.bank.ui.Ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -87,23 +88,26 @@ public final class BankAccountRepository implements Repository<BankAccount> {
     }
 
     public void saveJson() throws IOException {
+        String jsonDataPath = Ui.getDataPath() + "/bankaccounts.json";
+        String savePath = jsonDataPath;
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File("c:/temp/bankaccounts.json"), bankAccounts);
+        objectMapper.writeValue(new File(savePath), bankAccounts);
     }
 
     public void loadJson() throws IOException {
         try {
-            File f = new File("c:/temp/bankaccounts.json");
+            String jsonDataPath = Ui.getDataPath() + "/bankaccounts.json";
+            String loadPath = jsonDataPath;
+            File f = new File(loadPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File("c:/temp/bankaccounts.json"),
+                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File(loadPath),
                         new TypeReference<ArrayList<BankAccount>>() {
                         });
                 bankAccounts = bankAccountList;
             } else {
-                System.err.println("Creating new bankaccounts.json file.");
                 saveJson();
             }
         } catch (IOException ex) {

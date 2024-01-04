@@ -71,7 +71,7 @@ public class BankAccountService implements Service<BankAccount> {
             BankAccount account = repository.findById(id);
             if (amount < 1) {
                 throw new ServiceException("Invalid deposit EUR " + amount / 100
-                        + " to account id " + account.getId(), Long.toString(account.getId()));
+                        + " to account id " + account.getId());
             } else {
                 account.setBalance(account.getBalance() + amount);
                 save(account);
@@ -89,7 +89,7 @@ public class BankAccountService implements Service<BankAccount> {
             BankAccount account = repository.findById(id);
             if (account.getBalance() - amount < 0) {
                 throw new ServiceException("Insufficient balance to withdraw EUR "
-                        + amount / 100 + " from account id " + account.getId(), Long.toString(account.getId()));
+                        + amount / 100 + " from account id " + account.getId());
             } else {
                 account.setBalance(account.getBalance() - amount);
                 save(account);
@@ -107,14 +107,12 @@ public class BankAccountService implements Service<BankAccount> {
             BankAccount account = repository.findById(id);
             if (!account.isActive()) {
                 throw new ServiceException(
-                        "Cannot deactivate deactivated account id " + account.getId(),
-                        Long.toString(account.getId()));
+                        "Cannot deactivate deactivated account id " + account.getId());
             } else {
                 if (account.getBalance() > 0) {
                     throw new ServiceException(
                             "Cannot deactivate account id " + account.getId() + " with non-zero a balance of EUR "
-                                    + account.getBalance() / 100 + "." + account.getBalance() % 100 + ".",
-                            Long.toString(account.getId()));
+                                    + account.getBalance() / 100 + "." + account.getBalance() % 100 + ".");
                 } else {
                     account.setActive(false);
                     account.setDeactivatedDate(LocalDate.now());
