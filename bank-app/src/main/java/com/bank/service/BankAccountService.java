@@ -213,16 +213,14 @@ public class BankAccountService implements Service<BankAccount> {
                         " for deactivated customer id " + bankAccount.getCustomer().getId() + ".");
             }
     
-            // Check if an account with the same ID already exists
             BankAccount existingAccount = repository.findByCustomerId(bankAccount.getId());
             if (existingAccount != null && !existingAccount.equals(bankAccount)) {
                 throw new ServiceException("Cannot update. Duplicate account id " + bankAccount.getId());
             }
     
-            // Save the updated account
             BankAccount updatedAccount = save(bankAccount);
     
-            // Save the operation
+            
             Operation operation = new Operation(OperationType.ACCOUNT_UPDATE, System.getProperty("user.name"),
                     updatedAccount.getCustomer().getId(), updatedAccount.getId());
             os.save(operation);
