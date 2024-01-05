@@ -149,9 +149,9 @@ public class BankAccount {
    }
 
    @Override
-   public String toString() {
+   public String toString() {  
       return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nAccount Name: " + accountName + "\nAccount Type: " + type
-            + "\nBalance: " + balance + "\nActive: " + isActive + "\nCreated Date: " + createdDate
+            + "\nBalance: " + balance / 100 + "." + String.format("%02d", balance % 100) + "\nActive: " + isActive + "\nCreated Date: " + createdDate
             + "\nDeactivated Date: " + deactivatedDate + "\nCustomer:\n" + customer + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
    }
 }

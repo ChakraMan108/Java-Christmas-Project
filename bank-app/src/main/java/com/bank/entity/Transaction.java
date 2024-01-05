@@ -124,7 +124,7 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nAmount: " + amount + "\nUsername: " + username
+        return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nAmount: " + amount / 100 + "." + String.format("%02d", amount % 100) + "\nUsername: " + username
                 + "\nTransaction Type: " + type + "\nAccount ID: " + accountId + "\nDate: " + createdDate
                 + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     }

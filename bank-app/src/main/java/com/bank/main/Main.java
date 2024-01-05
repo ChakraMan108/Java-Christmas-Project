@@ -1,5 +1,7 @@
 package com.bank.main;
 
+import java.io.IOException;
+
 import com.bank.exceptions.UIException;
 import com.bank.ui.Ui;
 
@@ -17,8 +19,9 @@ public class Main {
                 }
             } while (!ui.isAuthenticated());
             ui.loadData();
+            ui.spinner(25);
             ui.displayMainMenu();
-        } catch (UIException ex) {
+        } catch (UIException | IOException | InterruptedException ex) {
             System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
         }
 

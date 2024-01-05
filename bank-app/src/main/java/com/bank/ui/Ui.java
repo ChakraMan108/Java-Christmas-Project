@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Scanner;
@@ -76,7 +77,7 @@ public class Ui implements UiInterface {
         try {
             clearConsole();
             System.out.println("\n==============================");
-            System.out.println("=        AUTHENTICATION      =");
+            System.out.println("=   BANK APP AUTHENTICATION  =");
             System.out.println("==============================");
             System.out.print("Enter username: ");
             String username = getString();
@@ -87,8 +88,7 @@ public class Ui implements UiInterface {
             } else {
                 System.out.println("\nAuthentication successful.");
                 System.out.println("Welcome [" + System.getProperty("user.name") + "].");
-                System.out.println("You are logged in as [username: " + username + "].");
-                pressEnterToContinue();
+                System.out.println("Logged in as [username: " + username + "].");
                 setAuthenticated(true);
             }
         } catch (Exception ex) {
@@ -101,9 +101,7 @@ public class Ui implements UiInterface {
         do {
             clearConsole();
             System.out.println("\n==============================");
-            System.out.println("=     BANKING APPLICATION    =");
-            System.out.println("==============================");
-            System.out.println("=          MAIN MENU         =");
+            System.out.println("=    BANK APP MAIN MENU      =");
             System.out.println("==============================");
             System.out.println("1. Customer Management");
             System.out.println("2. Account Management");
@@ -465,9 +463,10 @@ public class Ui implements UiInterface {
             long minimum = getCurrencyAmount();
             System.out.print("Enter balance maximum (EUR): ");
             long maximum = getCurrencyAmount();
-            System.out.println("\nDisplaying accounts between " + minimum / 100 + "." + minimum % 100
-                    + " EUR and " + maximum / 100 + "." + maximum % 100
-                    + " EUR.");
+            System.out.println(
+                    "\nDisplaying accounts between " + minimum / 100 + "." + String.format("%02d", minimum % 100)
+                            + " EUR and " + maximum / 100 + "." + String.format("%02d", maximum % 100)
+                            + " EUR.");
             ArrayList<BankAccount> bankAccounts = baService.findAll();
             for (BankAccount ba : bankAccounts) {
                 if (ba.getBalance() >= minimum && ba.getBalance() <= maximum) {
@@ -532,9 +531,10 @@ public class Ui implements UiInterface {
             System.out.print("\nEnter withdrawal ammount (EUR): ");
             long amount = getCurrencyAmount();
             baService.withdrawFromAccount(id, amount);
-            System.out.println("\nSuccessfully withdrawn " + amount / 100 + "." + amount % 100
+            System.out.println("\nSuccessfully withdrawn " + amount / 100 + "." + String.format("%02d", amount % 100)
                     + " EUR into account ID " + id + ".\nThe new balance is "
-                    + baService.findById(id).getBalance() / 100 + "." + baService.findById(id).getBalance() % 100
+                    + baService.findById(id).getBalance() / 100 + "."
+                    + String.format("%02d", baService.findById(id).getBalance() % 100)
                     + " EUR.");
             pressEnterToContinue();
         } catch (ServiceException | UIException ex) {
@@ -550,9 +550,10 @@ public class Ui implements UiInterface {
             System.out.print("\nEnter deposit ammount (EUR): ");
             long amount = getCurrencyAmount();
             baService.depositIntoAccount(id, amount);
-            System.out.println("\nSuccessfully deposited " + amount / 100 + "." + amount % 100
+            System.out.println("\nSuccessfully deposited " + amount / 100 + "." + String.format("%02d", amount % 100)
                     + " EUR into account ID " + id + ".\nThe new balance is "
-                    + baService.findById(id).getBalance() / 100 + "." + baService.findById(id).getBalance() % 100
+                    + baService.findById(id).getBalance() / 100 + "."
+                    + String.format("%02d", baService.findById(id).getBalance() % 100)
                     + " EUR.");
             pressEnterToContinue();
         } catch (ServiceException | UIException ex) {
@@ -571,13 +572,14 @@ public class Ui implements UiInterface {
             long amount = getCurrencyAmount();
             baService.withdrawFromAccount(payerId, amount);
             baService.depositIntoAccount(payeeId, amount);
-            System.out.println("\nSuccessfully transferred " + amount / 100 + "." + amount % 100
+            System.out.println("\nSuccessfully transferred " + amount / 100 + "." + String.format("%02d", amount % 100)
                     + " EUR from account ID " + payerId + " to account ID " + payeeId
                     + ".\nThe new balance of account ID " + payerId + " is "
                     + baService.findById(payerId).getBalance() / 100 + "."
-                    + baService.findById(payerId).getBalance() % 100 + " EUR.\nThe new balance of account ID " + payeeId
+                    + String.format("%02d", baService.findById(payerId).getBalance() % 100)
+                    + " EUR.\nThe new balance of account ID " + payeeId
                     + " is " + baService.findById(payeeId).getBalance() / 100 + "."
-                    + baService.findById(payeeId).getBalance() % 100 + " EUR.");
+                    + String.format("%02d", baService.findById(payeeId).getBalance() % 100) + " EUR.");
             pressEnterToContinue();
         } catch (ServiceException | UIException ex) {
             throw new UIException("[Transfer failed] " + ex.getMessage());
@@ -622,6 +624,7 @@ public class Ui implements UiInterface {
             System.out.print("Enter customer ID to update: ");
             long idToUpdate = getLong();
             Customer existingCustomer = cuService.findById(idToUpdate);
+            cuService.update(existingCustomer);
             System.out.println("Current Customer Details:");
             System.out.println(existingCustomer);
             System.out.print("Enter updated name (enter # for no change): ");
@@ -656,17 +659,27 @@ public class Ui implements UiInterface {
                 updated = true;
                 existingCustomer.setEmail(updatedEmail);
             }
-            System.out.print("Enter updated customer type [INDIVIDUAL | COMPANY] (enter # for no change): ");
+            System.out.print("Enter updated customer type [1 = INDIVIDUAL | 2 = COMPANY] (enter # for no change): ");
             String updatedTypeStr = getString();
             if (!updatedTypeStr.equals("#")) {
-                if (updatedTypeStr.equals("COMPANY".toUpperCase())
-                        || updatedTypeStr.equals("INDIVIDUAL".toUpperCase())) {
-                    updated = true;
-                    CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
-                    existingCustomer.setType(updatedType);
-                } else {
-                    throw new UIException("Invalid customer type.");
+                switch (updatedTypeStr) {
+                    case "1":
+                        updatedTypeStr = "INDIVIDUAL";
+                        if (existingCustomer.getType() == CustomerType.COMPANY) {
+                            updated = true;
+                        }
+                        break;
+                    case "2":
+                        updatedTypeStr = "COMPANY";
+                        if (existingCustomer.getType() == CustomerType.INDIVIDUAL) {
+                            updated = true;
+                        }
+                        break;
+                    default:
+                        throw new UIException("Invalid account type.");
                 }
+                CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
+                existingCustomer.setType(updatedType);
             }
             if (updated) {
                 cuService.update(existingCustomer);
@@ -731,7 +744,8 @@ public class Ui implements UiInterface {
             System.out.println("Total number of transactions: " + trService.count());
             System.out.println("Total number of operations: " + opService.count());
             long totalBalance = baService.findAll().stream().mapToLong(BankAccount::getBalance).sum();
-            System.out.println("Total balance of all accounts: " + totalBalance / 100 + "." + totalBalance % 100
+            System.out.println("Total balance of all accounts: " + totalBalance / 100 + "."
+                    + String.format("%02d", totalBalance % 100)
                     + " EUR");
             pressEnterToContinue();
         } catch (Exception e) {
@@ -900,13 +914,15 @@ public class Ui implements UiInterface {
             System.out.print("Enter bank account ID to update: ");
             long idToUpdate = getLong();
             BankAccount existingAccount = baService.findById(idToUpdate);
+            //existingAccount = baService.update(existingAccount);
             System.out.println("Current Account Details:");
             System.out.println(existingAccount);
             System.out.println("Enter updated name (enter # for no change): ");
             String updatedName = getString();
-            if (!updatedName.equals("#"))
+            if (!updatedName.equals("#")) {
                 existingAccount.setAccountName(updatedName);
-            updated = true;
+                updated = true;
+            }
             System.out.print(
                     "Enter updated BankAccount type [1 = CURRENT_ACCOUNT | 2 = SAVING_ACCCOUNT | 3 = STUDENT_ACCOUNT] (enter # for no change): ");
             String updatedTypeStr = getString();
@@ -914,28 +930,36 @@ public class Ui implements UiInterface {
                 switch (updatedTypeStr) {
                     case "1":
                         updatedTypeStr = "CURRENT_ACCOUNT";
-                        updated = true;
+                        if (existingAccount.getType() == AccountType.SAVING_ACCOUNT
+                                || existingAccount.getType() == AccountType.STUDENT_ACCOUNT) {
+                            updated = true;
+                        }
                         break;
                     case "2":
                         updatedTypeStr = "SAVING_ACCOUNT";
-                        updated = true;
+                        if (existingAccount.getType() == AccountType.CURRENT_ACCOUNT
+                                || existingAccount.getType() == AccountType.STUDENT_ACCOUNT) {
+                            updated = true;
+                        }
                         break;
                     case "3":
                         updatedTypeStr = "STUDENT_ACCOUNT";
-                        updated = true;
+                        if (existingAccount.getType() == AccountType.CURRENT_ACCOUNT
+                                || existingAccount.getType() == AccountType.SAVING_ACCOUNT) {
+                            updated = true;
+                        }
                         break;
                     default:
                         throw new UIException("Invalid account type.");
                 }
-                AccountType updatedType = AccountType.valueOf(updatedTypeStr.toUpperCase());
-                updated = true;
+                AccountType updatedType = AccountType.valueOf(updatedTypeStr);
                 existingAccount.setType(updatedType);
             }
             if (updated) {
-                baService.update(existingAccount);
+                BankAccount updatedBankAccount = baService.update(existingAccount);
                 System.out.println("\nBank account updated successfully!");
                 System.out.println("Updated bank account Details:");
-                System.out.println(existingAccount);
+                System.out.println(updatedBankAccount);
                 pressEnterToContinue();
             } else {
                 System.out.println("No changes made.");
@@ -963,13 +987,23 @@ public class Ui implements UiInterface {
         }
     }
 
+    public void delay(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public void pressEnterToContinue() {
-        System.out.println("Press ENTER to continue...");
-        String readString = "";
+        System.out.print("Press ENTER to continue. ");
+        String readString = null;
         do {
-            readString = scanner.nextLine();
-            if (readString.isEmpty()) {
-                readString = null;
+            if (scanner.hasNextLine()) {
+                readString = scanner.nextLine();
+                if (readString.isEmpty()) {
+                    readString = null;
+                }
             }
         } while (readString != null);
     }
@@ -984,6 +1018,19 @@ public class Ui implements UiInterface {
 
     public static String getDataPath() {
         return dataPath;
+    }
+
+    public void spinner(int milliseconds) throws InterruptedException, IOException {
+        try {
+            ArrayList<String> progressBar = new ArrayList<String>(Arrays.asList("[..............................]","[=.............................]", "[==............................]", "[===...........................]","[====..........................]", "[=====.........................]", "[======........................]", "[=======.......................]", "[========......................]", "[=========.....................]", "[==========....................]", "[===========...................]", "[============..................]", "[=============.................]", "[==============................]", "[===============...............]", "[================..............]", "[=================.............]", "[==================............]", "[===================...........]", "[====================..........]", "[=====================.........]", "[======================........]", "[=======================.......]", "[========================......]", "[=========================.....]", "[==========================....]", "[===========================...]", "[============================..]", "[==============================]"));
+            for (int x = 0; x < progressBar.size(); x++) {
+                String progressBarString = "\r" + progressBar.get(x);
+                System.out.print(progressBarString);
+                Thread.sleep(milliseconds);
+            }
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private Pair<LocalDate> getDateRange() throws UIException {
