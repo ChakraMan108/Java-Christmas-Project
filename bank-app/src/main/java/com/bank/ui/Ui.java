@@ -18,6 +18,7 @@ import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
 import com.bank.entity.Operation;
 import com.bank.entity.Transaction;
+import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.exceptions.UIException;
 import com.bank.service.BankAccountService;
@@ -944,6 +945,9 @@ public class Ui implements UiInterface {
         } catch (ServiceException | UIException | DateTimeParseException e) {
             System.out.println("[Bank account update failed] " + e.getMessage());
             pressEnterToContinue();
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -971,7 +975,7 @@ public class Ui implements UiInterface {
             if (readString.isEmpty()) {
                 readString = null;
             }
-        } while (readString != null);
+        } while (readString != null );
     }
 
     private void setAuthenticated(boolean authenticated) {
