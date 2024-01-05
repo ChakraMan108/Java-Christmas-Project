@@ -98,7 +98,7 @@ public class TransactionTest {
     @Test
     public void testToString() {
         Transaction transaction = new Transaction(1000, "Test User", Transaction.TransactionType.DEPOSIT, 1);
-        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 0\nAmount: 1000\nUsername: Test User\nTransaction Type: DEPOSIT\nAccount ID: 1\nDate: null\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 0\nAmount: 10.00\nUsername: Test User\nTransaction Type: DEPOSIT\nAccount ID: 1\nDate: null\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
         assertEquals(expected, transaction.toString());
     }
 }
