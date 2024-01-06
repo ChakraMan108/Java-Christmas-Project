@@ -34,7 +34,7 @@ public class Ui implements UiInterface {
     public static String dataPath;
 
     private static Scanner scanner = null;
-    private static boolean authenticated = false;
+    private boolean authenticated = false;
 
     // Public Constructor
     public Ui() {
@@ -626,7 +626,7 @@ public class Ui implements UiInterface {
             System.out.println("Current Customer Details:");
             System.out.println(existingCustomer);
             Customer updatedCustomer = new Customer(existingCustomer);
-            // Fail fast validation to force validation exceptions before user input - update () returns null as no changes were made
+            // Fail fast validation to force some validation exceptions before any user input. cuService.update () returns null as no changes were made at this point
             cuService.update(updatedCustomer);
             System.out.print("Enter updated name (enter # for no change): ");
             String updatedName = getString();

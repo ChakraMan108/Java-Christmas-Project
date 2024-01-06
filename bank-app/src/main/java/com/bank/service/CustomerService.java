@@ -69,35 +69,32 @@ public final class CustomerService implements Service<Customer> {
             if (!customer.isActive())
                 throw new ServiceException("Cannot update deactivated customer id " + customer.getId() + ".");
             if (customer.getId() <= 0)
-                throw new ServiceException("Cannot update customer with invalid id.");
+                throw new ServiceException("Cannot update customer with invalid id " + customer.getId() + ".");
             if (customer.getName().equals(""))
-                throw new ServiceException("Cannot update customer with empty name.");
+                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty name.");
             if (customer.getAddress().equals(""))
-                throw new ServiceException("Cannot update customer with empty address.");
+                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty address.");
             if (customer.getDob().equals(null))
-                throw new ServiceException("Cannot update customer with empty date of birth.");
+                throw new ServiceException(
+                        "Cannot update customer id " + customer.getId() + " with empty date of birth.");
             if (customer.getPhoneNumber().equals(""))
-                throw new ServiceException("Cannot update customer with empty phone number.");
+                throw new ServiceException(
+                        "Cannot update customer id " + customer.getId() + " with empty phone number.");
             if (customer.getEmail().equals(""))
-                throw new ServiceException("Cannot update customer with empty email.");
+                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty email.");
             if (customer.getType() == null)
-                throw new ServiceException("Cannot update customer with empty type.");
+                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty type.");
             if (customer.getCreatedDate().equals(null))
-                throw new ServiceException("Cannot update customer with empty created date.");
+                throw new ServiceException(
+                        "Cannot update customer id " + customer.getId() + " with empty created date.");
             if (customer.getCreatedDate().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot update customer with created date in the future.");
+                throw new ServiceException(
+                        "Cannot update customer id " + customer.getId() + " with created date in the future.");
             if (customer.getCreatedDate().isBefore(customer.getDob()))
-                throw new ServiceException("Cannot update customer with created date before date of birth.");
-            if (customer.getDeactivatedDate() != null) {
-                if (customer.getDeactivatedDate().isAfter(LocalDate.now()))
-                    throw new ServiceException("Cannot update customer with deactivated date in the future.");
-                if (customer.getDeactivatedDate().isBefore(customer.getCreatedDate()))
-                    throw new ServiceException("Cannot update customer with deactivated date before created date.");
-                if (customer.getDeactivatedDate().isBefore(customer.getDob()))
-                    throw new ServiceException("Cannot update customer with deactivated date before date of birth.");
-                if (customer.isActive())
-                    throw new ServiceException("Cannot update activated customer with deactivated date.");
-            }
+                throw new ServiceException(
+                        "Cannot update customer id " + customer.getId() + " with created date before date of birth.");
+            if (customer.getDeactivatedDate() != null)
+                throw new ServiceException("Cannot update customer id " + customer.getId() + " with deactivated date.");
             if (!findById(customer.getId()).equals(customer)) {
                 Customer updatedCustomer = save(customer);
                 BankAccount bankAccount = baService.findByCustomerId(customer.getId());
@@ -106,16 +103,17 @@ public final class CustomerService implements Service<Customer> {
                 if (bankAccount != null) {
                     bankAccount.setCustomer(updatedCustomer);
                     baService.save(bankAccount);
-                    o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"), bankAccount.getId(),
-                        customer.getId());
+                    o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
+                            bankAccount.getId(),
+                            customer.getId());
                 } else {
                     updatedCustomer = save(customer);
-                    o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"), 0, customer.getId());
+                    o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"), 0,
+                            customer.getId());
                 }
                 opService.save(o);
                 return updatedCustomer;
-            }
-            else {
+            } else {
                 return null;
             }
         } catch (ServiceException ex) {
@@ -127,30 +125,37 @@ public final class CustomerService implements Service<Customer> {
         try {
             Customer customer = repository.findById(id);
             if (!customer.isActive())
-                throw new ServiceException("Cannot deactivate deactivated customer id " + customer.getId());
-            else {
-                BankAccount bankAccount = baService.findByCustomerId(id);
-                if (bankAccount != null) {
-                    if (bankAccount.getCustomer().getId() == customer.getId() && bankAccount.isActive()) {
-                        throw new ServiceException("Cannot deactivate customer id " + customer.getId()
-                                + " with an active bank account id " + bankAccount.getId() + ".");
-                    }
-                    customer.setActive(false);
-                    customer.setDeactivatedDate(LocalDate.now());
-                    save(customer);
-                    bankAccount.setCustomer(customer);
-                    baService.save(bankAccount);
-                    Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
-                            bankAccount.getId(), customer.getId());
-                    opService.save(o);
-                } else {
-                    customer.setActive(false);
-                    customer.setDeactivatedDate(LocalDate.now());
-                    save(customer);
-                    Operation o = new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
-                            0, customer.getId());
-                    opService.save(o);
-                }
+                throw new ServiceException("Cannot deactivate deactivated customer id " + customer.getId() + ".");
+            if (customer.getDeactivatedDate() != null)
+                throw new ServiceException(
+                        "Cannot deactivate customer id " + customer.getId() + " with deactivated date.");
+
+            BankAccount bankAccount = baService.findByCustomerId(id);
+            if (bankAccount != null) {
+                if (bankAccount.isActive())
+                    throw new ServiceException("Cannot deactivate customer id " + customer.getId()
+                            + " with an active bank account id " + bankAccount.getId() + ".");
+                if (bankAccount.getBalance() < 0)
+                    throw new ServiceException("Cannot deactivate customer id " + customer.getId()
+                            + " with a bank account id " + bankAccount.getId() + " with a negative balance of "
+                            + bankAccount.getBalance() + ".");
+                if (bankAccount.getBalance() > 0)
+                    throw new ServiceException("Cannot deactivate customer id " + customer.getId()
+                            + " with a bank account id " + bankAccount.getId() + " with a positive balance of "
+                            + bankAccount.getBalance() + ".");
+
+                customer.setActive(false);
+                customer.setDeactivatedDate(LocalDate.now());
+                bankAccount.setCustomer(save(customer));
+                baService.save(bankAccount);
+                opService.save(new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
+                        bankAccount.getId(), customer.getId()));
+            } else {
+                customer.setActive(false);
+                customer.setDeactivatedDate(LocalDate.now());
+                save(customer);
+                opService.save(new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"), 0,
+                        customer.getId()));
             }
         } catch (RepositoryException | ServiceException ex) {
             throw new ServiceException("[Customer Service deactivateCustomer error] " + ex.getMessage(), ex);
@@ -159,13 +164,33 @@ public final class CustomerService implements Service<Customer> {
 
     public Customer createCustomer(Customer customer) throws ServiceException {
         try {
-            Customer cust = new Customer();
+            if (customer.equals(null))
+                throw new ServiceException("Cannot create null customer.");
+            if (customer.getId() != 0 || customer.isActive() != false || customer.getCreatedDate() != null)
+                throw new ServiceException("Cannot create customer with non-empty id, isActive or createdDate.");
+            if (customer.getDob().isAfter(LocalDate.now()))
+                throw new ServiceException("Cannot create customer with date of birth in the future.");
+            if (customer.getCreatedDate().isAfter(LocalDate.now()))
+                throw new ServiceException("Cannot create customer with created date in the future.");
+            if (customer.getCreatedDate().isBefore(customer.getDob()))
+                throw new ServiceException("Cannot create customer with created date before date of birth.");
+            if (customer.getName().equals(""))
+                throw new ServiceException("Cannot create customer with empty name.");
+            if (customer.getAddress().equals(""))
+                throw new ServiceException("Cannot create customer with empty address.");
+            if (customer.getDob().equals(null))
+                throw new ServiceException("Cannot create customer with empty date of birth.");
+            if (customer.getPhoneNumber().equals(""))
+                throw new ServiceException("Cannot create customer with empty phone number.");
+            if (customer.getEmail().equals(""))
+                throw new ServiceException("Cannot create customerwith empty email.");
+            if (customer.getType() == null)
+                throw new ServiceException("Cannot create customer with empty type.");
             customer.setActive(true);
             customer.setCreatedDate(LocalDate.now());
-            cust = save(customer);
-            Operation o = new Operation(OperationType.CUSTOMER_CREATION, System.getProperty("user.name"), 0,
-                    cust.getId());
-            opService.save(o);
+            Customer cust = new Customer(save(customer));
+            opService.save(new Operation(OperationType.CUSTOMER_CREATION, System.getProperty("user.name"), 0,
+                    cust.getId()));
             return cust;
         } catch (ServiceException ex) {
             throw new ServiceException("[Customer Service createCustomer error] " + ex.getMessage(), ex);
