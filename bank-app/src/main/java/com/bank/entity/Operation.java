@@ -1,6 +1,7 @@
 package com.bank.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Operation {
 
@@ -18,11 +19,13 @@ public class Operation {
     private String username;
     private long accountId;
     private long customerId;
-    private LocalDate date;
+    private LocalDateTime date;
 
+    // Public constructor for testing and empty objects
     public Operation() {
     }
 
+    // Parametrised constructor taking mandatory fields
     public Operation(OperationType operationtype, String username, long accountId, long customerId) {
         this.operationtype = operationtype;
         this.username = username;
@@ -70,19 +73,12 @@ public class Operation {
         this.username = username;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
-    }
-
-    @Override
-    public String toString() {
-        return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nOperation Type: " + operationtype
-                + "\nUsername: " + username + "\nAccount ID: " + accountId + "\nCustomer ID: " + customerId
-                + "\nDate: " + date + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     }
 
     @Override
@@ -128,4 +124,17 @@ public class Operation {
         return true;
     }
 
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String dateStr = null;
+        if (date != null) {
+            dateStr = date.format(formatter);
+        } else {
+            dateStr = "N/A";
+        }
+        return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nOperation Type: " + operationtype
+                + "\nUsername: " + username + "\nAccount ID: " + accountId + "\nCustomer ID: " + customerId
+                + "\nDate: " + dateStr + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+    }
 }

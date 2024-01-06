@@ -1,6 +1,7 @@
 package com.bank.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BankAccount {
    
@@ -15,18 +16,32 @@ public class BankAccount {
    private AccountType type;
    private long balance;
    private boolean isActive;
-   private LocalDate createdDate;
-   private LocalDate deactivatedDate;
+   private LocalDateTime createdDate;
+   private LocalDateTime deactivatedDate;
    private Customer customer;
 
+   // Empty constructor for instantiating empty/null objects for testing etc.
    public BankAccount() {
 
    }
 
+   // Parametrised constructor taking mandatory fields
    public BankAccount(String accountName, AccountType type, long balance) {
       this.accountName = accountName;
       this.type = type;
       this.balance = balance;
+   }
+
+   // Parametrised constructor taking all fields from a customer object to create a copy
+   public BankAccount(BankAccount existingAccount) {
+      this.id = existingAccount.id;
+      this.accountName = existingAccount.accountName;
+      this.type = existingAccount.type;
+      this.balance = existingAccount.balance;
+      this.isActive = existingAccount.isActive;
+      this.createdDate = existingAccount.createdDate;
+      this.deactivatedDate = existingAccount.deactivatedDate;
+      this.customer = existingAccount.customer;
    }
 
    public long getId() {
@@ -61,19 +76,19 @@ public class BankAccount {
       this.isActive = isActive;
    }
 
-   public LocalDate getCreatedDate() {
+   public LocalDateTime getCreatedDate() {
       return createdDate;
    }
 
-   public void setCreatedDate(LocalDate createdDate) {
+   public void setCreatedDate(LocalDateTime createdDate) {
       this.createdDate = createdDate;
    }
 
-   public LocalDate getDeactivatedDate() {
+   public LocalDateTime getDeactivatedDate() {
       return deactivatedDate;
    }
 
-   public void setDeactivatedDate(LocalDate deactivatedDate) {
+   public void setDeactivatedDate(LocalDateTime deactivatedDate) {
       this.deactivatedDate = deactivatedDate;
    }
 
@@ -150,8 +165,23 @@ public class BankAccount {
 
    @Override
    public String toString() {  
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+      String createdDateStr = null;
+      String deactivatedDateStr = null;
+      if (createdDate != null) {
+          createdDateStr = createdDate.format(formatter);
+      }
+      else {
+          createdDateStr = "N/A";
+      }
+      if (deactivatedDate != null) {
+          deactivatedDateStr = deactivatedDate.format(formatter);
+      }
+      else {
+          deactivatedDateStr = "N/A";
+      }
       return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nAccount Name: " + accountName + "\nAccount Type: " + type
-            + "\nBalance: " + balance / 100 + "." + String.format("%02d", balance % 100) + "\nActive: " + isActive + "\nCreated Date: " + createdDate
-            + "\nDeactivated Date: " + deactivatedDate + "\nCustomer:\n" + customer + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+            + "\nBalance: " + balance / 100 + "." + String.format("%02d", balance % 100) + "\nActive: " + isActive + "\nCreated Date: " + createdDateStr
+            + "\nDeactivated Date: " + deactivatedDateStr + "\nCustomer:\n" + customer + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
    }
 }

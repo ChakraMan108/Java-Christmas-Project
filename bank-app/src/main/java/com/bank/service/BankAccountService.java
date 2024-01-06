@@ -2,7 +2,9 @@ package com.bank.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
 import com.bank.entity.Operation;
@@ -79,18 +81,15 @@ public final class BankAccountService implements Service<BankAccount> {
     public void depositIntoAccount(long id, long amount) throws ServiceException {
         try {
             BankAccount account = repository.findById(id);
-            if (amount < 1)
-                throw new ServiceException(
-                        "Invalid deposit EUR " + amount / 100 + "." + String.format("%02d", amount % 100)
-                                + " to account id " + account.getId());
             if (!account.isActive())
                 throw new ServiceException("Cannot deposit into deactivated account id " + account.getId() + ".");
             if (account.getDeactivatedDate() != null)
                 throw new ServiceException(
-                        "Cannot deposit into account id " + account.getId() + " with a deactivated date.");
-            if (account.getCreatedDate().isAfter(LocalDate.now()))
+                        "Cannot deposit into account id " + account.getId() + " with deactivated date.");
+            if (amount < 1)
                 throw new ServiceException(
-                        "Cannot deposit into account id " + account.getId() + " with a future created date.");
+                        "Invalid deposit EUR " + amount / 100 + "." + String.format("%02d", amount % 100)
+                                + " to account id " + account.getId());
             account.setBalance(account.getBalance() + amount);
             save(account);
             ts.save(new Transaction(amount, System.getProperty("user.name"),
@@ -103,17 +102,14 @@ public final class BankAccountService implements Service<BankAccount> {
     public void withdrawFromAccount(long id, long amount) throws ServiceException {
         try {
             BankAccount account = findById(id);
-            if (account.getBalance() - amount < 0)
-                throw new ServiceException("Insufficient balance to withdraw EUR " + amount / 100 + "."
-                        + String.format("%02d", amount % 100) + " from account id " + account.getId() + ".");
             if (!account.isActive())
                 throw new ServiceException("Cannot deposit into deactivated account id " + account.getId() + ".");
             if (account.getDeactivatedDate() != null)
                 throw new ServiceException(
-                        "Cannot deposit into account id " + account.getId() + " with a deactivated date.");
-            if (account.getCreatedDate().isAfter(LocalDate.now()))
-                throw new ServiceException(
-                        "Cannot deposit into account id " + account.getId() + " with a future created date.");
+                        "Cannot deposit into account id " + account.getId() + " with deactivated date.");
+            if (account.getBalance() - amount < 0)
+                throw new ServiceException("Insufficient balance to withdraw EUR " + amount / 100 + "."
+                        + String.format("%02d", amount % 100) + " from account id " + account.getId() + ".");
             account.setBalance(account.getBalance() - amount);
             save(account);
             ts.save(new Transaction(amount, System.getProperty("user.name"),
@@ -133,12 +129,9 @@ public final class BankAccountService implements Service<BankAccount> {
                 throw new ServiceException(
                         "Cannot deactivate account id " + account.getId() + " with a deactivated date.");
             if (account.getBalance() > 0)
-                throw new ServiceException(
-                        "Cannot deactivate account id " + account.getId() + " with non-zero a balance of EUR "
-                                + account.getBalance() / 100 + "."
-                                + String.format("%02d", account.getBalance() % 100 + "."));
+                throw new ServiceException(String.format("Cannot deactivate account id %d with non-zero a balance of EUR %d.%02d.", account.getId(), account.getBalance() / 100 , account.getBalance() % 100));
             account.setActive(false);
-            account.setDeactivatedDate(LocalDate.now());
+            account.setDeactivatedDate(LocalDateTime.now());
             save(account);
             os.save(new Operation(OperationType.ACCOUNT_DEACTIVATION, System.getProperty("user.name"),
                     account.getId(), account.getCustomer().getId()));
@@ -151,22 +144,12 @@ public final class BankAccountService implements Service<BankAccount> {
         try {
             if (bankAccount.equals(null) || customer.equals(null))
                 throw new ServiceException("Cannot create account with null account or customer.");
+            if (bankAccount.getId() != 0 || bankAccount.isActive() != false || bankAccount.getCreatedDate() != null)
+                throw new ServiceException("Cannot create account with non-empty account id, isActive or createdDate.");
             if (!customer.isActive())
                 throw new ServiceException("Cannot create account for deactivated customer.");
             if (customer.getId() <= 0)
                 throw new ServiceException("Cannot create account with invalid customer id.");
-            if (customer.getDob().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot create account with customer date of birth in the future.");
-            if (customer.getCreatedDate().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot create account with customer created date in the future.");
-            if (customer.getCreatedDate().isBefore(customer.getDob()))
-                throw new ServiceException("Cannot create account with customer created date before date of birth.");
-            if (bankAccount.getCustomer().getCreatedDate().equals(null))
-                throw new ServiceException("Cannot create account with empty created date.");
-            if (bankAccount.getCustomer().getCreatedDate().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot create account with customer created date in the future.");
-            if (bankAccount.getCustomer().getCreatedDate().isBefore(bankAccount.getCustomer().getDob()))
-                throw new ServiceException("Cannot create account with customer created date before date of birth.");
             if (customer.getName().equals(""))
                 throw new ServiceException("Cannot create account with customer with empty name.");
             if (customer.getAddress().equals(""))
@@ -181,33 +164,29 @@ public final class BankAccountService implements Service<BankAccount> {
                 throw new ServiceException("Cannot create account with customer with empty type.");
             if (customer.getCreatedDate().equals(null))
                 throw new ServiceException("Cannot create account with customer with empty created date.");
-            if (customer.getCreatedDate().isAfter(LocalDate.now()))
+            if (customer.getDob().isAfter(LocalDate.now()))
+                throw new ServiceException("Cannot create account with customer date of birth in the future.");
+            if (customer.getCreatedDate().isAfter(LocalDateTime.now()))
+                throw new ServiceException("Cannot create account with customer created date in the future.");
+            if (customer.getCreatedDate().toLocalDate().isBefore(customer.getDob()))
+                throw new ServiceException("Cannot create account with customer created date before date of birth.");
+
+            if (customer.getCreatedDate().isAfter(LocalDateTime.now()))
                 throw new ServiceException("Cannot create account with customer with created date in the future.");
-            if (customer.getCreatedDate().isBefore(customer.getDob()))
+            if (customer.getCreatedDate().toLocalDate().isBefore(customer.getDob()))
                 throw new ServiceException(
                         "Cannot create account with customer with created date before date of birth.");
-            if (customer.getDeactivatedDate() != null) {
-                if (customer.getDeactivatedDate().isAfter(LocalDate.now()))
-                    throw new ServiceException(
-                            "Cannot create account with customer with deactivated date in the future.");
-                if (customer.getDeactivatedDate().isBefore(customer.getCreatedDate()))
-                    throw new ServiceException(
-                            "Cannot create account with customer with deactivated date before created date.");
-                if (customer.getDeactivatedDate().isBefore(customer.getDob()))
-                    throw new ServiceException(
-                            "Cannot create account with customer with deactivated date before date of birth.");
-                if (customer.isActive())
-                    throw new ServiceException("Cannot create account with activated customer with deactivated date.");
-            }
+            if (customer.getDeactivatedDate() != null)
+                throw new ServiceException("Cannot create account with customer with deactivated date.");
             BankAccount createdAccount = new BankAccount();
             bankAccount.setActive(true);
-            bankAccount.setCreatedDate(LocalDate.now());
+            bankAccount.setCreatedDate(LocalDateTime.now());
             bankAccount.setCustomer(customer);
             createdAccount = save(bankAccount);
             os.save(new Operation(OperationType.ACCOUNT_CREATION, System.getProperty("user.name"),
                     createdAccount.getCustomer().getId(), createdAccount.getId()));
             return createdAccount;
-        } catch (ServiceException ex) {
+        } catch (ServiceException | NullPointerException ex) {
             throw new ServiceException("[Bank Account Service createAccount error] " + ex.getMessage(), ex);
         }
     }
@@ -223,7 +202,7 @@ public final class BankAccountService implements Service<BankAccount> {
             if (!bankAccount.getCustomer().isActive())
                 throw new ServiceException("Cannot update account id " + bankAccount.getId()
                         + " for deactivated customer id " + bankAccount.getCustomer().getId() + ".");
-            if (bankAccount.getCreatedDate().isBefore(bankAccount.getCustomer().getDob()))
+            if (bankAccount.getCreatedDate().toLocalDate().isBefore(bankAccount.getCustomer().getDob()))
                 throw new ServiceException("Cannot update account id " + bankAccount.getId()
                         + " with created date before customer date of birth.");
             if (bankAccount.getCustomer().getId() <= 0)
@@ -232,25 +211,14 @@ public final class BankAccountService implements Service<BankAccount> {
             if (bankAccount.getBalance() < 0)
                 throw new ServiceException(
                         "Cannot update account id " + bankAccount.getId() + " with negative balance.");
-            if (bankAccount.getCreatedDate().isAfter(LocalDate.now()))
+            if (bankAccount.getCreatedDate().isAfter(LocalDateTime.now()))
                 throw new ServiceException(
                         "Cannot update account id " + bankAccount.getId() + " with future created date.");
             if (bankAccount.getId() <= 0)
                 throw new ServiceException("Cannot update account with invalid id.");
-            if (bankAccount.getDeactivatedDate() != null) {
-                if (bankAccount.getDeactivatedDate().isAfter(LocalDate.now()))
-                    throw new ServiceException(
-                            "Cannot update account id " + bankAccount.getId() + " with future deactivated date.");
-                if (bankAccount.getDeactivatedDate().isBefore(bankAccount.getCreatedDate()))
-                    throw new ServiceException("Cannot update account id " + bankAccount.getId()
-                            + " with deactivated date before created date.");
-                if (bankAccount.getDeactivatedDate().isBefore(bankAccount.getCustomer().getDob()))
-                    throw new ServiceException("Cannot update account id " + bankAccount.getId()
-                            + " with deactivated date before customer date of birth.");
-                if (bankAccount.isActive())
-                    throw new ServiceException(
-                            "Cannot update activated account id " + bankAccount.getId() + " with deactivated date.");
-            }
+            if (bankAccount.getDeactivatedDate() != null)
+                throw new ServiceException(
+                        "Cannot update activated account id " + bankAccount.getId() + " with deactivated date.");
             BankAccount udpdatedAccount = new BankAccount();
             udpdatedAccount = save(bankAccount);
             os.save(new Operation(OperationType.ACCOUNT_UPDATE, System.getProperty("user.name"),

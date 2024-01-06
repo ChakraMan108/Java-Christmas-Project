@@ -1,9 +1,14 @@
 package com.bank.entity;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Test;
 
 public class TransactionTest {
 
@@ -12,14 +17,14 @@ public class TransactionTest {
         Transaction transaction = new Transaction();
         transaction.setId(1);
         transaction.setAmount(1000);
-        transaction.setCreatedDate(LocalDate.of(2022, 1, 1));
+        transaction.setCreatedDate(LocalDateTime.of(2022, 1, 1, 1, 1));
         transaction.setUsername("Test User");
         transaction.setType(Transaction.TransactionType.DEPOSIT);
         transaction.setAccountId(1);
 
         assertEquals(1, transaction.getId());
         assertEquals(1000, transaction.getAmount());
-        assertEquals(LocalDate.of(2022, 1, 1), transaction.getCreatedDate());
+        assertEquals(LocalDateTime.of(2022, 1, 1,1,1), transaction.getCreatedDate());
         assertEquals("Test User", transaction.getUsername());
         assertEquals(Transaction.TransactionType.DEPOSIT, transaction.getType());
         assertEquals(1, transaction.getAccountId());
@@ -96,9 +101,32 @@ public class TransactionTest {
     }
     
     @Test
-    public void testToString() {
-        Transaction transaction = new Transaction(1000, "Test User", Transaction.TransactionType.DEPOSIT, 1);
-        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 0\nAmount: 10.00\nUsername: Test User\nTransaction Type: DEPOSIT\nAccount ID: 1\nDate: null\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-        assertEquals(expected, transaction.toString());
+    public void testToString_withDate() {
+        Transaction transaction = new Transaction();
+        transaction.setId(1);
+        transaction.setAmount(1000);
+        transaction.setCreatedDate(LocalDateTime.of(2022, 1, 1, 1, 1));
+        transaction.setUsername("Test User");
+        transaction.setType(Transaction.TransactionType.DEPOSIT);
+        transaction.setAccountId(1);
+    
+        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 1\nAmount: 10.00\nUsername: Test User\nTransaction Type: DEPOSIT\nAccount ID: 1\nDate: 2022-01-01 01:01\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+        String actual = transaction.toString();
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testToString_withoutDate() {
+        Transaction transaction = new Transaction();
+        transaction.setId(1);
+        transaction.setAmount(1000);
+        transaction.setCreatedDate(null);
+        transaction.setUsername("Test User");
+        transaction.setType(Transaction.TransactionType.DEPOSIT);
+        transaction.setAccountId(1);
+    
+        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 1\nAmount: 10.00\nUsername: Test User\nTransaction Type: DEPOSIT\nAccount ID: 1\nDate: N/A\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+        String actual = transaction.toString();
+        assertEquals(expected, actual);
     }
 }
