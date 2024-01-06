@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -331,7 +333,7 @@ public class Ui implements UiInterface {
             System.out.println("4. Transactions by Date");
             System.out.println("5. Operations by Date");
             System.out.println("6. Return to Main Menu");
-            System.out.println("========================");
+            System.out.println("==============================");
             System.out.print("Selection option: ");
 
             try {
@@ -602,8 +604,18 @@ public class Ui implements UiInterface {
             System.out.print("Enter customer email: ");
             String email = getString();
             validateEmail(email);
-            System.out.print("Enter customer type [INDIVIDUAL | COMPANY]: ");
+            System.out.print("Enter customer type [1 = INDIVIDUAL | 2 = COMPANY]: ");
             String typeStr = getString();
+            switch (typeStr) {
+                case "1":
+                    typeStr = "INDIVIDUAL";
+                    break;
+                case "2":
+                    typeStr = "COMPANY";
+                    break;
+                default:
+                    throw new UIException("Invalid customer type.");
+            }
             CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
             Customer savedCustomer = cuService
                     .createCustomer(new Customer(fullName, address, dob, phoneNumber, email, type));
@@ -626,7 +638,8 @@ public class Ui implements UiInterface {
             System.out.println("Current Customer Details:");
             System.out.println(existingCustomer);
             Customer updatedCustomer = new Customer(existingCustomer);
-            // Fail fast validation to force some validation exceptions before any user input. cuService.update () returns null as no changes were made at this point
+            // Fail fast validation to force some validation exceptions before any user
+            // input. cuService.update () returns null as no changes were made at this point
             cuService.update(updatedCustomer);
             System.out.print("Enter updated name (enter # for no change): ");
             String updatedName = getString();
@@ -686,8 +699,8 @@ public class Ui implements UiInterface {
                 if (cuService.update(updatedCustomer) == null) {
                     throw new UIException("No changes made.");
                 } else {
-                    System.out.println("Customer updated successfully!");
-                    System.out.println("Updated Customer Details:");
+                    System.out.println("\nCustomer updated successfully!");
+                    System.out.println("Updated Customer details:");
                     System.out.println(updatedCustomer);
                     pressEnterToContinue();
                 }
@@ -707,7 +720,7 @@ public class Ui implements UiInterface {
             Long idToUpdate = getLong();
             cuService.findById(idToUpdate);
             cuService.deactivateCustomer(idToUpdate);
-            System.out.println("Customer id " + idToUpdate + " deactivated successfully.");
+            System.out.println("\nCustomer id " + idToUpdate + " deactivated successfully!");
             System.out.println("Customer details:\n" + cuService.findById(idToUpdate));
             pressEnterToContinue();
         } catch (ServiceException e) {
@@ -760,13 +773,16 @@ public class Ui implements UiInterface {
     private void displayAccountsByDate() {
         try {
             long count = 0;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Accounts By Date\n==============================");
-            Pair<LocalDate> dates = getDateRange();
-            System.out.println("\nDisplaying accounts from " + dates.getFirst() + " to " + dates.getSecond());
+            Pair<LocalDateTime> dates = getDateRange();
+            String dateFirstStr = dates.getFirst().format(formatter);
+            String dateSecondStr = dates.getFirst().format(formatter);
+            System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<BankAccount> bankAccounts = baService.findAll();
             if (!bankAccounts.isEmpty()) {
                 for (BankAccount bankAccount : bankAccounts) {
-                    LocalDate bankAccounDate = bankAccount.getCreatedDate();
+                    LocalDateTime bankAccounDate = bankAccount.getCreatedDate();
                     if (!bankAccounDate.isBefore(dates.getFirst()) && !bankAccounDate.isAfter(dates.getSecond())) {
                         count++;
                         System.out.println("\nAccount #" + count);
@@ -787,13 +803,16 @@ public class Ui implements UiInterface {
     private void displayCustomersByDate() {
         try {
             long count = 0;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Customers By Date\n==============================");
-            Pair<LocalDate> dates = getDateRange();
-            System.out.println("\nDisplaying customers from " + dates.getFirst() + " to " + dates.getSecond());
+            Pair<LocalDateTime> dates = getDateRange();
+            String dateFirstStr = dates.getFirst().format(formatter);
+            String dateSecondStr = dates.getFirst().format(formatter);
+            System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<Customer> customers = cuService.findAll();
             if (!customers.isEmpty()) {
                 for (Customer customer : customers) {
-                    LocalDate customerDate = customer.getCreatedDate();
+                    LocalDateTime customerDate = customer.getCreatedDate();
                     if (!customerDate.isBefore(dates.getFirst()) && !customerDate.isAfter(dates.getSecond())) {
                         count++;
                         System.out.println("\nCustomer #" + count);
@@ -814,13 +833,16 @@ public class Ui implements UiInterface {
     private void displayTransactionsByDate() {
         try {
             long count = 0;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Transactions By Date\n==============================");
-            Pair<LocalDate> dates = getDateRange();
-            System.out.println("\nDisplaying customers from " + dates.getFirst() + " to " + dates.getSecond());
+            Pair<LocalDateTime> dates = getDateRange();
+            String dateFirstStr = dates.getFirst().format(formatter);
+            String dateSecondStr = dates.getFirst().format(formatter);
+            System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<Transaction> transactions = trService.findAll();
             if (!transactions.isEmpty()) {
                 for (Transaction transaction : transactions) {
-                    LocalDate transactionDate = transaction.getCreatedDate();
+                    LocalDateTime transactionDate = transaction.getCreatedDate();
                     if (!transactionDate.isBefore(dates.getFirst()) && !transactionDate.isAfter(dates.getSecond())) {
                         count++;
                         System.out.println("\nTransaction #" + count);
@@ -841,13 +863,16 @@ public class Ui implements UiInterface {
     private void displayOperationsByDate() {
         try {
             long count = 0;
-            System.out.println("\nDisplay Transactions By Date\n==============================");
-            Pair<LocalDate> dates = getDateRange();
-            System.out.println("\nDisplaying customers from " + dates.getFirst() + " to " + dates.getSecond());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            System.out.println("\nDisplay Operations By Date\n==============================");
+            Pair<LocalDateTime> dates = getDateRange();
+            String dateFirstStr = dates.getFirst().format(formatter);
+            String dateSecondStr = dates.getFirst().format(formatter);
+            System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<Operation> operations = opService.findAll();
             if (!operations.isEmpty()) {
                 for (Operation operation : operations) {
-                    LocalDate operationDate = operation.getDate();
+                    LocalDateTime operationDate = operation.getDate();
                     if (!operationDate.isBefore(dates.getFirst()) && !operationDate.isAfter(dates.getSecond())) {
                         count++;
                         System.out.println("\nOperation #" + count);
@@ -917,13 +942,16 @@ public class Ui implements UiInterface {
             System.out.print("Enter bank account ID to update: ");
             long idToUpdate = getLong();
             BankAccount existingAccount = baService.findById(idToUpdate);
-            // existingAccount = baService.update(existingAccount);
+            BankAccount updatedAccount = new BankAccount(existingAccount);
+            // Fail fast validation to force some validation exceptions before any user
+            // input. cuService.update () returns null as no changes were made at this point
+            baService.update(updatedAccount);
             System.out.println("Current Account Details:");
             System.out.println(existingAccount);
             System.out.println("Enter updated name (enter # for no change): ");
             String updatedName = getString();
             if (!updatedName.equals("#")) {
-                existingAccount.setAccountName(updatedName);
+                updatedAccount.setAccountName(updatedName);
                 updated = true;
             }
             System.out.print(
@@ -956,17 +984,19 @@ public class Ui implements UiInterface {
                         throw new UIException("Invalid account type.");
                 }
                 AccountType updatedType = AccountType.valueOf(updatedTypeStr);
-                existingAccount.setType(updatedType);
+                updatedAccount.setType(updatedType);
             }
             if (updated) {
-                BankAccount updatedBankAccount = baService.update(existingAccount);
-                System.out.println("\nBank account updated successfully!");
-                System.out.println("Updated bank account Details:");
-                System.out.println(updatedBankAccount);
-                pressEnterToContinue();
+                if (baService.update(updatedAccount) == null) {
+                    throw new UIException("No changes made.");
+                } else {
+                    System.out.println("\nBank account updated successfully!");
+                    System.out.println("Updated bank account details:");
+                    System.out.println(updatedAccount);
+                    pressEnterToContinue();
+                }
             } else {
-                System.out.println("No changes made.");
-                pressEnterToContinue();
+                throw new UIException("No changes made.");
             }
         } catch (ServiceException | UIException | DateTimeParseException e) {
             System.out.println("[Bank account update failed] " + e.getMessage());
@@ -981,7 +1011,7 @@ public class Ui implements UiInterface {
             Long idToUpdate = getLong();
             baService.findById(idToUpdate);
             baService.deactivateAccount(idToUpdate);
-            System.out.println("Bank account id " + idToUpdate + " deactivated successfully.");
+            System.out.println("\nBank account id " + idToUpdate + " deactivated successfully.");
             System.out.println("Bank account details:\n" + baService.findById(idToUpdate));
             pressEnterToContinue();
         } catch (ServiceException e) {
@@ -1018,16 +1048,25 @@ public class Ui implements UiInterface {
     public void spinner(int milliseconds) throws InterruptedException, IOException {
         try {
             ArrayList<String> progressBar = new ArrayList<String>(
-                    Arrays.asList("[............................]", "[=...........................]", "[==..........................]",
-                            "[===.........................]", "[====........................]", "[=====.......................]",
-                            "[======......................]", "[=======.....................]", "[========....................]",
-                            "[=========...................]", "[==========..................]", "[===========.................]",
-                            "[============................]", "[=============...............]", "[==============..............]",
-                            "[===============.............]", "[================............]", "[=================...........]",
-                            "[==================..........]", "[===================.........]", "[====================........]",
-                            "[=====================.......]", "[======================......]", "[=======================.....]",
-                            "[========================....]", "[=========================...]", "[==========================..]",
-                            "[===========================.]", "[============================]")); 
+                    Arrays.asList("[............................]", "[=...........................]",
+                            "[==..........................]",
+                            "[===.........................]", "[====........................]",
+                            "[=====.......................]",
+                            "[======......................]", "[=======.....................]",
+                            "[========....................]",
+                            "[=========...................]", "[==========..................]",
+                            "[===========.................]",
+                            "[============................]", "[=============...............]",
+                            "[==============..............]",
+                            "[===============.............]", "[================............]",
+                            "[=================...........]",
+                            "[==================..........]", "[===================.........]",
+                            "[====================........]",
+                            "[=====================.......]", "[======================......]",
+                            "[=======================.....]",
+                            "[========================....]", "[=========================...]",
+                            "[==========================..]",
+                            "[===========================.]", "[============================]"));
             for (int x = 0; x < progressBar.size(); x++) {
                 String progressBarString = "\r" + progressBar.get(x);
                 System.out.print(progressBarString);
@@ -1038,26 +1077,30 @@ public class Ui implements UiInterface {
         }
     }
 
-    private Pair<LocalDate> getDateRange() throws UIException {
+    private Pair<LocalDateTime> getDateRange() throws UIException {
         try {
             LocalDate startDate;
             LocalDate endDate;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
-            System.out.print("Enter Start Date [yyyy-dd-mm] (enter # for 1 year ago): ");
+            LocalDateTime startDateTime;
+            LocalDateTime endDateTime;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            System.out.print("Enter Start Date [yyyy-mm-dd] (enter # for 1 year ago): ");
             String startDateStr = getString();
             if (!startDateStr.equals("#")) {
                 startDate = LocalDate.parse(startDateStr, formatter);
+                startDateTime = LocalDateTime.of(startDate, LocalTime.of(0, 0));
             } else {
-                startDate = LocalDate.now().minusYears(1);
+                startDateTime = LocalDateTime.now().minusYears(1);
             }
             System.out.print("Enter End Date [yyyy-mm-dd] (enter # for today): ");
             String endDateStr = getString();
             if (!endDateStr.equals("#")) {
                 endDate = LocalDate.parse(endDateStr, formatter);
+                endDateTime = LocalDateTime.of(endDate, LocalTime.of(0, 0));
             } else {
-                endDate = LocalDate.now();
+                endDateTime = LocalDateTime.now();
             }
-            return new Pair<LocalDate>(startDate, endDate);
+            return new Pair<LocalDateTime>(startDateTime, endDateTime);
         } catch (UIException | DateTimeParseException e) {
             throw new UIException("[Get date range failed] " + e.getMessage());
         }

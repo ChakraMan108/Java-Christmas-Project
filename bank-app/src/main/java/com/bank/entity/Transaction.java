@@ -1,6 +1,7 @@
 package com.bank.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transaction {
 
@@ -11,26 +12,26 @@ public class Transaction {
 
     private long id;
     private long amount;
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
     private String username;
     private TransactionType type = null;
     private long accountId;
 
-/* ****************************** */
-// Constructors
+
+    // Public constructor for testing and empty objects
     public Transaction()
     {
     
     }
 
+    // Parametrised constructor taking mandatory fields
     public Transaction(long amount, String username, TransactionType type, long accountId) {
         this.amount = amount;
         this.username = username;
         this.type = type;
         this.accountId = accountId;
     }
-/* ****************************** */
-// Getters and setters
+
     public long getId() {
         return id;
     }
@@ -47,7 +48,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public LocalDate getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
@@ -67,7 +68,7 @@ public class Transaction {
         this.type = type;
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -124,8 +125,15 @@ public class Transaction {
 
     @Override
     public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String createDateStr = null;
+        if (createdDate != null) {
+            createDateStr = createdDate.format(formatter);
+        } else {
+            createDateStr = "N/A";
+        }
         return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nAmount: " + amount / 100 + "." + String.format("%02d", amount % 100) + "\nUsername: " + username
-                + "\nTransaction Type: " + type + "\nAccount ID: " + accountId + "\nDate: " + createdDate
+                + "\nTransaction Type: " + type + "\nAccount ID: " + accountId + "\nDate: " + createDateStr
                 + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     }
 }

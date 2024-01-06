@@ -1,6 +1,8 @@
 package com.bank.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Customer {
 
@@ -16,8 +18,8 @@ public class Customer {
     private String phoneNumber;
     private String email;
     private boolean isActive;
-    private LocalDate createdDate;
-    private LocalDate deactivatedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime deactivatedDate;
     private CustomerType type = null;
 
     // Empty constructor for instantiating empty/null objects for testing etc.
@@ -107,19 +109,19 @@ public class Customer {
         this.isActive = isActive;
     }
 
-    public LocalDate getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public LocalDate getDeactivatedDate() {
+    public LocalDateTime getDeactivatedDate() {
         return deactivatedDate;
     }
 
-    public void setDeactivatedDate(LocalDate deactivatedDate) {
+    public void setDeactivatedDate(LocalDateTime deactivatedDate) {
         this.deactivatedDate = deactivatedDate;
     }
 
@@ -203,9 +205,24 @@ public class Customer {
 
     @Override
     public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String createdDateStr = null;
+        String deactivatedDateStr = null;
+        if (createdDate != null) {
+            createdDateStr = createdDate.format(formatter);
+        }
+        else {
+            createdDateStr = "N/A";
+        }
+        if (deactivatedDate != null) {
+            deactivatedDateStr = deactivatedDate.format(formatter);
+        }
+        else {
+            deactivatedDateStr = "N/A";
+        }
         return "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: " + id + "\nName: " + name + "\nAddress: " + address + "\nDob: " + dob + "\nPhone Number: "
-                + phoneNumber + "\nEmail: " + email + "\nActive: " + isActive + "\nCreated Date: " + createdDate
-                + "\nDactivated Date: " + deactivatedDate + "\nCustomer Type: " + type + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+                + phoneNumber + "\nEmail: " + email + "\nActive: " + isActive + "\nCreated Date: " + createdDateStr
+                + "\nDactivated Date: " + deactivatedDateStr + "\nCustomer Type: " + type + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     }
     
 }

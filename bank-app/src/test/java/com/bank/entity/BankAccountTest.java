@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,8 +82,8 @@ class BankAccountTest {
         account.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
         account.setBalance(1000);
         account.setActive(true);
-        account.setCreatedDate(LocalDate.of(2022, 1, 1));
-        account.setDeactivatedDate(LocalDate.of(2022, 1, 2));
+        account.setCreatedDate(LocalDateTime.of(2022, 1, 1,1 ,1));
+        account.setDeactivatedDate(LocalDateTime.of(2022, 1, 2,1 ,1));
         Customer customer = new Customer();
         account.setCustomer(customer);
 
@@ -92,8 +92,8 @@ class BankAccountTest {
         assertEquals(BankAccount.AccountType.CURRENT_ACCOUNT, account.getType());
         assertEquals(1000, account.getBalance());
         assertTrue(account.isActive());
-        assertEquals(LocalDate.of(2022, 1, 1), account.getCreatedDate());
-        assertEquals(LocalDate.of(2022, 1, 2), account.getDeactivatedDate());
+        assertEquals(LocalDateTime.of(2022, 1, 1,1, 1), account.getCreatedDate());
+        assertEquals(LocalDateTime.of(2022, 1, 2,1,1), account.getDeactivatedDate());
         assertEquals(customer, account.getCustomer());
     }
 
@@ -164,9 +164,38 @@ class BankAccountTest {
     }
 
     @Test
-    public void testToString() {
-        BankAccount account = new BankAccount("Test Account", BankAccount.AccountType.CURRENT_ACCOUNT, 1000);
-        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 0\nAccount Name: Test Account\nAccount Type: CURRENT_ACCOUNT\nBalance: 10.00\nActive: false\nCreated Date: null\nDeactivated Date: null\nCustomer:\nnull\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-        assertEquals(expected, account.toString());
+    public void testToString_withDates() {
+        BankAccount account = new BankAccount();
+        account.setId(1);
+        account.setAccountName("Test Account");
+        account.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
+        account.setBalance(1000);
+        account.setActive(true);
+        account.setCreatedDate(LocalDateTime.of(2022, 1, 1,1 ,1));
+        account.setDeactivatedDate(LocalDateTime.of(2022, 1, 2,1 ,1));
+        Customer customer = new Customer();
+        account.setCustomer(customer);
+    
+        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 1\nAccount Name: Test Account\nAccount Type: CURRENT_ACCOUNT\nBalance: 10.00\nActive: true\nCreated Date: 2022-01-01 01:01\nDeactivated Date: 2022-01-02 01:01\nCustomer:\n" + customer + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+        String actual = account.toString();
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testToString_withoutDates() {
+        BankAccount account = new BankAccount();
+        account.setId(1);
+        account.setAccountName("Test Account");
+        account.setType(BankAccount.AccountType.CURRENT_ACCOUNT);
+        account.setBalance(1000);
+        account.setActive(true);
+        account.setCreatedDate(null);
+        account.setDeactivatedDate(null);
+        Customer customer = new Customer();
+        account.setCustomer(customer);
+    
+        String expected = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nID: 1\nAccount Name: Test Account\nAccount Type: CURRENT_ACCOUNT\nBalance: 10.00\nActive: true\nCreated Date: N/A\nDeactivated Date: N/A\nCustomer:\n" + customer + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+        String actual = account.toString();
+        assertEquals(expected, actual);
     }
 }

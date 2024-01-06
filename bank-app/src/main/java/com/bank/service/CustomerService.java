@@ -2,6 +2,7 @@ package com.bank.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import com.bank.entity.BankAccount;
@@ -87,10 +88,10 @@ public final class CustomerService implements Service<Customer> {
             if (customer.getCreatedDate().equals(null))
                 throw new ServiceException(
                         "Cannot update customer id " + customer.getId() + " with empty created date.");
-            if (customer.getCreatedDate().isAfter(LocalDate.now()))
+            if (customer.getCreatedDate().isAfter(LocalDateTime.now()))
                 throw new ServiceException(
                         "Cannot update customer id " + customer.getId() + " with created date in the future.");
-            if (customer.getCreatedDate().isBefore(customer.getDob()))
+            if (customer.getCreatedDate().toLocalDate().isBefore(customer.getDob()))
                 throw new ServiceException(
                         "Cannot update customer id " + customer.getId() + " with created date before date of birth.");
             if (customer.getDeactivatedDate() != null)
@@ -145,14 +146,14 @@ public final class CustomerService implements Service<Customer> {
                             + bankAccount.getBalance() + ".");
 
                 customer.setActive(false);
-                customer.setDeactivatedDate(LocalDate.now());
+                customer.setDeactivatedDate(LocalDateTime.now());
                 bankAccount.setCustomer(save(customer));
                 baService.save(bankAccount);
                 opService.save(new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"),
                         bankAccount.getId(), customer.getId()));
             } else {
                 customer.setActive(false);
-                customer.setDeactivatedDate(LocalDate.now());
+                customer.setDeactivatedDate(LocalDateTime.now());
                 save(customer);
                 opService.save(new Operation(OperationType.CUSTOMER_DEACTIVATION, System.getProperty("user.name"), 0,
                         customer.getId()));
@@ -170,10 +171,6 @@ public final class CustomerService implements Service<Customer> {
                 throw new ServiceException("Cannot create customer with non-empty id, isActive or createdDate.");
             if (customer.getDob().isAfter(LocalDate.now()))
                 throw new ServiceException("Cannot create customer with date of birth in the future.");
-            if (customer.getCreatedDate().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot create customer with created date in the future.");
-            if (customer.getCreatedDate().isBefore(customer.getDob()))
-                throw new ServiceException("Cannot create customer with created date before date of birth.");
             if (customer.getName().equals(""))
                 throw new ServiceException("Cannot create customer with empty name.");
             if (customer.getAddress().equals(""))
@@ -187,7 +184,7 @@ public final class CustomerService implements Service<Customer> {
             if (customer.getType() == null)
                 throw new ServiceException("Cannot create customer with empty type.");
             customer.setActive(true);
-            customer.setCreatedDate(LocalDate.now());
+            customer.setCreatedDate(LocalDateTime.now());
             Customer cust = new Customer(save(customer));
             opService.save(new Operation(OperationType.CUSTOMER_CREATION, System.getProperty("user.name"), 0,
                     cust.getId()));

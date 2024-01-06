@@ -2,7 +2,7 @@ package com.bank.repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import com.bank.entity.Transaction;
@@ -45,7 +45,7 @@ public final class TransactionRepository implements Repository<Transaction> {
     public Transaction save(Transaction transaction) throws RepositoryException {
     try {
         transaction.setId(generateId());
-        transaction.setCreatedDate(LocalDate.now());
+        transaction.setCreatedDate(LocalDateTime.now());
         transactions.add(transaction);
         saveJson();
         return transaction;
