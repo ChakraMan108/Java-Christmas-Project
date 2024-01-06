@@ -24,6 +24,7 @@ public final class CustomerRepository implements Repository<Customer> {
     }
 
     private ArrayList<Customer> customers = new ArrayList<>();
+
     private String jsonDataPath = Ui.getDataPath() + "/customers.json";
 
     

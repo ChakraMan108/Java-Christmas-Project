@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Scanner;
+
 import org.apache.commons.validator.routines.EmailValidator;
 
 import com.bank.entity.BankAccount;
@@ -33,18 +34,18 @@ public class Ui implements UiInterface {
     public static String dataPath;
 
     private static Scanner scanner = null;
-    private boolean authenticated = false;
+    private static boolean authenticated = false;
 
     // Public Constructor
     public Ui() {
         scanner = new Scanner(System.in);
     }
 
-    // Service initialisation
-    BankAccountService baService = new BankAccountService();
-    OperationService opService = new OperationService();
-    TransactionService trService = new TransactionService();
-    CustomerService cuService = new CustomerService();
+    // Service singleton initialisation
+    BankAccountService baService = BankAccountService.getInstance();
+    OperationService opService = OperationService.getInstance();
+    TransactionService trService = TransactionService.getInstance();
+    CustomerService cuService = CustomerService.getInstance();
 
     public void loadProperties() throws UIException {
         try {
@@ -169,7 +170,6 @@ public class Ui implements UiInterface {
             System.out.print("Selection option: ");
             try {
                 String userInput = getString();
-
                 switch (userInput) {
                     case "1":
                         createCustomer();
@@ -210,7 +210,6 @@ public class Ui implements UiInterface {
             System.out.println("4. Return to Main Menu");
             System.out.println("==============================");
             System.out.print("Selection option: ");
-
             try {
                 String userInput = getString();
                 switch (userInput) {
@@ -624,40 +623,42 @@ public class Ui implements UiInterface {
             System.out.print("Enter customer ID to update: ");
             long idToUpdate = getLong();
             Customer existingCustomer = cuService.findById(idToUpdate);
-            cuService.update(existingCustomer);
             System.out.println("Current Customer Details:");
             System.out.println(existingCustomer);
+            Customer updatedCustomer = new Customer(existingCustomer);
+            // Fail fast validation to force validation exceptions before user input - update () returns null as no changes were made
+            cuService.update(updatedCustomer);
             System.out.print("Enter updated name (enter # for no change): ");
             String updatedName = getString();
             if (!updatedName.equals("#")) {
                 updated = true;
-                existingCustomer.setName(updatedName);
+                updatedCustomer.setName(updatedName);
             }
             System.out.print("Enter updated address (enter # for no change): ");
             String updatedAddress = getString();
             if (!updatedAddress.equals("#")) {
                 updated = true;
-                existingCustomer.setAddress(updatedAddress);
+                updatedCustomer.setAddress(updatedAddress);
             }
             System.out.print("Enter updated date of birth [yyyy-mm-dd] (enter # for no change): ");
             String updatedDobStr = getString();
             if (!updatedDobStr.equals("#")) {
                 updated = true;
                 LocalDate updatedDob = LocalDate.parse(updatedDobStr);
-                existingCustomer.setDob(updatedDob);
+                updatedCustomer.setDob(updatedDob);
             }
             System.out.print("Enter updated phone number (enter # for no change): ");
             String updatedPhoneNumber = getString();
             if (!updatedPhoneNumber.equals("#")) {
                 updated = true;
-                existingCustomer.setPhoneNumber(updatedPhoneNumber);
+                updatedCustomer.setPhoneNumber(updatedPhoneNumber);
             }
             System.out.print("Enter updated email (enter # for no change): ");
             String updatedEmail = getString();
             if (!updatedEmail.equals("#")) {
                 validateEmail(updatedEmail);
                 updated = true;
-                existingCustomer.setEmail(updatedEmail);
+                updatedCustomer.setEmail(updatedEmail);
             }
             System.out.print("Enter updated customer type [1 = INDIVIDUAL | 2 = COMPANY] (enter # for no change): ");
             String updatedTypeStr = getString();
@@ -679,17 +680,19 @@ public class Ui implements UiInterface {
                         throw new UIException("Invalid account type.");
                 }
                 CustomerType updatedType = CustomerType.valueOf(updatedTypeStr.toUpperCase());
-                existingCustomer.setType(updatedType);
+                updatedCustomer.setType(updatedType);
             }
             if (updated) {
-                cuService.update(existingCustomer);
-                System.out.println("Customer updated successfully!");
-                System.out.println("Updated Customer Details:");
-                System.out.println(existingCustomer);
-                pressEnterToContinue();
+                if (cuService.update(updatedCustomer) == null) {
+                    throw new UIException("No changes made.");
+                } else {
+                    System.out.println("Customer updated successfully!");
+                    System.out.println("Updated Customer Details:");
+                    System.out.println(updatedCustomer);
+                    pressEnterToContinue();
+                }
             } else {
-                System.out.println("No changes made.");
-                pressEnterToContinue();
+                throw new UIException("No changes made.");
             }
         } catch (ServiceException | UIException | DateTimeParseException | IllegalArgumentException e) {
             System.out.println("[Customer update failed] " + e.getMessage());
@@ -914,7 +917,7 @@ public class Ui implements UiInterface {
             System.out.print("Enter bank account ID to update: ");
             long idToUpdate = getLong();
             BankAccount existingAccount = baService.findById(idToUpdate);
-            //existingAccount = baService.update(existingAccount);
+            // existingAccount = baService.update(existingAccount);
             System.out.println("Current Account Details:");
             System.out.println(existingAccount);
             System.out.println("Enter updated name (enter # for no change): ");
@@ -987,23 +990,15 @@ public class Ui implements UiInterface {
         }
     }
 
-    public void delay(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
     public void pressEnterToContinue() {
         System.out.print("Press ENTER to continue. ");
         String readString = null;
         do {
-            if (scanner.hasNextLine()) {
-                readString = scanner.nextLine();
-                if (readString.isEmpty()) {
-                    readString = null;
-                }
+            // if (scanner.hasNextLine()) {
+            readString = scanner.nextLine();
+            if (readString.isEmpty()) {
+                readString = null;
+                // }
             }
         } while (readString != null);
     }
@@ -1022,7 +1017,17 @@ public class Ui implements UiInterface {
 
     public void spinner(int milliseconds) throws InterruptedException, IOException {
         try {
-            ArrayList<String> progressBar = new ArrayList<String>(Arrays.asList("[..............................]","[=.............................]", "[==............................]", "[===...........................]","[====..........................]", "[=====.........................]", "[======........................]", "[=======.......................]", "[========......................]", "[=========.....................]", "[==========....................]", "[===========...................]", "[============..................]", "[=============.................]", "[==============................]", "[===============...............]", "[================..............]", "[=================.............]", "[==================............]", "[===================...........]", "[====================..........]", "[=====================.........]", "[======================........]", "[=======================.......]", "[========================......]", "[=========================.....]", "[==========================....]", "[===========================...]", "[============================..]", "[==============================]"));
+            ArrayList<String> progressBar = new ArrayList<String>(
+                    Arrays.asList("[............................]", "[=...........................]", "[==..........................]",
+                            "[===.........................]", "[====........................]", "[=====.......................]",
+                            "[======......................]", "[=======.....................]", "[========....................]",
+                            "[=========...................]", "[==========..................]", "[===========.................]",
+                            "[============................]", "[=============...............]", "[==============..............]",
+                            "[===============.............]", "[================............]", "[=================...........]",
+                            "[==================..........]", "[===================.........]", "[====================........]",
+                            "[=====================.......]", "[======================......]", "[=======================.....]",
+                            "[========================....]", "[=========================...]", "[==========================..]",
+                            "[===========================.]", "[============================]")); 
             for (int x = 0; x < progressBar.size(); x++) {
                 String progressBarString = "\r" + progressBar.get(x);
                 System.out.print(progressBarString);

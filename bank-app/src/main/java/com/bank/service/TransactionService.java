@@ -7,15 +7,25 @@ import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.TransactionRepository;
 
-public class TransactionService implements Service<Transaction> {
+public final class TransactionService implements Service<Transaction> {
+
+    // Singleton
+    private static TransactionService INSTANCE;
+    private String info = "Transaction Service";
+
+    public static TransactionService getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TransactionService();
+        }
+        return INSTANCE;
+    }
 
     private TransactionRepository repository = TransactionRepository.getInstance();
 
     public long count() throws ServiceException {
         try {
             return repository.count();
-        }
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
     }
@@ -23,8 +33,7 @@ public class TransactionService implements Service<Transaction> {
     public ArrayList<Transaction> findAll() throws ServiceException {
         try {
             return repository.findAll();
-        } 
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
     }
@@ -32,8 +41,7 @@ public class TransactionService implements Service<Transaction> {
     public Transaction findById(long id) throws ServiceException {
         try {
             return repository.findById(id);
-        } 
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
     }
@@ -41,12 +49,11 @@ public class TransactionService implements Service<Transaction> {
     public Transaction save(Transaction transaction) throws ServiceException {
         try {
             return repository.save(transaction);
-        }
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
     }
-    
+
     public void saveJson() throws ServiceException {
         try {
             repository.saveJson();
@@ -61,5 +68,9 @@ public class TransactionService implements Service<Transaction> {
         } catch (IOException ex) {
             throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
         }
+    }
+
+    public String getInfo() {
+        return info;
     }
 }

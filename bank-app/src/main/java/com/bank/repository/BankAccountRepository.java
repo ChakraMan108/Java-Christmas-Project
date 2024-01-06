@@ -60,7 +60,7 @@ public final class BankAccountRepository implements Repository<BankAccount> {
                 return ba;
             }
         }
-        System.err.println("Bank account linked to customer id " + id + " not found in the repository.");
+        //System.err.println("Bank account linked to customer id " + id + " not found in the repository.");
         return null;
         //throw new RepositoryException("Bank account linked to customer id " + id + " not found in the repository.");
     }

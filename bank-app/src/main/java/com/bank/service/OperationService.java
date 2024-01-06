@@ -8,7 +8,18 @@ import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.OperationRepository;
 
-public class OperationService implements Service<Operation> {
+public final class OperationService implements Service<Operation> {
+
+    // Singleton    
+    private static OperationService INSTANCE;
+    private String info = "Operation Service";
+
+    public static OperationService getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new OperationService();
+        }
+        return INSTANCE;
+    }
 
     private OperationRepository repository = OperationRepository.getInstance();
 
@@ -43,7 +54,7 @@ public class OperationService implements Service<Operation> {
             throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
         }
     }
-    
+
     public void saveJson() throws ServiceException {
         try {
             repository.saveJson();
@@ -59,4 +70,9 @@ public class OperationService implements Service<Operation> {
             throw new ServiceException("[Operation Service error] " + ex.getMessage(), ex);
         }
     }
+
+    public String getInfo() {
+        return info;
+    }
+
 }
