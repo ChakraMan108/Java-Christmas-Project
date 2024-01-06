@@ -36,6 +36,21 @@ public class Customer {
         this.type = type;
     }
 
+    // Parametrised constructor taking all fields from a customer object
+    public Customer(Customer other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.address = other.address;
+        this.dob = other.dob;
+        this.phoneNumber = other.phoneNumber;
+        this.email = other.email;
+        this.type = other.type;
+        this.isActive = other.isActive;
+        this.createdDate = other.createdDate;
+        this.deactivatedDate = other.deactivatedDate;
+        this.type = other.type;
+    }
+
     public long getId() {
         return id;
     }

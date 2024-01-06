@@ -19,11 +19,10 @@ public class Main {
                 }
             } while (!ui.isAuthenticated());
             ui.loadData();
-            ui.spinner(25);
+                ui.spinner(25);
             ui.displayMainMenu();
-        } catch (UIException | IOException | InterruptedException ex) {
+        } catch (UIException | InterruptedException | IOException ex) {
             System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
         }
-
     }
 }

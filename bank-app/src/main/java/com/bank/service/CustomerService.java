@@ -12,14 +12,25 @@ import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
 import com.bank.repository.CustomerRepository;
 
-public class CustomerService implements Service<Customer> {
+public final class CustomerService implements Service<Customer> {
+
+    private static CustomerService INSTANCE;
+    private String info = "Customer Service";
+
+    public static CustomerService getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CustomerService();
+        }
+        return INSTANCE;
+    }
 
     private CustomerRepository repository = CustomerRepository.getInstance();
-    private OperationService opService = new OperationService();
-    private BankAccountService baService = new BankAccountService();
+    private OperationService opService = OperationService.getInstance();
+    private BankAccountService baService = BankAccountService.getInstance();
 
     public long count() throws ServiceException {
         try {
+            loadJson();
             return repository.count();
         } catch (RepositoryException ex) {
             throw new ServiceException("[Customer Service count error] " + ex.getMessage(), ex);
@@ -28,6 +39,7 @@ public class CustomerService implements Service<Customer> {
 
     public ArrayList<Customer> findAll() throws ServiceException {
         try {
+            loadJson();
             return repository.findAll();
         } catch (RepositoryException ex) {
             throw new ServiceException("[Customer Service findAll error] " + ex.getMessage(), ex);
@@ -52,27 +64,59 @@ public class CustomerService implements Service<Customer> {
 
     public Customer update(Customer customer) throws ServiceException {
         try {
-            Customer updatedCustomer = new Customer();
-            if (!customer.isActive() || customer.getDeactivatedDate() != null) {
+            if (customer.equals(null))
+                throw new ServiceException("Cannot update null customer.");
+            if (!customer.isActive())
                 throw new ServiceException("Cannot update deactivated customer id " + customer.getId() + ".");
-            } else {
-                if (customer.equals(null))
-                    throw new ServiceException("Cannot update null customer.");
+            if (customer.getId() <= 0)
+                throw new ServiceException("Cannot update customer with invalid id.");
+            if (customer.getName().equals(""))
+                throw new ServiceException("Cannot update customer with empty name.");
+            if (customer.getAddress().equals(""))
+                throw new ServiceException("Cannot update customer with empty address.");
+            if (customer.getDob().equals(null))
+                throw new ServiceException("Cannot update customer with empty date of birth.");
+            if (customer.getPhoneNumber().equals(""))
+                throw new ServiceException("Cannot update customer with empty phone number.");
+            if (customer.getEmail().equals(""))
+                throw new ServiceException("Cannot update customer with empty email.");
+            if (customer.getType() == null)
+                throw new ServiceException("Cannot update customer with empty type.");
+            if (customer.getCreatedDate().equals(null))
+                throw new ServiceException("Cannot update customer with empty created date.");
+            if (customer.getCreatedDate().isAfter(LocalDate.now()))
+                throw new ServiceException("Cannot update customer with created date in the future.");
+            if (customer.getCreatedDate().isBefore(customer.getDob()))
+                throw new ServiceException("Cannot update customer with created date before date of birth.");
+            if (customer.getDeactivatedDate() != null) {
+                if (customer.getDeactivatedDate().isAfter(LocalDate.now()))
+                    throw new ServiceException("Cannot update customer with deactivated date in the future.");
+                if (customer.getDeactivatedDate().isBefore(customer.getCreatedDate()))
+                    throw new ServiceException("Cannot update customer with deactivated date before created date.");
+                if (customer.getDeactivatedDate().isBefore(customer.getDob()))
+                    throw new ServiceException("Cannot update customer with deactivated date before date of birth.");
+                if (customer.isActive())
+                    throw new ServiceException("Cannot update activated customer with deactivated date.");
+            }
+            if (!findById(customer.getId()).equals(customer)) {
+                Customer updatedCustomer = save(customer);
                 BankAccount bankAccount = baService.findByCustomerId(customer.getId());
+                Operation o = new Operation();
+
                 if (bankAccount != null) {
-                    updatedCustomer = save(customer);
                     bankAccount.setCustomer(updatedCustomer);
                     baService.save(bankAccount);
-                    Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
-                            bankAccount.getId(), customer.getId());
-                    opService.save(o);
+                    o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"), bankAccount.getId(),
+                        customer.getId());
                 } else {
                     updatedCustomer = save(customer);
-                    Operation o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"),
-                            0, customer.getId());
-                    opService.save(o);
+                    o = new Operation(OperationType.CUSTOMER_UPDATE, System.getProperty("user.name"), 0, customer.getId());
                 }
+                opService.save(o);
                 return updatedCustomer;
+            }
+            else {
+                return null;
             }
         } catch (ServiceException ex) {
             throw new ServiceException("[Customer Service update error] " + ex.getMessage(), ex);
@@ -142,5 +186,9 @@ public class CustomerService implements Service<Customer> {
         } catch (IOException ex) {
             throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
         }
+    }
+
+    public String getInfo() {
+        return info;
     }
 }
