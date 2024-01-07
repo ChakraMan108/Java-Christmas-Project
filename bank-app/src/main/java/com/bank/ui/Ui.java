@@ -1,11 +1,8 @@
 package com.bank.ui;
 
-import java.io.BufferedReader;
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +12,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -428,9 +424,13 @@ public class Ui implements UiInterface {
     private static void clearConsole() {
         try {
             if (System.getProperty("os.name").toLowerCase().contains("win"))
+                // clear screen on windows OS
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             else
-                Runtime.getRuntime().exec("clear");
+               // clear screen on *nix OS
+                System.out.print("\033[H\033[2J");
+                System.out.flush();      
+                //Runtime.getRuntime().exec("clear");
         } catch (IOException | InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
@@ -737,6 +737,7 @@ public class Ui implements UiInterface {
 
     private void displayCustomerDetails() {
         try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Customer Details\n==============================");
             System.out.print("Enter customer ID to display: ");
             long id = getLong();
@@ -749,8 +750,14 @@ public class Ui implements UiInterface {
             System.out.println("Email: " + customer.getEmail());
             System.out.println("Type: " + customer.getType());
             System.out.println("Active " + customer.isActive());
-            System.out.println("Created Date: " + customer.getCreatedDate());
-            System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
+            if (customer.getCreatedDate() != null)
+                System.out.println("Created Date: " + customer.getCreatedDate().format(formatter));
+            else 
+                System.out.println("Created Date: " + customer.getCreatedDate());
+            if (customer.getDeactivatedDate() != null)
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate().format(formatter));
+            else 
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
             pressEnterToContinue();
         } catch (ServiceException | UIException e) {
             System.out.println("[Customer display failed] " + e.getMessage());
@@ -1029,13 +1036,13 @@ public class Ui implements UiInterface {
     public void pressEnterToContinue() {
         System.out.print("Press ENTER to continue. ");
         String readString = null;
-        do {
-            if (scanner.hasNextLine()) {
+        //do {
+            // if (scanner.hasNextLine()) {
                 readString = scanner.nextLine();
                 if (readString == null || readString.trim().equals(""))
                     readString = null;
-            }
-        } while (readString != null);
+            //}
+        //} while (readString != null);
     }
 
     private void setAuthenticated(boolean authenticated) {
