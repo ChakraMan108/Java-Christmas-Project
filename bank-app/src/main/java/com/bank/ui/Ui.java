@@ -1,8 +1,11 @@
 package com.bank.ui;
 
+import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +15,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -69,7 +73,7 @@ public class Ui implements UiInterface {
     public void loadData() throws UIException {
         try {
             File directory = new File(getDataPath());
-            if (!directory.exists()){
+            if (!directory.exists()) {
                 directory.mkdirs();
             }
             cuService.loadJson();
@@ -374,18 +378,16 @@ public class Ui implements UiInterface {
     }
 
     public String getString() throws UIException {
-
         String input = scanner.nextLine();
-        if (input == null || input.trim().equals("")) {
+        if (input == null || input.trim() == "") {
             throw new UIException("[getString Input Error] Invalid input.");
         }
         return input;
     }
 
     public long getLong() throws UIException {
-
         String input = scanner.nextLine();
-        if (input == null || input.trim().equals("")) {
+        if (input == null || input.trim() == "") {
             throw new UIException("[getLong Input Error] Invalid input.");
         }
         try {
@@ -396,7 +398,6 @@ public class Ui implements UiInterface {
     }
 
     private long getCurrencyAmount() throws UIException {
-
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
             throw new UIException("Invalid input.");
@@ -1029,11 +1030,10 @@ public class Ui implements UiInterface {
         System.out.print("Press ENTER to continue. ");
         String readString = null;
         do {
-            // if (scanner.hasNextLine()) {
-            readString = scanner.nextLine();
-            if (readString.isEmpty()) {
-                readString = null;
-                // }
+            if (scanner.hasNextLine()) {
+                readString = scanner.nextLine();
+                if (readString == null || readString.trim().equals(""))
+                    readString = null;
             }
         } while (readString != null);
     }
