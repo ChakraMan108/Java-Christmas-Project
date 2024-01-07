@@ -1,5 +1,6 @@
 package com.bank.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -67,6 +68,10 @@ public class Ui implements UiInterface {
 
     public void loadData() throws UIException {
         try {
+            File directory = new File(getDataPath());
+            if (!directory.exists()){
+                directory.mkdirs();
+            }
             cuService.loadJson();
             baService.loadJson();
             opService.loadJson();

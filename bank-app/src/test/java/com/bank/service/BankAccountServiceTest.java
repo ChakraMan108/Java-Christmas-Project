@@ -21,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bank.entity.BankAccount;
 import com.bank.entity.Customer;
-import com.bank.entity.BankAccount.AccountType;
 import com.bank.entity.Customer.CustomerType;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
