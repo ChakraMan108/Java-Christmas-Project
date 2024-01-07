@@ -142,42 +142,35 @@ public final class BankAccountService implements Service<BankAccount> {
 
     public BankAccount createAccount(BankAccount bankAccount, Customer customer) throws ServiceException {
         try {
-            if (bankAccount.equals(null) || customer.equals(null))
+            if (bankAccount == null || customer == null)
                 throw new ServiceException("Cannot create account with null account or customer.");
-            if (bankAccount.getId() != 0 || bankAccount.isActive() != false || bankAccount.getCreatedDate() != null)
-                throw new ServiceException("Cannot create account with non-empty account id, isActive or createdDate.");
+            if (bankAccount.getId() != 0 || bankAccount.isActive() != false || bankAccount.getCreatedDate() != null || bankAccount.getDeactivatedDate() != null)
+                throw new ServiceException("Cannot create account with non-empty account id, isActive createdDate or deactivatedDate.");
             if (!customer.isActive())
                 throw new ServiceException("Cannot create account for deactivated customer.");
             if (customer.getId() <= 0)
-                throw new ServiceException("Cannot create account with invalid customer id.");
-            if (customer.getName().equals(""))
-                throw new ServiceException("Cannot create account with customer with empty name.");
-            if (customer.getAddress().equals(""))
-                throw new ServiceException("Cannot create account with customer with empty address.");
-            if (customer.getDob().equals(null))
-                throw new ServiceException("Cannot create account with customer with empty date of birth.");
-            if (customer.getPhoneNumber().equals(""))
-                throw new ServiceException("Cannot create account with customer with empty phone number.");
-            if (customer.getEmail().equals(""))
-                throw new ServiceException("Cannot create account with customer with empty email.");
+                throw new ServiceException("Cannot create account for invalid customer id.");
+            if (customer.getName() == null)
+                throw new ServiceException("Cannot create account for customer with empty name.");
+            if (customer.getAddress() == null)
+                throw new ServiceException("Cannot create account for customer with empty address.");
+            if (customer.getDob() == null)
+                throw new ServiceException("Cannot create account for customer with empty date of birth.");
+            if (customer.getPhoneNumber() == null)
+                throw new ServiceException("Cannot create account for customer with empty phone number.");
+            if (customer.getEmail() == null)
+                throw new ServiceException("Cannot create account for customer with empty email.");
             if (customer.getType() == null)
-                throw new ServiceException("Cannot create account with customer with empty type.");
-            if (customer.getCreatedDate().equals(null))
-                throw new ServiceException("Cannot create account with customer with empty created date.");
-            if (customer.getDob().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot create account with customer date of birth in the future.");
-            if (customer.getCreatedDate().isAfter(LocalDateTime.now()))
-                throw new ServiceException("Cannot create account with customer created date in the future.");
-            if (customer.getCreatedDate().toLocalDate().isBefore(customer.getDob()))
-                throw new ServiceException("Cannot create account with customer created date before date of birth.");
-
-            if (customer.getCreatedDate().isAfter(LocalDateTime.now()))
-                throw new ServiceException("Cannot create account with customer with created date in the future.");
-            if (customer.getCreatedDate().toLocalDate().isBefore(customer.getDob()))
-                throw new ServiceException(
-                        "Cannot create account with customer with created date before date of birth.");
+                throw new ServiceException("Cannot create account for customer with empty type.");
+            if (customer.getCreatedDate() == null)
+                throw new ServiceException("Cannot create account for customer with empty created date.");
+            if (customer.getDob() != null && customer.getDob().isAfter(LocalDate.now()))
+                throw new ServiceException("Cannot create account for customer date of birth in the future.");
+            if (customer.getCreatedDate() != null && customer.getCreatedDate().isAfter(LocalDateTime.now()))
+                throw new ServiceException("Cannot create account for customer created date in the future.");
             if (customer.getDeactivatedDate() != null)
-                throw new ServiceException("Cannot create account with customer with deactivated date.");
+                throw new ServiceException("Cannot create account for customer with deactivated date.");
+                
             BankAccount createdAccount = new BankAccount();
             bankAccount.setActive(true);
             bankAccount.setCreatedDate(LocalDateTime.now());
@@ -186,34 +179,28 @@ public final class BankAccountService implements Service<BankAccount> {
             os.save(new Operation(OperationType.ACCOUNT_CREATION, System.getProperty("user.name"),
                     createdAccount.getCustomer().getId(), createdAccount.getId()));
             return createdAccount;
-        } catch (ServiceException | NullPointerException ex) {
+        } catch (ServiceException ex) {
             throw new ServiceException("[Bank Account Service createAccount error] " + ex.getMessage(), ex);
         }
     }
 
     public BankAccount update(BankAccount bankAccount) throws ServiceException {
         try {
-            if (bankAccount.equals(null))
+            if (bankAccount == null)
                 throw new ServiceException("Cannot update null account.");
-            if (bankAccount.getCustomer().equals(null))
+            if (bankAccount.getCustomer() == null)
                 throw new ServiceException("Cannot update account id " + bankAccount.getId() + " with null customer.");
             if (!bankAccount.isActive())
                 throw new ServiceException("Cannot update deactivated account id " + bankAccount.getId() + ".");
             if (!bankAccount.getCustomer().isActive())
                 throw new ServiceException("Cannot update account id " + bankAccount.getId()
                         + " for deactivated customer id " + bankAccount.getCustomer().getId() + ".");
-            if (bankAccount.getCreatedDate().toLocalDate().isBefore(bankAccount.getCustomer().getDob()))
-                throw new ServiceException("Cannot update account id " + bankAccount.getId()
-                        + " with created date before customer date of birth.");
             if (bankAccount.getCustomer().getId() <= 0)
                 throw new ServiceException(
                         "Cannot update account id " + bankAccount.getId() + " with invalid customer id.");
             if (bankAccount.getBalance() < 0)
                 throw new ServiceException(
                         "Cannot update account id " + bankAccount.getId() + " with negative balance.");
-            if (bankAccount.getCreatedDate().isAfter(LocalDateTime.now()))
-                throw new ServiceException(
-                        "Cannot update account id " + bankAccount.getId() + " with future created date.");
             if (bankAccount.getId() <= 0)
                 throw new ServiceException("Cannot update account with invalid id.");
             if (bankAccount.getDeactivatedDate() != null)

@@ -31,16 +31,16 @@ import com.bank.repository.BankAccountRepository;
 public class BankAccountServiceTest {
 
     @InjectMocks
-    private BankAccountService bankAccountService;
+    private BankAccountService bankAccountService = BankAccountService.getInstance();
 
     @Mock
-    private BankAccountRepository repository;
+    private BankAccountRepository repository = BankAccountRepository.getInstance();
 
     @Mock
-    private TransactionService ts;
+    private TransactionService ts = TransactionService.getInstance();
 
     @Mock
-    private OperationService os;
+    private OperationService os = OperationService.getInstance();
 
     private BankAccount bankAccount;
     private Customer customer;
@@ -54,6 +54,7 @@ public class BankAccountServiceTest {
         bankAccount = new BankAccount();
         bankAccount.setId(1L);
         bankAccount.setActive(true);
+        bankAccount.setCreatedDate(LocalDateTime.now());
         bankAccount.setCustomer(customer);
     }
 
@@ -249,22 +250,77 @@ public class BankAccountServiceTest {
     @Test
     public void testCreateAccount_successfulAccountCreation() throws ServiceException, RepositoryException {
         BankAccount bankAccount2 = new BankAccount();
-        Mockito.when(repository.save(bankAccount2)).thenReturn(bankAccount2);
-        bankAccount2.setAccountName("John Doe");
-        bankAccount2.setBalance(10L);
-        bankAccount2.setType(AccountType.CURRENT_ACCOUNT);
+        BankAccount bankAccount3 = new BankAccount();
+        BankAccount bankAccount4 = new BankAccount();
         customer.setActive(true);
         customer.setId(1L);
         customer.setName("John Doe");
         customer.setDob(LocalDate.now().minusYears(18));
-        customer.setCreatedDate(LocalDateTime.of(2022, 1, 1,1,1));
+        customer.setCreatedDate(LocalDateTime.of(2022, 1, 1, 1, 1));
         customer.setDeactivatedDate(null);
         customer.setAddress("123 Main St");
         customer.setEmail("email@email.com");
         customer.setPhoneNumber("1234567890");
         customer.setType(CustomerType.COMPANY);
-
+        Mockito.when(repository.save(bankAccount2)).thenReturn(bankAccount2);
         assertNotNull(bankAccountService.createAccount(bankAccount2, customer));
-        assertEquals(bankAccount, bankAccountService.createAccount(bankAccount2, customer));
+        Mockito.when(repository.save(bankAccount3)).thenReturn(bankAccount3);
+        assertDoesNotThrow(() -> bankAccountService.createAccount(bankAccount3, customer));
+        Mockito.when(repository.save(bankAccount4)).thenReturn(bankAccount4);
+        assertEquals(bankAccount4, bankAccountService.createAccount(bankAccount4, customer));
+    }
+
+    @Test
+    public void testUpdate_nullAccount() {
+        assertThrows(ServiceException.class, () -> bankAccountService.update(null));
+    }
+
+    @Test
+    public void testUpdate_nullCustomer() {
+        bankAccount.setCustomer(null);
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_deactivatedAccount() {
+        bankAccount.setActive(false);
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_deactivatedCustomer() {
+        customer.setActive(false);
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_invalidCustomerId() {
+        customer.setId(-1L);
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_negativeBalance() {
+        bankAccount.setBalance(-1);
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_invalidAccountId() {
+        bankAccount.setId(-1L);
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_deactivatedDate() {
+        bankAccount.setDeactivatedDate(LocalDateTime.now());
+        assertThrows(ServiceException.class, () -> bankAccountService.update(bankAccount));
+    }
+
+    @Test
+    public void testUpdate_success() throws ServiceException, RepositoryException {
+        Mockito.when(repository.save(bankAccount)).thenReturn(bankAccount);
+        assertDoesNotThrow(() -> bankAccountService.update(bankAccount));
+        assertEquals(bankAccount, bankAccountService.update(bankAccount));
     }
 }
