@@ -63,44 +63,55 @@ public final class CustomerService implements Service<Customer> {
         }
     }
 
+    public Customer createCustomer(Customer customer) throws ServiceException {
+        try {
+            if (customer == null)
+                throw new ServiceException("Cannot create null customer.");
+            if (customer.getId() != 0 || customer.isActive() != false || customer.getCreatedDate() != null || customer.getDeactivatedDate() != null)
+                throw new ServiceException("Cannot create customer with non-empty id, isActive, createdDate or deactivatedDate.");
+            if (customer.getName() == null)
+                throw new ServiceException("Cannot create customer with empty name.");
+            if (customer.getAddress() == null)
+                throw new ServiceException("Cannot create customer with empty address.");
+            if (customer.getDob() == null)
+                throw new ServiceException("Cannot create customer with empty date of birth.");
+            if (customer.getPhoneNumber() ==null)
+                throw new ServiceException("Cannot create customer with empty phone number.");
+            if (customer.getEmail() == null)
+                throw new ServiceException("Cannot create customerwith empty email.");
+            if (customer.getType() == null)
+                throw new ServiceException("Cannot create customer with empty type.");
+            if (customer.getDob() != null && customer.getDob().isAfter(LocalDate.now()))
+                throw new ServiceException("Cannot create customer with date of birth in the future.");
+
+            customer.setActive(true);
+            customer.setCreatedDate(LocalDateTime.now());
+            Customer cust = new Customer(save(customer));
+            opService.save(new Operation(OperationType.CUSTOMER_CREATION, System.getProperty("user.name"), 0,
+                    cust.getId()));
+            return cust;
+        } catch (ServiceException ex) {
+            throw new ServiceException("[Customer Service createCustomer error] " + ex.getMessage(), ex);
+        }
+    }
+
     public Customer update(Customer customer) throws ServiceException {
         try {
-            if (customer.equals(null))
+            if (customer == null)
                 throw new ServiceException("Cannot update null customer.");
             if (!customer.isActive())
                 throw new ServiceException("Cannot update deactivated customer id " + customer.getId() + ".");
             if (customer.getId() <= 0)
                 throw new ServiceException("Cannot update customer with invalid id " + customer.getId() + ".");
-            if (customer.getName().equals(""))
-                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty name.");
-            if (customer.getAddress().equals(""))
-                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty address.");
-            if (customer.getDob().equals(null))
-                throw new ServiceException(
-                        "Cannot update customer id " + customer.getId() + " with empty date of birth.");
-            if (customer.getPhoneNumber().equals(""))
-                throw new ServiceException(
-                        "Cannot update customer id " + customer.getId() + " with empty phone number.");
-            if (customer.getEmail().equals(""))
-                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty email.");
-            if (customer.getType() == null)
-                throw new ServiceException("Cannot update customer id " + customer.getId() + " with empty type.");
-            if (customer.getCreatedDate().equals(null))
-                throw new ServiceException(
-                        "Cannot update customer id " + customer.getId() + " with empty created date.");
-            if (customer.getCreatedDate().isAfter(LocalDateTime.now()))
+            if (customer.getCreatedDate() != null && customer.getCreatedDate().isAfter(LocalDateTime.now()))
                 throw new ServiceException(
                         "Cannot update customer id " + customer.getId() + " with created date in the future.");
-            if (customer.getCreatedDate().toLocalDate().isBefore(customer.getDob()))
-                throw new ServiceException(
-                        "Cannot update customer id " + customer.getId() + " with created date before date of birth.");
             if (customer.getDeactivatedDate() != null)
                 throw new ServiceException("Cannot update customer id " + customer.getId() + " with deactivated date.");
             if (!findById(customer.getId()).equals(customer)) {
                 Customer updatedCustomer = save(customer);
                 BankAccount bankAccount = baService.findByCustomerId(customer.getId());
                 Operation o = new Operation();
-
                 if (bankAccount != null) {
                     bankAccount.setCustomer(updatedCustomer);
                     baService.save(bankAccount);
@@ -115,6 +126,7 @@ public final class CustomerService implements Service<Customer> {
                 opService.save(o);
                 return updatedCustomer;
             } else {
+                // Update not needed, the customer is the same
                 return null;
             }
         } catch (ServiceException ex) {
@@ -160,37 +172,6 @@ public final class CustomerService implements Service<Customer> {
             }
         } catch (RepositoryException | ServiceException ex) {
             throw new ServiceException("[Customer Service deactivateCustomer error] " + ex.getMessage(), ex);
-        }
-    }
-
-    public Customer createCustomer(Customer customer) throws ServiceException {
-        try {
-            if (customer.equals(null))
-                throw new ServiceException("Cannot create null customer.");
-            if (customer.getId() != 0 || customer.isActive() != false || customer.getCreatedDate() != null)
-                throw new ServiceException("Cannot create customer with non-empty id, isActive or createdDate.");
-            if (customer.getDob().isAfter(LocalDate.now()))
-                throw new ServiceException("Cannot create customer with date of birth in the future.");
-            if (customer.getName().equals(""))
-                throw new ServiceException("Cannot create customer with empty name.");
-            if (customer.getAddress().equals(""))
-                throw new ServiceException("Cannot create customer with empty address.");
-            if (customer.getDob().equals(null))
-                throw new ServiceException("Cannot create customer with empty date of birth.");
-            if (customer.getPhoneNumber().equals(""))
-                throw new ServiceException("Cannot create customer with empty phone number.");
-            if (customer.getEmail().equals(""))
-                throw new ServiceException("Cannot create customerwith empty email.");
-            if (customer.getType() == null)
-                throw new ServiceException("Cannot create customer with empty type.");
-            customer.setActive(true);
-            customer.setCreatedDate(LocalDateTime.now());
-            Customer cust = new Customer(save(customer));
-            opService.save(new Operation(OperationType.CUSTOMER_CREATION, System.getProperty("user.name"), 0,
-                    cust.getId()));
-            return cust;
-        } catch (ServiceException ex) {
-            throw new ServiceException("[Customer Service createCustomer error] " + ex.getMessage(), ex);
         }
     }
 

@@ -1045,7 +1045,7 @@ public class Ui implements UiInterface {
         return dataPath;
     }
 
-    public void spinner(int milliseconds) throws InterruptedException, IOException {
+    public void progressBar(int milliseconds) throws InterruptedException, IOException {
         try {
             ArrayList<String> progressBar = new ArrayList<String>(
                     Arrays.asList("[............................]", "[=...........................]",
