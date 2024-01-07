@@ -1,5 +1,6 @@
 package com.bank.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -67,6 +68,10 @@ public class Ui implements UiInterface {
 
     public void loadData() throws UIException {
         try {
+            File directory = new File(getDataPath());
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
             cuService.loadJson();
             baService.loadJson();
             opService.loadJson();
@@ -369,18 +374,16 @@ public class Ui implements UiInterface {
     }
 
     public String getString() throws UIException {
-
         String input = scanner.nextLine();
-        if (input == null || input.trim().equals("")) {
+        if (input == null || input.trim() == "") {
             throw new UIException("[getString Input Error] Invalid input.");
         }
         return input;
     }
 
     public long getLong() throws UIException {
-
         String input = scanner.nextLine();
-        if (input == null || input.trim().equals("")) {
+        if (input == null || input.trim() == "") {
             throw new UIException("[getLong Input Error] Invalid input.");
         }
         try {
@@ -391,7 +394,6 @@ public class Ui implements UiInterface {
     }
 
     private long getCurrencyAmount() throws UIException {
-
         String input = scanner.nextLine();
         if (input == null || input.trim().equals("")) {
             throw new UIException("Invalid input.");
@@ -422,9 +424,13 @@ public class Ui implements UiInterface {
     private static void clearConsole() {
         try {
             if (System.getProperty("os.name").toLowerCase().contains("win"))
+                // clear screen on windows OS
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             else
-                Runtime.getRuntime().exec("clear");
+               // clear screen on *nix OS
+                System.out.print("\033[H\033[2J");
+                System.out.flush();      
+                //Runtime.getRuntime().exec("clear");
         } catch (IOException | InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
@@ -731,6 +737,7 @@ public class Ui implements UiInterface {
 
     private void displayCustomerDetails() {
         try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Customer Details\n==============================");
             System.out.print("Enter customer ID to display: ");
             long id = getLong();
@@ -743,8 +750,14 @@ public class Ui implements UiInterface {
             System.out.println("Email: " + customer.getEmail());
             System.out.println("Type: " + customer.getType());
             System.out.println("Active " + customer.isActive());
-            System.out.println("Created Date: " + customer.getCreatedDate());
-            System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
+            if (customer.getCreatedDate() != null)
+                System.out.println("Created Date: " + customer.getCreatedDate().format(formatter));
+            else 
+                System.out.println("Created Date: " + customer.getCreatedDate());
+            if (customer.getDeactivatedDate() != null)
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate().format(formatter));
+            else 
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
             pressEnterToContinue();
         } catch (ServiceException | UIException e) {
             System.out.println("[Customer display failed] " + e.getMessage());
@@ -1023,14 +1036,13 @@ public class Ui implements UiInterface {
     public void pressEnterToContinue() {
         System.out.print("Press ENTER to continue. ");
         String readString = null;
-        do {
+        //do {
             // if (scanner.hasNextLine()) {
-            readString = scanner.nextLine();
-            if (readString.isEmpty()) {
-                readString = null;
-                // }
-            }
-        } while (readString != null);
+                readString = scanner.nextLine();
+                if (readString == null || readString.trim().equals(""))
+                    readString = null;
+            //}
+        //} while (readString != null);
     }
 
     private void setAuthenticated(boolean authenticated) {
