@@ -19,7 +19,7 @@ public class Main {
                 }
             } while (!ui.isAuthenticated());
             ui.loadData();
-                ui.progressBar(25);
+                ui.progressBar(20);
             ui.displayMainMenu();
         } catch (UIException | InterruptedException | IOException ex) {
             System.out.println(ex.getMessage() + "\nExiting the Bank Application.");

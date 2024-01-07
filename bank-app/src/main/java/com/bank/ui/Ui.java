@@ -1,5 +1,6 @@
 package com.bank.ui;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,8 @@ public class Ui implements UiInterface {
 
     private static Scanner scanner = null;
     private boolean authenticated = false;
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // Public Constructor
     public Ui() {
@@ -84,19 +87,30 @@ public class Ui implements UiInterface {
     public void authenticateApp() throws UIException {
         try {
             clearConsole();
+            Console console = System.console();
             System.out.println("\n==============================");
             System.out.println("=   BANK APP AUTHENTICATION  =");
             System.out.println("==============================");
-            System.out.print("Enter username: ");
-            String username = getString();
-            System.out.print("Enter password: ");
-            String password = getString();
+            // System.out.print("Username: ");
+            // String username = getString();
+            // System.out.print("Enter password: ");
+            // String password = getString();
+            String username = console.readLine("Username: ");
+            if (username == null || username.trim().equals(null)) {
+                throw new UIException("Invalid input.");
+            }
+            char[] passwordChar = console.readPassword("Password: ");
+            if (passwordChar == null || passwordChar.length == 0) {
+                throw new UIException("Invalid input.");
+            }
+            String password = String.valueOf(passwordChar);
             if (!username.equals(appUsername) || !password.equals(appPassword)) {
                 throw new UIException("Invalid credentials.");
             } else {
                 System.out.println("\nAuthentication successful.");
                 System.out.println("Welcome [" + System.getProperty("user.name") + "].");
                 System.out.println("Logged in as [username: " + username + "].");
+                System.out.println("Logged in at [" + LocalDateTime.now().format(dateTimeFormatter) + "].\n");
                 setAuthenticated(true);
             }
         } catch (Exception ex) {
@@ -427,10 +441,10 @@ public class Ui implements UiInterface {
                 // clear screen on windows OS
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             else
-               // clear screen on *nix OS
+                // clear screen on *nix OS
                 System.out.print("\033[H\033[2J");
-                System.out.flush();      
-                //Runtime.getRuntime().exec("clear");
+            System.out.flush();
+            // Runtime.getRuntime().exec("clear");
         } catch (IOException | InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
@@ -737,7 +751,6 @@ public class Ui implements UiInterface {
 
     private void displayCustomerDetails() {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Customer Details\n==============================");
             System.out.print("Enter customer ID to display: ");
             long id = getLong();
@@ -751,12 +764,12 @@ public class Ui implements UiInterface {
             System.out.println("Type: " + customer.getType());
             System.out.println("Active " + customer.isActive());
             if (customer.getCreatedDate() != null)
-                System.out.println("Created Date: " + customer.getCreatedDate().format(formatter));
-            else 
+                System.out.println("Created Date: " + customer.getCreatedDate().format(dateTimeFormatter));
+            else
                 System.out.println("Created Date: " + customer.getCreatedDate());
             if (customer.getDeactivatedDate() != null)
-                System.out.println("Deactivated Date: " + customer.getDeactivatedDate().format(formatter));
-            else 
+                System.out.println("Deactivated Date: " + customer.getDeactivatedDate().format(dateTimeFormatter));
+            else
                 System.out.println("Deactivated Date: " + customer.getDeactivatedDate());
             pressEnterToContinue();
         } catch (ServiceException | UIException e) {
@@ -786,11 +799,10 @@ public class Ui implements UiInterface {
     private void displayAccountsByDate() {
         try {
             long count = 0;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Accounts By Date\n==============================");
             Pair<LocalDateTime> dates = getDateRange();
-            String dateFirstStr = dates.getFirst().format(formatter);
-            String dateSecondStr = dates.getFirst().format(formatter);
+            String dateFirstStr = dates.getFirst().format(dateTimeFormatter);
+            String dateSecondStr = dates.getFirst().format(dateTimeFormatter);
             System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<BankAccount> bankAccounts = baService.findAll();
             if (!bankAccounts.isEmpty()) {
@@ -816,11 +828,10 @@ public class Ui implements UiInterface {
     private void displayCustomersByDate() {
         try {
             long count = 0;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Customers By Date\n==============================");
             Pair<LocalDateTime> dates = getDateRange();
-            String dateFirstStr = dates.getFirst().format(formatter);
-            String dateSecondStr = dates.getFirst().format(formatter);
+            String dateFirstStr = dates.getFirst().format(dateTimeFormatter);
+            String dateSecondStr = dates.getFirst().format(dateTimeFormatter);
             System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<Customer> customers = cuService.findAll();
             if (!customers.isEmpty()) {
@@ -846,11 +857,10 @@ public class Ui implements UiInterface {
     private void displayTransactionsByDate() {
         try {
             long count = 0;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Transactions By Date\n==============================");
             Pair<LocalDateTime> dates = getDateRange();
-            String dateFirstStr = dates.getFirst().format(formatter);
-            String dateSecondStr = dates.getFirst().format(formatter);
+            String dateFirstStr = dates.getFirst().format(dateTimeFormatter);
+            String dateSecondStr = dates.getFirst().format(dateTimeFormatter);
             System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<Transaction> transactions = trService.findAll();
             if (!transactions.isEmpty()) {
@@ -876,11 +886,10 @@ public class Ui implements UiInterface {
     private void displayOperationsByDate() {
         try {
             long count = 0;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             System.out.println("\nDisplay Operations By Date\n==============================");
             Pair<LocalDateTime> dates = getDateRange();
-            String dateFirstStr = dates.getFirst().format(formatter);
-            String dateSecondStr = dates.getFirst().format(formatter);
+            String dateFirstStr = dates.getFirst().format(dateTimeFormatter);
+            String dateSecondStr = dates.getFirst().format(dateTimeFormatter);
             System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
             ArrayList<Operation> operations = opService.findAll();
             if (!operations.isEmpty()) {
@@ -1036,13 +1045,13 @@ public class Ui implements UiInterface {
     public void pressEnterToContinue() {
         System.out.print("Press ENTER to continue. ");
         String readString = null;
-        //do {
-            // if (scanner.hasNextLine()) {
-                readString = scanner.nextLine();
-                if (readString == null || readString.trim().equals(""))
-                    readString = null;
-            //}
-        //} while (readString != null);
+        // do {
+        // if (scanner.hasNextLine()) {
+        readString = scanner.nextLine();
+        if (readString == null || readString.trim().equals(""))
+            readString = null;
+        // }
+        // } while (readString != null);
     }
 
     private void setAuthenticated(boolean authenticated) {
@@ -1061,24 +1070,42 @@ public class Ui implements UiInterface {
         try {
             ArrayList<String> progressBar = new ArrayList<String>(
                     Arrays.asList("[............................]", "[=...........................]",
-                            "[==..........................]",
-                            "[===.........................]", "[====........................]",
-                            "[=====.......................]",
-                            "[======......................]", "[=======.....................]",
-                            "[========....................]",
-                            "[=========...................]", "[==========..................]",
-                            "[===========.................]",
+                            "[==..........................]", "[===.........................]",
+                            "[====........................]",
+                            "[=====.......................]", "[======......................]",
+                            "[=======.....................]",
+                            "[========....................]", "[=========...................]",
+                            "[==========..................]", "[===========.................]",
                             "[============................]", "[=============...............]",
-                            "[==============..............]",
-                            "[===============.............]", "[================............]",
-                            "[=================...........]",
-                            "[==================..........]", "[===================.........]",
+                            "[==============..............]", "[===============.............]",
+                            "[================............]",
+                            "[=================...........]", "[==================..........]",
+                            "[===================.........]",
                             "[====================........]",
                             "[=====================.......]", "[======================......]",
                             "[=======================.....]",
                             "[========================....]", "[=========================...]",
                             "[==========================..]",
-                            "[===========================.]", "[============================]"));
+                            "[===========================.]", "[============================]",
+                            "[===========================.]", "[==========================..]",
+                            "[=========================...]", "[========================....]",
+                            "[=======================.....]",
+                            "[======================......]", "[=====================.......]",
+                            "[====================........]",
+                            "[===================.........]", "[==================..........]",
+                            "[=================...........]",
+                            "[================............]", "[===============.............]",
+                            "[==============..............]",
+                            "[=============...............]", "[============................]",
+                            "[===========.................]",
+                            "[==========..................]", "[=========...................]",
+                            "[========....................]",
+                            "[=======.....................]", "[======......................]",
+                            "[=====.......................]",
+                            "[====........................]", "[===.........................]",
+                            "[==..........................]",
+                            "[=...........................]", "[............................]"));
+
             for (int x = 0; x < progressBar.size(); x++) {
                 String progressBarString = "\r" + progressBar.get(x);
                 System.out.print(progressBarString);
@@ -1095,11 +1122,11 @@ public class Ui implements UiInterface {
             LocalDate endDate;
             LocalDateTime startDateTime;
             LocalDateTime endDateTime;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             System.out.print("Enter Start Date [yyyy-mm-dd] (enter # for 1 year ago): ");
             String startDateStr = getString();
             if (!startDateStr.equals("#")) {
-                startDate = LocalDate.parse(startDateStr, formatter);
+                startDate = LocalDate.parse(startDateStr, dateFormatter);
                 startDateTime = LocalDateTime.of(startDate, LocalTime.of(0, 0));
             } else {
                 startDateTime = LocalDateTime.now().minusYears(1);
@@ -1107,7 +1134,7 @@ public class Ui implements UiInterface {
             System.out.print("Enter End Date [yyyy-mm-dd] (enter # for today): ");
             String endDateStr = getString();
             if (!endDateStr.equals("#")) {
-                endDate = LocalDate.parse(endDateStr, formatter);
+                endDate = LocalDate.parse(endDateStr, dateFormatter);
                 endDateTime = LocalDateTime.of(endDate, LocalTime.of(0, 0));
             } else {
                 endDateTime = LocalDateTime.now();
