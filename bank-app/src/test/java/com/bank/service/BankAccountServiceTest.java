@@ -246,11 +246,8 @@ public class BankAccountServiceTest {
         assertThrows(ServiceException.class, () -> bankAccountService.createAccount(bankAccount, customer));
     }
 
-    @Test
-    public void testCreateAccount_successfulAccountCreation() throws ServiceException, RepositoryException {
-        BankAccount bankAccount2 = new BankAccount();
-        BankAccount bankAccount3 = new BankAccount();
-        BankAccount bankAccount4 = new BankAccount();
+    private void createValidCustomer()
+    {
         customer.setActive(true);
         customer.setId(1L);
         customer.setName("John Doe");
@@ -261,6 +258,14 @@ public class BankAccountServiceTest {
         customer.setEmail("email@email.com");
         customer.setPhoneNumber("1234567890");
         customer.setType(CustomerType.COMPANY);
+    }
+
+    @Test
+    public void testCreateAccount_successfulAccountCreation() throws ServiceException, RepositoryException {
+        BankAccount bankAccount2 = new BankAccount();
+        BankAccount bankAccount3 = new BankAccount();
+        BankAccount bankAccount4 = new BankAccount();
+        createValidCustomer();
         Mockito.when(repository.save(bankAccount2)).thenReturn(bankAccount2);
         assertNotNull(bankAccountService.createAccount(bankAccount2, customer));
         Mockito.when(repository.save(bankAccount3)).thenReturn(bankAccount3);

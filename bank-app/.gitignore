@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 **/target/
+Docker.bat
 
 ### STS ###
 .apt_generated
@@ -32,3 +33,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
