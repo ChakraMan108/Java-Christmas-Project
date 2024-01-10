@@ -1,8 +1,6 @@
 package com.bank.ui;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Properties;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -40,7 +38,6 @@ public class UiCli implements Ui {
     public static String dataPath;
 
     private static Scanner scanner = null;
-    private boolean authenticated = false;
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -859,7 +856,7 @@ public class UiCli implements Ui {
             String dateFirstStr = dates.getFirst().format(dateTimeFormatter);
             String dateSecondStr = dates.getFirst().format(dateTimeFormatter);
             System.out.println("\nDisplaying accounts from " + dateFirstStr + " to " + dateSecondStr);
-            ArrayList<Transaction> transactions = trService.findAll();
+            ArrayList<Transaction> transactions = (ArrayList<Transaction>) trService.findAll();
             if (!transactions.isEmpty()) {
                 for (Transaction transaction : transactions) {
                     LocalDateTime transactionDate = transaction.getCreatedDate();

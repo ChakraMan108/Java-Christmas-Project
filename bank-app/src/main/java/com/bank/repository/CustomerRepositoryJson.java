@@ -2,7 +2,9 @@ package com.bank.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import com.bank.entity.Customer;
 import com.bank.exceptions.RepositoryException;
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class CustomerRepositoryJson implements CustomerRepository {
 
+    private String dataPath;
     private ArrayList<Customer> customers = new ArrayList<>();
 
     private String jsonDataPath; // = CliUi.getDataPath() + "/customers.json";
@@ -85,4 +88,21 @@ public class CustomerRepositoryJson implements CustomerRepository {
         }
     }
 
+    public void loadProperties() throws RepositoryException {
+        try {
+            InputStream appConfigPath = CustomerRepositoryJson.class.getClassLoader().getResourceAsStream("repo.properties");
+            Properties appProps = new Properties();
+            appProps.load(appConfigPath);
+            if (System.getProperty("os.name").toLowerCase().contains("win"))
+                dataPath = appProps.getProperty("app.win.path");
+            else
+                dataPath = appProps.getProperty("app.nix.path");
+        } catch (IOException e) {
+            throw new RepositoryException("[CustomerRepository loadProperties error]" + e.getMessage());
+        }
+    }
+
+    private String getDataPath() {
+        return dataPath;
+    }
 }

@@ -2,16 +2,20 @@ package com.bank.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
+import com.bank.exceptions.UIException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public final class BankAccountRepositoryJson implements BankAccountRepository {
 
+    private String dataPath;
     private ArrayList<BankAccount> bankAccounts = new ArrayList<>();
 
     public long count() throws RepositoryException {
@@ -102,5 +106,23 @@ public final class BankAccountRepositoryJson implements BankAccountRepository {
         } catch (IOException ex) {
             throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
         }
+    }
+
+    public void loadProperties() throws RepositoryException {
+        try {
+            InputStream appConfigPath = BankAccountRepositoryJson.class.getClassLoader().getResourceAsStream("repo.properties");
+            Properties appProps = new Properties();
+            appProps.load(appConfigPath);
+            if (System.getProperty("os.name").toLowerCase().contains("win"))
+                dataPath = appProps.getProperty("app.win.path");
+            else
+                dataPath = appProps.getProperty("app.nix.path");
+        } catch (IOException e) {
+            throw new RepositoryException("[BankAccountRepository loadProperties error]" + e.getMessage());
+        }
+    }
+
+    private String getDataPath() {
+        return dataPath;
     }
 }

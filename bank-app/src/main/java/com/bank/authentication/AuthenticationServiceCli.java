@@ -49,7 +49,7 @@ public class AuthenticationServiceCli implements AuthenticationService {
                 throw new UIException("Invalid input.");
             String passwordEntry = String.valueOf(passwordChar);
             if (!usernameEntry.equals(getUsername()) || !passwordEntry.equals(getPassword())) {
-                System.out.println("\nInvalid credentials.");
+                System.out.println("\nInvalid credentials! Please try again.");
                 return false;
             } else {
                 System.out.println("\nAuthentication successful.");

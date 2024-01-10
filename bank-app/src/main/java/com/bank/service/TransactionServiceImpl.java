@@ -1,5 +1,7 @@
 package com.bank.service;
 
+import java.util.List;
+
 import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
@@ -22,7 +24,7 @@ public final class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    public Iterable<? extends Transaction> findAll() throws ServiceException {
+    public List<Transaction> findAll() throws ServiceException {
         try {
             return repository.findAll();
         } catch (RepositoryException ex) {
@@ -46,19 +48,4 @@ public final class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    // public void saveJson() throws ServiceException {
-    //     try {
-    //         repository.saveJson();
-    //     } catch (IOException ex) {
-    //         throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
-    //     }
-    // }
-
-    // public void loadJson() throws ServiceException {
-    //     try {
-    //         repository.loadJson();
-    //     } catch (IOException ex) {
-    //         throw new ServiceException("[Transaction Service error] " + ex.getMessage(), ex);
-    //     }
-    // }
 }

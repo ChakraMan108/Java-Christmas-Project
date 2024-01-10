@@ -2,6 +2,9 @@ package com.bank.main;
 
 import com.bank.authentication.AuthenticationService;
 import com.bank.authentication.AuthenticationServiceCli;
+import com.bank.entity.Transaction;
+import com.bank.entity.Transaction.TransactionType;
+import com.bank.exceptions.ServiceException;
 import com.bank.exceptions.UIException;
 import com.bank.repository.BankAccountRepository;
 import com.bank.repository.BankAccountRepositoryJson;
@@ -45,6 +48,7 @@ public class Main {
             do {
                 try {
                     authenticated = ui.authenticate();
+                    ui.pressEnterToContinue();
                 } catch (UIException ex) {
                     System.out.println(ex.getMessage());
                     ui.pressEnterToContinue();

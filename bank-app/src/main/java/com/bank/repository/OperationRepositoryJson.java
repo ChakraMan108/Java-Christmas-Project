@@ -2,8 +2,10 @@ package com.bank.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
@@ -13,6 +15,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class OperationRepositoryJson implements OperationRepository {
 
+    private String dataPath;
     private ArrayList<Operation> operations = new ArrayList<>();
 
     public Iterable<? extends Operation> findAll() throws RepositoryException {
@@ -72,5 +75,23 @@ public class OperationRepositoryJson implements OperationRepository {
             throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
         }
     }
+    
+    public void loadProperties() throws RepositoryException {
+        try {
+            InputStream appConfigPath = OperationRepositoryJson.class.getClassLoader().getResourceAsStream("repo.properties");
+            Properties appProps = new Properties();
+            appProps.load(appConfigPath);
+            if (System.getProperty("os.name").toLowerCase().contains("win"))
+                dataPath = appProps.getProperty("app.win.path");
+            else
+                dataPath = appProps.getProperty("app.nix.path");
+        } catch (IOException e) {
+            throw new RepositoryException("[OperationRepository loadProperties error]" + e.getMessage());
+        }
+    }
 
+    private String getDataPath() {
+        return dataPath;
+    }
+    
 }
