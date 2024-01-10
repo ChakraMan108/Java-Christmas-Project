@@ -1,6 +1,5 @@
 package com.bank.ui;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -39,8 +37,6 @@ public class UiCli implements Ui {
     private OperationService opService;
     private TransactionService trService;
     private AuthenticationService authService;
-    private String appUsername;
-    private String appPassword;
     public static String dataPath;
 
     private static Scanner scanner = null;
@@ -59,36 +55,37 @@ public class UiCli implements Ui {
                 scanner = new Scanner(System.in);
     }
 
-    public void loadProperties() throws UIException {
+    public boolean authenticate() throws UIException {
         try {
-            InputStream appConfigPath = UiCli.class.getClassLoader().getResourceAsStream("app.properties");
-            Properties appProps = new Properties();
-            appProps.load(appConfigPath);
-            appUsername = appProps.getProperty("app.username");
-            appPassword = appProps.getProperty("app.password");
-            if (System.getProperty("os.name").toLowerCase().contains("win"))
-                dataPath = appProps.getProperty("app.win.path");
-            else
-                dataPath = appProps.getProperty("app.nix.path");
-        } catch (IOException e) {
-            throw new UIException("[UI loadProperties error]" + e.getMessage());
-        }
-    }
-
-    public void loadData() throws UIException {
-        try {
-            File directory = new File(getDataPath());
-            if (!directory.exists()) {
-                directory.mkdirs();
+            clearConsole();
+            System.out.println("\n==============================");
+            System.out.println("=   BANK APP AUTHENTICATION  =");
+            System.out.println("==============================");
+            if (authService.authenticate()) {
+                return true;
             }
-            // cuService.loadJson();
-            // baService.loadJson();
-            // opService.loadJson();
-            // trService.loadJson();
-        } catch (ServiceException e) {
-            throw new UIException("[UI loadData error]" + e.getMessage());
+            else {
+                return false;
+            }
+        } catch (ServiceException ex) {
+            throw new UIException("[UI authenticate error]" + ex.getMessage());
         }
     }
+    
+    // public void loadData() throws UIException {
+    //     try {
+    //         File directory = new File(getDataPath());
+    //         if (!directory.exists()) {
+    //             directory.mkdirs();
+    //         }
+    //         // cuService.loadJson();
+    //         // baService.loadJson();
+    //         // opService.loadJson();
+    //         // trService.loadJson();
+    //     } catch (ServiceException e) {
+    //         throw new UIException("[UI loadData error]" + e.getMessage());
+    //     }
+    // }
 
     // public void authenticateApp() throws UIException {
     //     try {
@@ -160,14 +157,14 @@ public class UiCli implements Ui {
                         break;
                     case "6":
                         exit = true;
-                        try {
-                            // cuService.saveJson();
-                            // baService.saveJson();
-                            // opService.saveJson();
-                            // trService.saveJson();
-                        } catch (ServiceException e) {
-                            System.out.println(e.getMessage());
-                        }
+                        // try {
+                        //     // cuService.saveJson();
+                        //     // baService.saveJson();
+                        //     // opService.saveJson();
+                        //     // trService.saveJson();
+                        // } catch (ServiceException e) {
+                        //     System.out.println(e.getMessage());
+                        // }
                         System.out.println("Goodbye! Exiting the Bank Application.");
                         break;
                     default:
@@ -1052,14 +1049,6 @@ public class UiCli implements Ui {
             readString = null;
         // }
         // } while (readString != null);
-    }
-
-    private void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
-    }
-
-    public boolean isAuthenticated() {
-        return authenticated;
     }
 
     public static String getDataPath() {

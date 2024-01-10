@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import com.bank.entity.Customer;
 import com.bank.exceptions.RepositoryException;
-import com.bank.ui.CliUi;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,7 +14,7 @@ public class CustomerRepositoryJson implements CustomerRepository {
 
     private ArrayList<Customer> customers = new ArrayList<>();
 
-    private String jsonDataPath = CliUi.getDataPath() + "/customers.json";
+    private String jsonDataPath; // = CliUi.getDataPath() + "/customers.json";
 
     
     public long count() throws RepositoryException {
@@ -58,7 +57,7 @@ public class CustomerRepositoryJson implements CustomerRepository {
 
     public void saveJson() throws IOException {
         try {
-            jsonDataPath = CliUi.getDataPath() + "/customers.json";
+            //jsonDataPath = CliUi.getDataPath() + "/customers.json";
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.writeValue(new File(jsonDataPath), customers);
@@ -69,7 +68,7 @@ public class CustomerRepositoryJson implements CustomerRepository {
 
     public void loadJson() throws IOException {
         try {
-            jsonDataPath = CliUi.getDataPath() + "/customers.json";
+            //jsonDataPath = CliUi.getDataPath() + "/customers.json";
             File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();

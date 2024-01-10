@@ -1,6 +1,8 @@
 package com.bank.authentication;
 
+import com.bank.exceptions.ServiceException;
+
 public interface AuthenticationService {
 
-    public boolean authenticate(String username, String password);
+    public boolean authenticate() throws ServiceException;
 }

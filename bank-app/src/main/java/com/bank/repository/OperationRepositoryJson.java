@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import com.bank.entity.Operation;
 import com.bank.exceptions.RepositoryException;
-import com.bank.ui.CliUi;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -49,7 +48,7 @@ public class OperationRepositoryJson implements OperationRepository {
     }
 
     public void saveJson() throws IOException {
-        String jsonDataPath = CliUi.getDataPath() + "/operations.json";
+        String jsonDataPath = ""; // = CliUi.getDataPath() + "/operations.json";
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.writeValue(new File(jsonDataPath), operations);
@@ -57,7 +56,7 @@ public class OperationRepositoryJson implements OperationRepository {
 
     public void loadJson() throws IOException {
         try {
-            String jsonDataPath = CliUi.getDataPath() + "/operations.json";
+        String jsonDataPath = ""; // = CliUi.getDataPath() + "/operations.json";
             File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();

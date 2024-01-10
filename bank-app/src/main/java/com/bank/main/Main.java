@@ -1,7 +1,5 @@
 package com.bank.main;
 
-import java.io.IOException;
-
 import com.bank.authentication.AuthenticationService;
 import com.bank.authentication.AuthenticationServiceCli;
 import com.bank.exceptions.UIException;
@@ -25,6 +23,9 @@ import com.bank.ui.Ui;
 import com.bank.ui.UiCli;
 
 public class Main {
+    
+    private static boolean authenticated;
+
     public static void main(String[] args) {
 
 		CustomerRepository cuRepo = new CustomerRepositoryJson();
@@ -41,19 +42,18 @@ public class Main {
 		Ui ui = new UiCli(cuService, baService, opService, trService, authService);
         
         try {
-            //ui.loadProperties();
             do {
                 try {
-                    // authenticated = ui.isAuthenticated());
+                    authenticated = ui.authenticate();
                 } catch (UIException ex) {
                     System.out.println(ex.getMessage());
-                    //ui.pressEnterToContinue();
+                    ui.pressEnterToContinue();
                 }
-            } while (!ui.isAuthenticated());
+            } while (!authenticated);
             //ui.loadData();
             //ui.progressBar(20);
             ui.displayApp();
-        } catch (UIException | InterruptedException | IOException ex) {
+        } catch (UIException ex) {
             System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
         }
     }

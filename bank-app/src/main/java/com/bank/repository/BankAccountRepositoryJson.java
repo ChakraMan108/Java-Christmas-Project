@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
-import com.bank.ui.CliUi;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -78,7 +77,7 @@ public final class BankAccountRepositoryJson implements BankAccountRepository {
     }
 
     public void saveJson() throws IOException {
-        String jsonDataPath = CliUi.getDataPath() + "/bankaccounts.json";
+        String jsonDataPath = ""; // = CliUi.getDataPath() + "/bankaccounts.json";
         String savePath = jsonDataPath;
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -87,7 +86,7 @@ public final class BankAccountRepositoryJson implements BankAccountRepository {
 
     public void loadJson() throws IOException {
         try {
-            String jsonDataPath = CliUi.getDataPath() + "/bankaccounts.json";
+            String jsonDataPath = ""; // = CliUi.getDataPath() + "/bankaccounts.json";
             String loadPath = jsonDataPath;
             File f = new File(loadPath);
             if (f.exists() && !f.isDirectory()) {
