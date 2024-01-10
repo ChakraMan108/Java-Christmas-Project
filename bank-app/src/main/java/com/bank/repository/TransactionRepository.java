@@ -1,90 +1,12 @@
 package com.bank.repository;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
+import java.util.List;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.RepositoryException;
-import com.bank.ui.Ui;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public final class TransactionRepository implements Repository<Transaction> {
-
-    private static TransactionRepository INSTANCE;
-    private String info = "Transaction Repository";
-
-    public static TransactionRepository getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new TransactionRepository();
-        }
-        return INSTANCE;
-    }
-    
-    private ArrayList<Transaction> transactions = new ArrayList<>();
-    
-    public long count() throws RepositoryException {
-        return transactions.size();
-    }
-
-    public ArrayList<Transaction> findAll() throws RepositoryException {
-        return transactions;
-    }
-
-    public Transaction findById(long id) throws RepositoryException {
-        for (Transaction transaction : transactions) {
-            if (transaction.getId() == id)
-                return transaction;
-         }
-        throw new RepositoryException("No transaction with id " + id + " found in the repository.");
-    }
-    
-    public Transaction save(Transaction transaction) throws RepositoryException {
-    try {
-        transaction.setId(generateId());
-        transaction.setCreatedDate(LocalDateTime.now());
-        transactions.add(transaction);
-        saveJson();
-        return transaction;
-    } catch (IOException ex) {
-        throw new RepositoryException("[Transaction Repository save error]" + ex.getMessage(), ex);
-    }
-    }
-
-    public long generateId() {
-        return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
-    }
-
-    public void saveJson() throws IOException {
-        String jsonDataPath = Ui.getDataPath() + "/transactions.json";
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File(jsonDataPath), transactions);
-    }
-
-    public void loadJson() throws IOException {
-        try {
-            String jsonDataPath = Ui.getDataPath() + "/transactions.json";
-            File f = new File(jsonDataPath);
-            if (f.exists() && !f.isDirectory()) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Transaction> transctionList = objectMapper.readValue(new File(jsonDataPath),
-                        new TypeReference<ArrayList<Transaction>>() {
-                        });
-                transactions = transctionList;
-            } else {
-                saveJson();
-            }
-        } catch (IOException ex) {
-            throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
-        }
-    }
-
-    public String getInfo() {
-        return info;
-    }
+public interface TransactionRepository {
+	public List<Transaction> findAll() throws RepositoryException; 
+	public Transaction findById(long id) throws RepositoryException;
+	public long count() throws RepositoryException;
+	public Transaction save(Transaction entity) throws RepositoryException;
 }
