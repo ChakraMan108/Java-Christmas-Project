@@ -39,7 +39,7 @@ public class BankAccountServiceTest {
     private TransactionService ts = TransactionService.getInstance();
 
     @Mock
-    private OperationService os = OperationService.getInstance();
+    private OperationServiceImpl os = OperationServiceImpl.getInstance();
 
     private BankAccount bankAccount;
     private Customer customer;

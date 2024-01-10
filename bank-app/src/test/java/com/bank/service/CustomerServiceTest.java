@@ -27,7 +27,7 @@ import com.bank.entity.Customer;
 import com.bank.entity.Customer.CustomerType;
 import com.bank.exceptions.RepositoryException;
 import com.bank.exceptions.ServiceException;
-import com.bank.repository.CustomerRepository;
+import com.bank.repository.OperationRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -36,10 +36,10 @@ public class CustomerServiceTest {
     private CustomerService customerService = CustomerService.getInstance();
 
     @Mock
-    private CustomerRepository repository = CustomerRepository.getInstance();
+    private OperationRepository repository = OperationRepository.getInstance();
 
     @Mock
-    private OperationService opService = OperationService.getInstance();
+    private OperationServiceImpl opService = OperationServiceImpl.getInstance();
 
     @Mock
     private BankAccountService baService = BankAccountService.getInstance();

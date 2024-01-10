@@ -22,7 +22,7 @@ import com.bank.exceptions.RepositoryException;
 public class CustomerRepositoryTest {
 
     @Mock
-    private CustomerRepository repository = CustomerRepository.getInstance();
+    private OperationRepository repository = OperationRepository.getInstance();
 
     private Customer customer;
     private ArrayList<Customer> customers = new ArrayList<Customer>();

@@ -25,7 +25,7 @@ import com.bank.repository.OperationRepository;
 public class OperationServiceTest {
 
     @InjectMocks
-    private OperationService operationService;
+    private OperationServiceImpl operationService;
 
     @Mock
     private OperationRepository repository;
