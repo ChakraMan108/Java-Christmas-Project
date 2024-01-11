@@ -117,8 +117,8 @@ public class JsonBankAccountRepository implements BankAccountRepository {
 
     public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = JsonBankAccountRepository.class.getClassLoader()
-                    .getResourceAsStream("bankaccount_repo.properties");
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/repository/bankaccount_repo.properties");
             appProps.load(appConfigPath);
             return appProps;
         } catch (IOException e) {

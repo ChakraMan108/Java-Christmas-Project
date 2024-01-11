@@ -33,10 +33,10 @@ public class Main {
 		OperationRepository opRepo = new JsonOperationRepository();
 		TransactionRepository trRepo = new JsonTransactionRepository();
         	
-        CustomerService cuService = new CustomerServiceImpl(cuRepo);
-		BankAccountService baService = new BankAccountServiceImpl(baRepo);
-		OperationService opService = new OperationServiceImpl(opRepo);
+        OperationService opService = new OperationServiceImpl(opRepo);
 		TransactionService trService = new TransactionServiceImpl(trRepo);
+		BankAccountService baService = new BankAccountServiceImpl(baRepo, opService, trService);
+        CustomerService cuService = new CustomerServiceImpl(cuRepo, baService, opService);
         AuthenticationService authService = new CliAuthenticationService();
 
 		Ui ui = new CliUi(cuService, baService, opService, trService, authService);

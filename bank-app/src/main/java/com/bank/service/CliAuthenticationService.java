@@ -23,8 +23,8 @@ public class CliAuthenticationService implements AuthenticationService {
 
     public Properties loadProperties() throws ServiceException {
         try {
-            InputStream appConfigPath = CliAuthenticationService.class.getClassLoader()
-                    .getResourceAsStream("auth.properties");
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/service/auth.properties");
             Properties appProps = new Properties();
             appProps.load(appConfigPath);
             setUsername(appProps.getProperty("app.username"));

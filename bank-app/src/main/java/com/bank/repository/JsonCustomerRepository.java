@@ -93,8 +93,8 @@ public class JsonCustomerRepository implements CustomerRepository {
 
     public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = JsonCustomerRepository.class.getClassLoader()
-                    .getResourceAsStream("customer_repo.properties");
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/repository/customer_repo.properties");
             appProps.load(appConfigPath);
             return appProps;
         } catch (IOException e) {

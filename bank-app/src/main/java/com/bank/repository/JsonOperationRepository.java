@@ -88,8 +88,8 @@ public class JsonOperationRepository implements OperationRepository {
 
     public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = JsonOperationRepository.class.getClassLoader()
-                    .getResourceAsStream("operation_repo.properties");
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/repository/operation_repo.properties");
             appProps.load(appConfigPath);
             return appProps;
         } catch (IOException e) {

@@ -88,8 +88,8 @@ public class JsonTransactionRepository implements TransactionRepository {
 
     public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = JsonTransactionRepository.class.getClassLoader()
-                    .getResourceAsStream("transaction_repo.properties");
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/repository/transaction_repo.properties");
             appProps.load(appConfigPath);
             return appProps;
         } catch (IOException e) {
