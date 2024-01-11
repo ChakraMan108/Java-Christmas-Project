@@ -12,14 +12,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class CustomerRepositoryJson implements CustomerRepository {
+public class JsonCustomerRepository implements CustomerRepository {
 
+    private Properties appProps = new Properties();
     private String dataPath;
     private ArrayList<Customer> customers = new ArrayList<>();
-
-    private String jsonDataPath; // = CliUi.getDataPath() + "/customers.json";
-
     
+    public JsonCustomerRepository() {
+        try {
+            loadProperties();
+            loadJson();
+        } catch (RepositoryException | IOException ex) {
+            System.out.println("[JsonCustomerRepository constructor error]" + ex.getMessage());
+        }
+    }
+
     public long count() throws RepositoryException {
         return customers.size();
     }
@@ -59,19 +66,15 @@ public class CustomerRepositoryJson implements CustomerRepository {
     }
 
     public void saveJson() throws IOException {
-        try {
-            //jsonDataPath = CliUi.getDataPath() + "/customers.json";
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.writeValue(new File(jsonDataPath), customers);
-        } catch (IOException ex) {
-            throw new IOException("Error saving customer JSON file: " + ex.getMessage(), ex);
-        }
+        String jsonDataPath = getDataPath();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.writeValue(new File(jsonDataPath), customers);
     }
 
     public void loadJson() throws IOException {
         try {
-            //jsonDataPath = CliUi.getDataPath() + "/customers.json";
+            String jsonDataPath = getDataPath();
             File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -88,21 +91,22 @@ public class CustomerRepositoryJson implements CustomerRepository {
         }
     }
 
-    public void loadProperties() throws RepositoryException {
+    public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = CustomerRepositoryJson.class.getClassLoader().getResourceAsStream("repo.properties");
-            Properties appProps = new Properties();
+            InputStream appConfigPath = JsonCustomerRepository.class.getClassLoader()
+                    .getResourceAsStream("customer_repo.properties");
             appProps.load(appConfigPath);
-            if (System.getProperty("os.name").toLowerCase().contains("win"))
-                dataPath = appProps.getProperty("app.win.path");
-            else
-                dataPath = appProps.getProperty("app.nix.path");
+            return appProps;
         } catch (IOException e) {
-            throw new RepositoryException("[CustomerRepository loadProperties error]" + e.getMessage());
+            throw new RepositoryException("[TransactionRepository loadProperties error]" + e.getMessage());
         }
     }
 
     private String getDataPath() {
+        if (System.getProperty("os.name").toLowerCase().contains("win"))
+            dataPath = appProps.getProperty("app.win.path");
+        else
+            dataPath = appProps.getProperty("app.nix.path");
         return dataPath;
     }
 }

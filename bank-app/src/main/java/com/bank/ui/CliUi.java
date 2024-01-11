@@ -14,7 +14,6 @@ import java.util.Scanner;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-import com.bank.authentication.AuthenticationService;
 import com.bank.entity.BankAccount;
 import com.bank.entity.BankAccount.AccountType;
 import com.bank.entity.Customer;
@@ -23,12 +22,13 @@ import com.bank.entity.Operation;
 import com.bank.entity.Transaction;
 import com.bank.exceptions.ServiceException;
 import com.bank.exceptions.UIException;
+import com.bank.service.AuthenticationService;
 import com.bank.service.BankAccountService;
 import com.bank.service.CustomerService;
 import com.bank.service.OperationService;
 import com.bank.service.TransactionService;
 
-public class UiCli implements Ui {
+public class CliUi implements Ui {
     
     private CustomerService cuService;
     private BankAccountService baService;
@@ -42,7 +42,7 @@ public class UiCli implements Ui {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // Public Constructor injecting services using service interfaces
-    public UiCli(CustomerService cuService, BankAccountService baService, OperationService opService,
+    public CliUi(CustomerService cuService, BankAccountService baService, OperationService opService,
             TransactionService trService, AuthenticationService authService) {
                 this.cuService = cuService;
                 this.baService = baService;

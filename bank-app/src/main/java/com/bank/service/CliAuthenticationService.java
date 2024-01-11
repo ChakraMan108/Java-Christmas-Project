@@ -1,4 +1,4 @@
-package com.bank.authentication;
+package com.bank.service;
 
 import java.io.Console;
 import java.io.IOException;
@@ -8,12 +8,12 @@ import java.util.Properties;
 import com.bank.exceptions.ServiceException;
 import com.bank.exceptions.UIException;
 
-public class AuthenticationServiceCli implements AuthenticationService {
+public class CliAuthenticationService implements AuthenticationService {
 
     private String username;
     private String password;
 
-    public AuthenticationServiceCli() {
+    public CliAuthenticationService() {
         try {
             loadProperties();
         } catch (ServiceException ex) {
@@ -21,14 +21,15 @@ public class AuthenticationServiceCli implements AuthenticationService {
         }
     }
 
-    public void loadProperties() throws ServiceException {
+    public Properties loadProperties() throws ServiceException {
         try {
-            InputStream appConfigPath = getClass().getClassLoader()
+            InputStream appConfigPath = CliAuthenticationService.class.getClassLoader()
                     .getResourceAsStream("auth.properties");
             Properties appProps = new Properties();
             appProps.load(appConfigPath);
             setUsername(appProps.getProperty("app.username"));
             setPassword(appProps.getProperty("app.password"));
+            return appProps;
         } catch (IOException e) {
             throw new ServiceException("[AuthenticationServiceCli loadProperties failed]" + e.getMessage());
         }

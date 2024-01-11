@@ -13,20 +13,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class TransactionRepositoryJson implements TransactionRepository {
+public class JsonTransactionRepository implements TransactionRepository {
 
     private Properties appProps = new Properties();
     private String dataPath;
     private ArrayList<Transaction> transactions = new ArrayList<>();
 
-    public TransactionRepositoryJson() {
+    public JsonTransactionRepository() {
         try {
             loadProperties();
             loadJson();
         } catch (RepositoryException | IOException ex) {
-            System.out.println("[TransactionRepositoryJson constructor error]" + ex.getMessage());
+            System.out.println("[JsonTransactionRepository constructor error]" + ex.getMessage());
         }
     }
+
     public long count() throws RepositoryException {
         return transactions.size();
     }
@@ -87,14 +88,10 @@ public class TransactionRepositoryJson implements TransactionRepository {
 
     public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = getClass().getClassLoader()
-                    .getResourceAsStream("transactionrepo.properties");
+            InputStream appConfigPath = JsonTransactionRepository.class.getClassLoader()
+                    .getResourceAsStream("transaction_repo.properties");
             appProps.load(appConfigPath);
             return appProps;
-            // if (System.getProperty("os.name").toLowerCase().contains("win"))
-            // appProps.getProperty("app.win.path");
-            // else
-            // appProps.getProperty("app.nix.path");
         } catch (IOException e) {
             throw new RepositoryException("[TransactionRepository loadProperties error]" + e.getMessage());
         }
