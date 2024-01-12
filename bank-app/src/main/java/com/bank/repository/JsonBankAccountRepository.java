@@ -8,15 +8,24 @@ import java.util.Properties;
 
 import com.bank.entity.BankAccount;
 import com.bank.exceptions.RepositoryException;
-import com.bank.exceptions.UIException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public final class BankAccountRepositoryJson implements BankAccountRepository {
+public class JsonBankAccountRepository implements BankAccountRepository {
 
+    private Properties appProps = new Properties();
     private String dataPath;
     private ArrayList<BankAccount> bankAccounts = new ArrayList<>();
+
+    public JsonBankAccountRepository() {
+        try {
+            loadProperties();
+            loadJson();
+        } catch (RepositoryException | IOException ex) {
+            System.out.println("[JsonBankAccountRepository constructor error]" + ex.getMessage());
+        }
+    }
 
     public long count() throws RepositoryException {
         return bankAccounts.size();
@@ -81,22 +90,20 @@ public final class BankAccountRepositoryJson implements BankAccountRepository {
     }
 
     public void saveJson() throws IOException {
-        String jsonDataPath = ""; // = CliUi.getDataPath() + "/bankaccounts.json";
-        String savePath = jsonDataPath;
+        String jsonDataPath = getDataPath();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File(savePath), bankAccounts);
+        objectMapper.writeValue(new File(jsonDataPath), bankAccounts);
     }
 
     public void loadJson() throws IOException {
         try {
-            String jsonDataPath = ""; // = CliUi.getDataPath() + "/bankaccounts.json";
-            String loadPath = jsonDataPath;
-            File f = new File(loadPath);
+            String jsonDataPath = getDataPath();
+            File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File(loadPath),
+                ArrayList<BankAccount> bankAccountList = objectMapper.readValue(new File(jsonDataPath),
                         new TypeReference<ArrayList<BankAccount>>() {
                         });
                 bankAccounts = bankAccountList;
@@ -108,21 +115,22 @@ public final class BankAccountRepositoryJson implements BankAccountRepository {
         }
     }
 
-    public void loadProperties() throws RepositoryException {
+    public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = BankAccountRepositoryJson.class.getClassLoader().getResourceAsStream("repo.properties");
-            Properties appProps = new Properties();
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/repository/bankaccount_repo.properties");
             appProps.load(appConfigPath);
-            if (System.getProperty("os.name").toLowerCase().contains("win"))
-                dataPath = appProps.getProperty("app.win.path");
-            else
-                dataPath = appProps.getProperty("app.nix.path");
+            return appProps;
         } catch (IOException e) {
-            throw new RepositoryException("[BankAccountRepository loadProperties error]" + e.getMessage());
+            throw new RepositoryException("[TransactionRepository loadProperties error]" + e.getMessage());
         }
-    }
+    }   
 
     private String getDataPath() {
+        if (System.getProperty("os.name").toLowerCase().contains("win"))
+            dataPath = appProps.getProperty("app.win.path");
+        else
+            dataPath = appProps.getProperty("app.nix.path");
         return dataPath;
     }
 }

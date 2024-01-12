@@ -16,10 +16,14 @@ import com.bank.repository.CustomerRepository;
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository repository;
+    private OperationService opService;
+    private BankAccountService baService;
 
-    public CustomerServiceImpl(CustomerRepository repo)
+    public CustomerServiceImpl(CustomerRepository repo, BankAccountService baService, OperationService opService)
 	{
 		this.repository = repo;
+        this.baService = baService;
+        this.opService = opService;
 	}
 
     public long count() throws ServiceException {

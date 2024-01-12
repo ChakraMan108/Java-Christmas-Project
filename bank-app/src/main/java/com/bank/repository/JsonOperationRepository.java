@@ -13,10 +13,20 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class OperationRepositoryJson implements OperationRepository {
+public class JsonOperationRepository implements OperationRepository {
 
+    private Properties appProps = new Properties();
     private String dataPath;
     private ArrayList<Operation> operations = new ArrayList<>();
+
+    public JsonOperationRepository() {
+        try {
+            loadProperties();
+            loadJson();
+        } catch (RepositoryException | IOException ex) {
+            System.out.println("[JsonOperationRepository constructor error]" + ex.getMessage());
+        }
+    }
 
     public Iterable<? extends Operation> findAll() throws RepositoryException {
         return operations;
@@ -51,7 +61,7 @@ public class OperationRepositoryJson implements OperationRepository {
     }
 
     public void saveJson() throws IOException {
-        String jsonDataPath = ""; // = CliUi.getDataPath() + "/operations.json";
+        String jsonDataPath = getDataPath();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.writeValue(new File(jsonDataPath), operations);
@@ -59,7 +69,7 @@ public class OperationRepositoryJson implements OperationRepository {
 
     public void loadJson() throws IOException {
         try {
-        String jsonDataPath = ""; // = CliUi.getDataPath() + "/operations.json";
+            String jsonDataPath = getDataPath();
             File f = new File(jsonDataPath);
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -75,22 +85,23 @@ public class OperationRepositoryJson implements OperationRepository {
             throw new IOException("Error loading customer JSON file: " + ex.getMessage(), ex);
         }
     }
-    
-    public void loadProperties() throws RepositoryException {
+
+    public Properties loadProperties() throws RepositoryException {
         try {
-            InputStream appConfigPath = OperationRepositoryJson.class.getClassLoader().getResourceAsStream("repo.properties");
-            Properties appProps = new Properties();
+            InputStream appConfigPath = getClass().getClassLoader()
+                    .getResourceAsStream("com/bank/repository/operation_repo.properties");
             appProps.load(appConfigPath);
-            if (System.getProperty("os.name").toLowerCase().contains("win"))
-                dataPath = appProps.getProperty("app.win.path");
-            else
-                dataPath = appProps.getProperty("app.nix.path");
+            return appProps;
         } catch (IOException e) {
-            throw new RepositoryException("[OperationRepository loadProperties error]" + e.getMessage());
+            throw new RepositoryException("[TransactionRepository loadProperties error]" + e.getMessage());
         }
     }
 
     private String getDataPath() {
+        if (System.getProperty("os.name").toLowerCase().contains("win"))
+            dataPath = appProps.getProperty("app.win.path");
+        else
+            dataPath = appProps.getProperty("app.nix.path");
         return dataPath;
     }
     

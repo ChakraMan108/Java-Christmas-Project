@@ -1,4 +1,4 @@
-package com.bank.authentication;
+package com.bank.service;
 
 import com.bank.exceptions.ServiceException;
 

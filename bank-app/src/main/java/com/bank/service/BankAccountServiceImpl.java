@@ -17,10 +17,15 @@ import com.bank.repository.BankAccountRepository;
 public class BankAccountServiceImpl implements BankAccountService {
 
     private BankAccountRepository repository;
+    private TransactionService ts;
+    private OperationService os;
 
-    public BankAccountServiceImpl(BankAccountRepository repo)
+    // Public constructor injecting the repository and other services
+    public BankAccountServiceImpl(BankAccountRepository repo, OperationService os, TransactionService ts)
 	{
 		this.repository = repo;
+        this.os = os;
+        this.ts = ts;
 	}
 
     // private TransactionService ts = TransactionService.getInstance();

@@ -3,55 +3,61 @@ package com.bank.repository;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import com.bank.entity.Transaction;
+import com.bank.entity.Customer;
 import com.bank.exceptions.RepositoryException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class TransactionRepositoryJson implements TransactionRepository {
+public class JsonCustomerRepository implements CustomerRepository {
 
     private Properties appProps = new Properties();
     private String dataPath;
-    private ArrayList<Transaction> transactions = new ArrayList<>();
-
-    public TransactionRepositoryJson() {
+    private ArrayList<Customer> customers = new ArrayList<>();
+    
+    public JsonCustomerRepository() {
         try {
             loadProperties();
             loadJson();
         } catch (RepositoryException | IOException ex) {
-            System.out.println("[TransactionRepositoryJson constructor error]" + ex.getMessage());
+            System.out.println("[JsonCustomerRepository constructor error]" + ex.getMessage());
         }
     }
+
     public long count() throws RepositoryException {
-        return transactions.size();
+        return customers.size();
     }
 
-    public ArrayList<Transaction> findAll() throws RepositoryException {
-        return transactions;
+    public ArrayList<Customer> findAll() throws RepositoryException {
+        return customers;
     }
 
-    public Transaction findById(long id) throws RepositoryException {
-        for (Transaction transaction : transactions) {
-            if (transaction.getId() == id)
-                return transaction;
+    public Customer findById(long id) throws RepositoryException {
+        for (Customer customer : customers) {
+            if (customer.getId() == id)
+                return customer;
         }
-        throw new RepositoryException("No transaction with id " + id + " found in the repository.");
+        throw new RepositoryException("Customer id " + id + " not found in the repository.");
     }
 
-    public Transaction save(Transaction transaction) throws RepositoryException {
+    public Customer save(Customer customer) throws RepositoryException {
         try {
-            transaction.setId(generateId());
-            transaction.setCreatedDate(LocalDateTime.now());
-            transactions.add(transaction);
+            for (Customer c : customers) {
+                if (c.getId() == customer.getId()) {
+                    customers.set(customers.indexOf(c), customer);
+                    saveJson();
+                    return customer;
+                }
+            }
+            customer.setId(generateId());
+            customers.add(customer);
             saveJson();
-            return transaction;
+            return customer;
         } catch (IOException ex) {
-            throw new RepositoryException("[Transaction Repository save error]" + ex.getMessage(), ex);
+            throw new RepositoryException("[Customer Repository save error]" + ex.getMessage(), ex);
         }
     }
 
@@ -63,7 +69,7 @@ public class TransactionRepositoryJson implements TransactionRepository {
         String jsonDataPath = getDataPath();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File(jsonDataPath), transactions);
+        objectMapper.writeValue(new File(jsonDataPath), customers);
     }
 
     public void loadJson() throws IOException {
@@ -73,10 +79,10 @@ public class TransactionRepositoryJson implements TransactionRepository {
             if (f.exists() && !f.isDirectory()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                ArrayList<Transaction> transactionList = objectMapper.readValue(new File(jsonDataPath),
-                        new TypeReference<ArrayList<Transaction>>() {
+                ArrayList<Customer> customerList = objectMapper.readValue(new File(jsonDataPath),
+                        new TypeReference<ArrayList<Customer>>() {
                         });
-                transactions = transactionList;
+                customers = customerList;
             } else {
                 saveJson();
             }
@@ -88,13 +94,9 @@ public class TransactionRepositoryJson implements TransactionRepository {
     public Properties loadProperties() throws RepositoryException {
         try {
             InputStream appConfigPath = getClass().getClassLoader()
-                    .getResourceAsStream("transactionrepo.properties");
+                    .getResourceAsStream("com/bank/repository/customer_repo.properties");
             appProps.load(appConfigPath);
             return appProps;
-            // if (System.getProperty("os.name").toLowerCase().contains("win"))
-            // appProps.getProperty("app.win.path");
-            // else
-            // appProps.getProperty("app.nix.path");
         } catch (IOException e) {
             throw new RepositoryException("[TransactionRepository loadProperties error]" + e.getMessage());
         }
