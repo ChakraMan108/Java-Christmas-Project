@@ -51,9 +51,9 @@ public class Main {
                     ui.pressEnterToContinue();
                 }
             } while (!authenticated);
-            //ui.loadData();
-            //ui.progressBar(20);
+            
             ui.displayApp();
+            
         } catch (UIException ex) {
             System.out.println(ex.getMessage() + "\nExiting the Bank Application.");
         }

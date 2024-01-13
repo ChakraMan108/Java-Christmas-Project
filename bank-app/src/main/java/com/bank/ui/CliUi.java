@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -37,7 +36,7 @@ public class CliUi implements Ui {
     private AuthenticationService authService;
     public static String dataPath;
 
-    private static Scanner scanner = null;
+    public static Scanner scanner = new Scanner(System.in);
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -49,15 +48,11 @@ public class CliUi implements Ui {
                 this.opService = opService;
                 this.trService = trService;
                 this.authService = authService;
-                scanner = new Scanner(System.in);
     }
 
     public boolean authenticate() throws UIException {
         try {
             clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=   BANK APP AUTHENTICATION  =");
-            System.out.println("==============================");
             if (authService.authenticate()) {
                 return true;
             }
@@ -69,110 +64,70 @@ public class CliUi implements Ui {
         }
     }
     
-    // public void loadData() throws UIException {
-    //     try {
-    //         File directory = new File(getDataPath());
-    //         if (!directory.exists()) {
-    //             directory.mkdirs();
-    //         }
-    //         // cuService.loadJson();
-    //         // baService.loadJson();
-    //         // opService.loadJson();
-    //         // trService.loadJson();
-    //     } catch (ServiceException e) {
-    //         throw new UIException("[UI loadData error]" + e.getMessage());
-    //     }
-    // }
-
-    // public void authenticateApp() throws UIException {
-    //     try {
-    //         clearConsole();
-    //         Console console = System.console();
-    //         System.out.println("\n==============================");
-    //         System.out.println("=   BANK APP AUTHENTICATION  =");
-    //         System.out.println("==============================");
-    //         // System.out.print("Username: ");
-    //         // String username = getString();
-    //         // System.out.print("Enter password: ");
-    //         // String password = getString();
-    //         String username = console.readLine("Username: ");
-    //         if (username == null || username.trim().equals(null)) {
-    //             throw new UIException("Invalid input.");
-    //         }
-    //         char[] passwordChar = console.readPassword("Password: ");
-    //         if (passwordChar == null || passwordChar.length == 0) {
-    //             throw new UIException("Invalid input.");
-    //         }
-    //         String password = String.valueOf(passwordChar);
-    //         if (!username.equals(appUsername) || !password.equals(appPassword)) {
-    //             throw new UIException("Invalid credentials.");
-    //         } else {
-    //             System.out.println("\nAuthentication successful.");
-    //             System.out.println("Welcome [" + System.getProperty("user.name") + "].");
-    //             System.out.println("Logged in as [username: " + username + "].");
-    //             System.out.println("Logged in at [" + LocalDateTime.now().format(dateTimeFormatter) + "].\n");
-    //             setAuthenticated(true);
-    //         }
-    //     } catch (Exception ex) {
-    //         throw new UIException("[UI error] " + ex.getMessage());
-    //     }
-    // }
-
     public void displayApp() {
         boolean exit = false;
         do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=    BANK APP MAIN MENU      =");
-            System.out.println("==============================");
-            System.out.println("1. Customer Management");
-            System.out.println("2. Account Management");
-            System.out.println("3. Account Display");
-            System.out.println("4. Account Manipulation");
-            System.out.println("5. Reporting");
-            System.out.println("6. Exit");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-
             try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        customerManagement();
-                        break;
-                    case "2":
-                        accountManagement();
-                        break;
-                    case "3":
-                        accountDisplay();
-                        break;
-                    case "4":
-                        accountManipulation();
-                        break;
-                    case "5":
-                        reporting();
-                        break;
-                    case "6":
-                        exit = true;
-                        // try {
-                        //     // cuService.saveJson();
-                        //     // baService.saveJson();
-                        //     // opService.saveJson();
-                        //     // trService.saveJson();
-                        // } catch (ServiceException e) {
-                        //     System.out.println(e.getMessage());
-                        // }
-                        System.out.println("Goodbye! Exiting the Bank Application.");
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
+                clearConsole();
+                MainMenu mainMenu = new MainMenu();
+                exit = mainMenu.isExited();
             } catch (UIException ex) {
                 System.out.println("[UI error] " + ex.getMessage());
+                exit = false;
                 pressEnterToContinue();
             }
+            // System.out.println("\n==============================");
+            // System.out.println("=    BANK APP MAIN MENU      =");
+            // System.out.println("==============================");
+            // System.out.println("1. Customer Management");
+            // System.out.println("2. Account Management");
+            // System.out.println("3. Account Display");
+            // System.out.println("4. Account Manipulation");
+            // System.out.println("5. Reporting");
+            // System.out.println("6. Exit");
+            // System.out.println("==============================");
+            // System.out.print("Selection option: ");
+
+        //     try {
+        //         String userInput = getString();
+        //         switch (userInput) {
+        //             case "1":
+        //                 customerManagement();
+        //                 break;
+        //             case "2":
+        //                 accountManagement();
+        //                 break;
+        //             case "3":
+        //                 accountDisplay();
+        //                 break;
+        //             case "4":
+        //                 accountManipulation();
+        //                 break;
+        //             case "5":
+        //                 reporting();
+        //                 break;
+        //             case "6":
+        //                 exit = true;
+        //                 // try {
+        //                 //     // cuService.saveJson();
+        //                 //     // baService.saveJson();
+        //                 //     // opService.saveJson();
+        //                 //     // trService.saveJson();
+        //                 // } catch (ServiceException e) {
+        //                 //     System.out.println(e.getMessage());
+        //                 // }
+        //                 System.out.println("Goodbye! Exiting the Bank Application.");
+        //                 break;
+        //             default:
+        //                 System.out.println("Invalid option selected. Please enter a valid option.");
+        //                 pressEnterToContinue();
+        //         }
+        //     } catch (UIException ex) {
+        //         System.out.println("[UI error] " + ex.getMessage());
+        //         pressEnterToContinue();
+        //     }
         } while (!exit);
+        System.out.println("\nGoodbye! Exiting the Bank Application.");
     }
 
     private void customerManagement() throws UIException {
@@ -1037,15 +992,11 @@ public class CliUi implements Ui {
     }
 
     public void pressEnterToContinue() {
-        System.out.print("Press ENTER to continue. ");
-        String readString = null;
-        // do {
-        // if (scanner.hasNextLine()) {
-        readString = scanner.nextLine();
+        System.out.print("Press ENTER to continue.");
+        Scanner localScanner = new Scanner(System.in);
+        String readString = localScanner.nextLine();
         if (readString == null || readString.trim().equals(""))
             readString = null;
-        // }
-        // } while (readString != null);
     }
 
     public static String getDataPath() {
