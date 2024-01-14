@@ -169,20 +169,4 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ServiceException("[Customer Service deactivateCustomer error] " + ex.getMessage(), ex);
         }
     }
-
-    // public void saveJson() throws ServiceException {
-    //     try {
-    //         repository.saveJson();
-    //     } catch (IOException ex) {
-    //         throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
-    //     }
-    // }
-
-    // public void loadJson() throws ServiceException {
-    //     try {
-    //         repository.loadJson();
-    //     } catch (IOException ex) {
-    //         throw new ServiceException("[Customer Service error] " + ex.getMessage(), ex);
-    //     }
-    // }
 }

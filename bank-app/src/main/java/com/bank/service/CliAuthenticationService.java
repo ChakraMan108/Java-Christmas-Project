@@ -15,7 +15,7 @@ public class CliAuthenticationService implements AuthenticationService {
 
     public CliAuthenticationService() {
         try {
-            loadProperties();
+            loadProperties();        
         } catch (ServiceException ex) {
             System.out.println(ex.getMessage());
         }
@@ -37,11 +37,17 @@ public class CliAuthenticationService implements AuthenticationService {
 
     public boolean authenticate() throws ServiceException {
         try {
+            
             Console console = System.console();
             if (console == null) {
                 System.out.println("No console: not in interactive mode!");
                 System.exit(0);
             }
+            
+            System.out.println("\n==============================");
+            System.out.println("=   BANK APP AUTHENTICATION  =");
+            System.out.println("=============================="); 
+
             String usernameEntry = console.readLine("Username: ");
             if (usernameEntry == null || usernameEntry.trim().equals(null))
                 throw new ServiceException("Invalid input.");
@@ -77,4 +83,5 @@ public class CliAuthenticationService implements AuthenticationService {
         this.password = password;
     }
 
+    
 }

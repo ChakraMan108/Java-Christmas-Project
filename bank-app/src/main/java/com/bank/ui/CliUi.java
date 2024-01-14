@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -30,14 +29,14 @@ import com.bank.service.TransactionService;
 
 public class CliUi implements Ui {
     
-    private CustomerService cuService;
-    private BankAccountService baService;
-    private OperationService opService;
-    private TransactionService trService;
+    private static CustomerService cuService;
+    private static BankAccountService baService;
+    private static OperationService opService;
+    private static TransactionService trService;
     private AuthenticationService authService;
     public static String dataPath;
 
-    private static Scanner scanner = null;
+    public static Scanner scanner = new Scanner(System.in);
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -49,15 +48,11 @@ public class CliUi implements Ui {
                 this.opService = opService;
                 this.trService = trService;
                 this.authService = authService;
-                scanner = new Scanner(System.in);
     }
 
     public boolean authenticate() throws UIException {
         try {
             clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=   BANK APP AUTHENTICATION  =");
-            System.out.println("==============================");
             if (authService.authenticate()) {
                 return true;
             }
@@ -69,325 +64,23 @@ public class CliUi implements Ui {
         }
     }
     
-    // public void loadData() throws UIException {
-    //     try {
-    //         File directory = new File(getDataPath());
-    //         if (!directory.exists()) {
-    //             directory.mkdirs();
-    //         }
-    //         // cuService.loadJson();
-    //         // baService.loadJson();
-    //         // opService.loadJson();
-    //         // trService.loadJson();
-    //     } catch (ServiceException e) {
-    //         throw new UIException("[UI loadData error]" + e.getMessage());
-    //     }
-    // }
-
-    // public void authenticateApp() throws UIException {
-    //     try {
-    //         clearConsole();
-    //         Console console = System.console();
-    //         System.out.println("\n==============================");
-    //         System.out.println("=   BANK APP AUTHENTICATION  =");
-    //         System.out.println("==============================");
-    //         // System.out.print("Username: ");
-    //         // String username = getString();
-    //         // System.out.print("Enter password: ");
-    //         // String password = getString();
-    //         String username = console.readLine("Username: ");
-    //         if (username == null || username.trim().equals(null)) {
-    //             throw new UIException("Invalid input.");
-    //         }
-    //         char[] passwordChar = console.readPassword("Password: ");
-    //         if (passwordChar == null || passwordChar.length == 0) {
-    //             throw new UIException("Invalid input.");
-    //         }
-    //         String password = String.valueOf(passwordChar);
-    //         if (!username.equals(appUsername) || !password.equals(appPassword)) {
-    //             throw new UIException("Invalid credentials.");
-    //         } else {
-    //             System.out.println("\nAuthentication successful.");
-    //             System.out.println("Welcome [" + System.getProperty("user.name") + "].");
-    //             System.out.println("Logged in as [username: " + username + "].");
-    //             System.out.println("Logged in at [" + LocalDateTime.now().format(dateTimeFormatter) + "].\n");
-    //             setAuthenticated(true);
-    //         }
-    //     } catch (Exception ex) {
-    //         throw new UIException("[UI error] " + ex.getMessage());
-    //     }
-    // }
-
     public void displayApp() {
         boolean exit = false;
         do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=    BANK APP MAIN MENU      =");
-            System.out.println("==============================");
-            System.out.println("1. Customer Management");
-            System.out.println("2. Account Management");
-            System.out.println("3. Account Display");
-            System.out.println("4. Account Manipulation");
-            System.out.println("5. Reporting");
-            System.out.println("6. Exit");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-
             try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        customerManagement();
-                        break;
-                    case "2":
-                        accountManagement();
-                        break;
-                    case "3":
-                        accountDisplay();
-                        break;
-                    case "4":
-                        accountManipulation();
-                        break;
-                    case "5":
-                        reporting();
-                        break;
-                    case "6":
-                        exit = true;
-                        // try {
-                        //     // cuService.saveJson();
-                        //     // baService.saveJson();
-                        //     // opService.saveJson();
-                        //     // trService.saveJson();
-                        // } catch (ServiceException e) {
-                        //     System.out.println(e.getMessage());
-                        // }
-                        System.out.println("Goodbye! Exiting the Bank Application.");
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
+                clearConsole();
+                MainMenu mainMenu = new MainMenu();
+                exit = mainMenu.isExited();
             } catch (UIException ex) {
                 System.out.println("[UI error] " + ex.getMessage());
+                exit = false;
                 pressEnterToContinue();
             }
         } while (!exit);
+        System.out.println("\nGoodbye! Exiting the Bank Application.");
     }
 
-    private void customerManagement() throws UIException {
-        boolean exit = false;
-        do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=     CUSTOMER MANAGEMENT    =");
-            System.out.println("==============================");
-            System.out.println("1. Create Customer");
-            System.out.println("2. Update Customer");
-            System.out.println("3. Deactivate Customer");
-            System.out.println("4. Display Customer Details");
-            System.out.println("5. Return to Main Menu");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-            try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        createCustomer();
-                        break;
-                    case "2":
-                        updateCustomer();
-                        break;
-                    case "3":
-                        deactivateCustomer();
-                        break;
-                    case "4":
-                        displayCustomerDetails();
-                        break;
-                    case "5":
-                        exit = true;
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
-            } catch (UIException ex) {
-                System.out.println("[UI error] " + ex.getMessage());
-                pressEnterToContinue();
-            }
-        } while (!exit);
-    }
-
-    private void accountManagement() {
-        boolean exit = false;
-        do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=     ACCOUNT MANAGEMENT     =");
-            System.out.println("==============================");
-            System.out.println("1. Create Account");
-            System.out.println("2. Update Account");
-            System.out.println("3. Deactivate Account");
-            System.out.println("4. Return to Main Menu");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-            try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        createAccount();
-                        break;
-                    case "2":
-                        updateAccount();
-                        break;
-                    case "3":
-                        deactivateAccount();
-                        break;
-                    case "4":
-                        exit = true;
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
-            } catch (UIException ex) {
-                System.out.println("[UI error] " + ex.getMessage());
-                pressEnterToContinue();
-            }
-        } while (!exit);
-    }
-
-    private void accountDisplay() {
-        boolean exit = false;
-        do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=      ACCOUNT DISPLAY       =");
-            System.out.println("==============================");
-            System.out.println("1. Display Account by ID");
-            System.out.println("2. Display Accounts by Customer");
-            System.out.println("3. Display Accounts by Balance");
-            System.out.println("4. Display Accounts by Type");
-            System.out.println("5. Return to Main Menu");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-            try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        displayAccountsById();
-                        break;
-                    case "2":
-                        displayAccountsByCustomer();
-                        break;
-                    case "3":
-                        displayAccountsByBalance();
-                        break;
-                    case "4":
-                        displayAccountsByType();
-                        break;
-                    case "5":
-                        exit = true;
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
-            } catch (UIException e) {
-                System.out.println("[UI error] " + e.getMessage());
-                pressEnterToContinue();
-            }
-        } while (!exit);
-    }
-
-    private void accountManipulation() {
-        boolean exit = false;
-        do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=   ACCOUNT MANIPULATION     =");
-            System.out.println("==============================");
-            System.out.println("1. Withdraw Funds");
-            System.out.println("2. Deposit Funds");
-            System.out.println("3. Transfer Funds");
-            System.out.println("4. Return to Main Menu");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-            try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        withdrawFromAccount();
-                        break;
-                    case "2":
-                        depositIntoAccount();
-                        break;
-                    case "3":
-                        transferToAccount();
-                        break;
-                    case "4":
-                        exit = true;
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
-            } catch (UIException ex) {
-                System.out.println("[UI error] " + ex.getMessage());
-                pressEnterToContinue();
-            }
-        } while (!exit);
-    }
-
-    private void reporting() {
-        boolean exit = false;
-        do {
-            clearConsole();
-            System.out.println("\n==============================");
-            System.out.println("=          REPORTING         =");
-            System.out.println("==============================");
-            System.out.println("1. Totals");
-            System.out.println("2. Accounts by Date");
-            System.out.println("3. Customers by Date");
-            System.out.println("4. Transactions by Date");
-            System.out.println("5. Operations by Date");
-            System.out.println("6. Return to Main Menu");
-            System.out.println("==============================");
-            System.out.print("Selection option: ");
-
-            try {
-                String userInput = getString();
-                switch (userInput) {
-                    case "1":
-                        displayTotals();
-                        break;
-                    case "2":
-                        displayAccountsByDate();
-                        break;
-                    case "3":
-                        displayCustomersByDate();
-                        break;
-                    case "4":
-                        displayTransactionsByDate();
-                        break;
-                    case "5":
-                        displayOperationsByDate();
-                        break;
-                    case "6":
-                        exit = true;
-                        break;
-                    default:
-                        System.out.println("Invalid option selected. Please enter a valid option.");
-                        pressEnterToContinue();
-                }
-            } catch (UIException ex) {
-                System.out.println("[UI error] " + ex.getMessage());
-                pressEnterToContinue();
-            }
-        } while (!exit);
-    }
-
-    public String getString() throws UIException {
+     public String getString() throws UIException {
         String input = scanner.nextLine();
         if (input == null || input.trim() == "") {
             throw new UIException("[getString Input Error] Invalid input.");
@@ -601,7 +294,7 @@ public class CliUi implements Ui {
         }
     }
 
-    private void createCustomer() {
+    public void createCustomer() {
         try {
             System.out.println("\nCreate Customer\n==============================");
             System.out.print("Enter customer firstname: ");
@@ -620,16 +313,12 @@ public class CliUi implements Ui {
             validateEmail(email);
             System.out.print("Enter customer type [1 = INDIVIDUAL | 2 = COMPANY]: ");
             String typeStr = getString();
-            switch (typeStr) {
-                case "1":
+            if (typeStr == "1")
                     typeStr = "INDIVIDUAL";
-                    break;
-                case "2":
-                    typeStr = "COMPANY";
-                    break;
-                default:
-                    throw new UIException("Invalid customer type.");
-            }
+                else if (typeStr == "2")
+                        typeStr = "COMPANY";
+                    else
+                        throw new UIException("Invalid customer type.");
             CustomerType type = CustomerType.valueOf(typeStr.toUpperCase());
             Customer savedCustomer = cuService
                     .createCustomer(new Customer(fullName, address, dob, phoneNumber, email, type));
@@ -1037,69 +726,15 @@ public class CliUi implements Ui {
     }
 
     public void pressEnterToContinue() {
-        System.out.print("Press ENTER to continue. ");
-        String readString = null;
-        // do {
-        // if (scanner.hasNextLine()) {
-        readString = scanner.nextLine();
+        System.out.print("Press ENTER to continue.");
+        Scanner localScanner = new Scanner(System.in);
+        String readString = localScanner.nextLine();
         if (readString == null || readString.trim().equals(""))
             readString = null;
-        // }
-        // } while (readString != null);
     }
 
     public static String getDataPath() {
         return dataPath;
-    }
-
-    public void progressBar(int milliseconds) throws InterruptedException, IOException {
-        try {
-            ArrayList<String> progressBar = new ArrayList<String>(
-                    Arrays.asList("[............................]", "[=...........................]",
-                            "[==..........................]", "[===.........................]",
-                            "[====........................]",
-                            "[=====.......................]", "[======......................]",
-                            "[=======.....................]",
-                            "[========....................]", "[=========...................]",
-                            "[==========..................]", "[===========.................]",
-                            "[============................]", "[=============...............]",
-                            "[==============..............]", "[===============.............]",
-                            "[================............]",
-                            "[=================...........]", "[==================..........]",
-                            "[===================.........]",
-                            "[====================........]",
-                            "[=====================.......]", "[======================......]",
-                            "[=======================.....]",
-                            "[========================....]", "[=========================...]",
-                            "[==========================..]",
-                            "[===========================.]", "[============================]",
-                            "[===========================.]", "[==========================..]",
-                            "[=========================...]", "[========================....]",
-                            "[=======================.....]",
-                            "[======================......]", "[=====================.......]",
-                            "[====================........]",
-                            "[===================.........]", "[==================..........]",
-                            "[=================...........]",
-                            "[================............]", "[===============.............]",
-                            "[==============..............]",
-                            "[=============...............]", "[============................]",
-                            "[===========.................]",
-                            "[==========..................]", "[=========...................]",
-                            "[========....................]",
-                            "[=======.....................]", "[======......................]",
-                            "[=====.......................]",
-                            "[====........................]", "[===.........................]",
-                            "[==..........................]",
-                            "[=...........................]", "[............................]"));
-
-            for (int x = 0; x < progressBar.size(); x++) {
-                String progressBarString = "\r" + progressBar.get(x);
-                System.out.print(progressBarString);
-                Thread.sleep(milliseconds);
-            }
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     private Pair<LocalDateTime> getDateRange() throws UIException {
@@ -1150,4 +785,25 @@ public class CliUi implements Ui {
         }
     }
 
+    public static CustomerService getCuService() {
+        return cuService;
+    }
+
+    public static BankAccountService getBaService() {
+        return baService;
+    }
+
+    public static OperationService getOpService() {
+        return opService;
+    }
+
+    public static TransactionService getTrService() {
+        return trService;
+    }
+
+    public static Scanner getScanner() {
+        return scanner;
+    }
+
+    
 }
