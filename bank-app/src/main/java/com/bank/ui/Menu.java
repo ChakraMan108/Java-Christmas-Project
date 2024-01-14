@@ -1,7 +1,6 @@
 package com.bank.ui;
 
 import java.util.Arrays;
-import java.util.Properties;
 
 import com.bank.exceptions.UIException;
 
@@ -16,14 +15,14 @@ public class Menu {
 	}
 
 	private void border() {
-		for (int ii = 0; ii < title.length() + 8; ii++)
+		for (int ii = 0; ii < title.length() + 22; ii++)
 			System.out.print("=");
 		System.out.println();
 	}
 
     public void display() {
         border();
-        System.out.printf("=   %s   =%n", title.toUpperCase());
+        System.out.printf("=           %s         =%n", title.toUpperCase());
         border();
         int index = 1;
         for (MenuOption option : options) {
@@ -59,5 +58,4 @@ abstract class MenuOption {
 	}
 
 	abstract void executeOption();
-
 }
